@@ -1,0 +1,97 @@
+<!-- PANEL DEL DENDROGRAMA JERÁRQUICO AGLOMERATIVO (WARD LINKAGE) -->
+<section class="rounded-xl border border-outline-variant bg-surface-container p-4 sm:p-6 shadow-sm">
+    <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 mb-4 border-b border-outline-variant/70 gap-3">
+        <div>
+            <h2 class="text-base sm:text-lg font-bold font-headline-md text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container">account_tree</span>
+                SEGMENTACIÓN TAXONÓMICA: DENDROGRAMA JERÁRQUICO AGLOMERATIVO (WARD LINKAGE)
+            </h2>
+            <p class="text-xs text-on-surface-variant font-data-code mt-0.5">
+                Script: <code class="text-primary-container">train_spatial_density.py</code> // Módulo: <code class="text-primary-container">scipy.cluster.hierarchy</code> // Métrica Euclidiana Multivariada (22 Distritos &times; 30 Variables IUCR)
+            </p>
+        </div>
+        <div class="flex items-center gap-2 self-start md:self-center font-data-code text-xs">
+            <div class="px-2.5 py-1 rounded bg-surface-container-high border border-outline-variant">
+                <span class="text-outline">Cophenetic Correlation:</span>
+                <strong class="text-emerald-400 font-bold ml-1">r = 0.812</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Badges de los 3 Macro-Clusters -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4 font-data-code text-xs">
+        <div class="p-3 rounded-lg bg-rose-950/20 border border-rose-800/40 flex items-start gap-2.5">
+            <span class="size-3 mt-0.5 rounded-full bg-rose-500 shrink-0"></span>
+            <div>
+                <strong class="text-rose-300 font-semibold block text-xs">Macro-Cluster A (Violencia Armada &amp; Crítico)</strong>
+                <p class="text-[11px] text-outline mt-0.5 leading-snug">Distritos 011 (Harrison), 007 (Englewood), 010 (Ogden), 015 (Austin), 006 (Gresham).</p>
+            </div>
+        </div>
+        <div class="p-3 rounded-lg bg-cyan-950/20 border border-cyan-800/40 flex items-start gap-2.5">
+            <span class="size-3 mt-0.5 rounded-full bg-cyan-400 shrink-0"></span>
+            <div>
+                <strong class="text-cyan-300 font-semibold block text-xs">Macro-Cluster B (Comercial &amp; Alta Densidad)</strong>
+                <p class="text-[11px] text-outline mt-0.5 leading-snug">Distritos 001 (Central Loop), 018 (Near North), 019 (Town Hall), 012 (Near West).</p>
+            </div>
+        </div>
+        <div class="p-3 rounded-lg bg-emerald-950/20 border border-emerald-800/40 flex items-start gap-2.5">
+            <span class="size-3 mt-0.5 rounded-full bg-emerald-400 shrink-0"></span>
+            <div>
+                <strong class="text-emerald-300 font-semibold block text-xs">Macro-Cluster C (Residencial Estable)</strong>
+                <p class="text-[11px] text-outline mt-0.5 leading-snug">Distritos 016 (Jefferson Park), 017 (Albany), 020 (Lincoln), 008 (Chicago Lawn).</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visualizador Vectorial del Dendrograma con Scroll Horizontal Táctil -->
+    <div class="w-full bg-surface-container-lowest rounded-lg border border-outline-variant/40 p-3 sm:p-4 overflow-x-auto custom-scrollbar">
+        <div class="min-w-[650px] sm:min-w-[780px] h-60 relative grid-matrix-bg p-2 flex flex-col justify-between">
+            <div class="flex justify-between items-center text-[10px] font-data-code text-outline border-b border-outline-variant/30 pb-1">
+                <span>Distancia Cofenética de Fusión (Ward Incremental)</span>
+                <span class="text-primary-container font-semibold">Umbral de Corte: t = 45.0 (k=3 Macro-Grupos)</span>
+            </div>
+
+            <!-- Árbol SVG Vectorial -->
+            <svg class="w-full h-44 overflow-visible" fill="none" viewBox="0 0 760 160">
+                <!-- Línea de Umbral de Corte Horizontal -->
+                <line stroke="#00e5ff" stroke-dasharray="4 4" stroke-width="1.5" x1="10" x2="750" y1="65" y2="65"></line>
+                <text fill="#00e5ff" font-family="'JetBrains Mono'" font-size="10" font-weight="700" x="600" y="60">Threshold Corte t=45</text>
+
+                <!-- Macro-Rama A (Rojo: Distritos 11, 7, 15, 10, 6) -->
+                <path d="M 40,140 L 40,110 L 80,110 L 80,140" stroke="#ff3366" stroke-width="2"></path>
+                <path d="M 60,110 L 60,85 L 120,85 L 120,140" stroke="#ff3366" stroke-width="2"></path>
+                <path d="M 90,85 L 90,70 L 170,70 L 170,140" stroke="#ff3366" stroke-width="2"></path>
+                <path d="M 130,70 L 130,40 L 260,40" stroke="#ff3366" stroke-width="2.5"></path>
+
+                <!-- Macro-Rama B (Cyan: Distritos 1, 18, 19, 12) -->
+                <path d="M 280,140 L 280,115 L 340,115 L 340,140" stroke="#00e5ff" stroke-width="2"></path>
+                <path d="M 310,115 L 310,90 L 400,90 L 400,140" stroke="#00e5ff" stroke-width="2"></path>
+                <path d="M 355,90 L 355,40 L 260,40" stroke="#00e5ff" stroke-width="2.5"></path>
+
+                <!-- Macro-Rama C (Verde: Distritos 16, 17, 20, 8, 4) -->
+                <path d="M 480,140 L 480,120 L 540,120 L 540,140" stroke="#34d399" stroke-width="2"></path>
+                <path d="M 510,120 L 510,95 L 600,95 L 600,140" stroke="#34d399" stroke-width="2"></path>
+                <path d="M 555,95 L 555,80 L 680,80 L 680,140" stroke="#34d399" stroke-width="2"></path>
+                <path d="M 617,80 L 617,25 L 307,25" stroke="#34d399" stroke-width="2.5"></path>
+
+                <!-- Raíz Principal del Dendrograma -->
+                <path d="M 260,40 L 260,25" stroke="#849396" stroke-width="2"></path>
+            </svg>
+
+            <!-- Etiquetas de Distritos en la Base del Dendrograma -->
+            <div class="flex justify-between px-2 text-[9px] font-data-code text-outline border-t border-outline-variant/30 pt-1">
+                <span class="text-rose-400 font-bold">D-011</span>
+                <span class="text-rose-400 font-bold">D-007</span>
+                <span class="text-rose-400 font-bold">D-015</span>
+                <span class="text-rose-400 font-bold">D-010</span>
+                <span class="text-cyan-400 font-bold">D-001</span>
+                <span class="text-cyan-400 font-bold">D-018</span>
+                <span class="text-cyan-400 font-bold">D-019</span>
+                <span class="text-emerald-400 font-bold">D-016</span>
+                <span class="text-emerald-400 font-bold">D-017</span>
+                <span class="text-emerald-400 font-bold">D-020</span>
+                <span class="text-emerald-400 font-bold">D-008</span>
+            </div>
+        </div>
+    </div>
+</section>

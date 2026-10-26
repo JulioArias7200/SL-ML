@@ -1,0 +1,73 @@
+<!-- BARRA LATERAL TÁCTICA CPD (Desktop >= 1024px) -->
+<aside class="w-64 shrink-0 hidden lg:flex flex-col justify-between border-r border-outline-variant/40 bg-surface-container-low p-4">
+    <div class="flex flex-col gap-6">
+        <!-- Logo de Unidad Policial -->
+        <a href="{{ url_for('dashboard_bp.index') }}" class="flex items-center gap-3 pb-3 border-b border-outline-variant/30 group">
+            <div class="size-10 rounded border border-primary-container/40 bg-surface-container-high flex items-center justify-center text-primary-container group-hover:scale-105 transition-transform shadow-sm">
+                <span class="material-symbols-outlined text-2xl">shield</span>
+            </div>
+            <div class="flex flex-col">
+                <h1 class="text-on-surface text-sm font-bold tracking-tight">CPD ANALYTICS CORE</h1>
+                <p class="text-outline text-label-sm font-data-code">CHICAGO ML-OPS // v4.2</p>
+            </div>
+        </a>
+
+        <!-- Navegación Primaria -->
+        <nav class="flex flex-col gap-1.5 font-label-md">
+            <!-- Dashboard General -->
+            <a href="{{ url_for('dashboard_bp.index') }}" 
+               class="flex items-center gap-3 px-3 py-2.5 rounded transition-all {{ 'bg-surface-container-high border-l-2 border-primary-container text-white font-semibold shadow-sm' if active_page == 'dashboard' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                <span class="material-symbols-outlined text-xl {{ 'text-primary-container' if active_page == 'dashboard' else '' }}">dashboard</span>
+                <span class="{{ 'text-primary-container font-bold' if active_page == 'dashboard' else '' }}">Dashboard General</span>
+            </a>
+
+            <!-- Módulo K-Means & NLP -->
+            <a href="{{ url_for('kmeans_nlp_bp.view') }}" 
+               class="flex items-center gap-3 px-3 py-2.5 rounded transition-all {{ 'bg-surface-container-high border-l-2 border-primary-container text-white font-semibold shadow-sm' if active_page == 'kmeans-nlp' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                <span class="material-symbols-outlined text-xl {{ 'text-primary-container' if active_page == 'kmeans-nlp' else '' }}">memory</span>
+                <span class="{{ 'text-primary-container font-bold' if active_page == 'kmeans-nlp' else '' }}">K-Means & NLP</span>
+            </a>
+
+            <!-- Módulo Geoespacial & Densidad -->
+            <a href="{{ url_for('spatial_density_bp.view') }}" 
+               class="flex items-center gap-3 px-3 py-2.5 rounded transition-all {{ 'bg-surface-container-high border-l-2 border-primary-container text-white font-semibold shadow-sm' if active_page == 'espacial-densidad' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                <span class="material-symbols-outlined text-xl {{ 'text-primary-container' if active_page == 'espacial-densidad' else '' }}">explore</span>
+                <span class="{{ 'text-primary-container font-bold' if active_page == 'espacial-densidad' else '' }}">Geoespacial & Densidad</span>
+            </a>
+
+            <div class="my-2 border-t border-outline-variant/30"></div>
+
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-all text-xs">
+                <span class="material-symbols-outlined text-lg">crisis_alert</span>
+                <span>Detección de Anomalías</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-all text-xs">
+                <span class="material-symbols-outlined text-lg">local_police</span>
+                <span>Patrullaje Preventivo</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-all text-xs">
+                <span class="material-symbols-outlined text-lg">tune</span>
+                <span>Configuración Pipeline</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Estado Hardware / Telemetría -->
+    <div class="flex flex-col gap-3 pt-4 border-t border-outline-variant/30 font-data-code">
+        <div class="flex items-center justify-between text-label-sm text-outline">
+            <span>GPU ENGINE</span>
+            <span class="text-primary-container font-semibold">NVIDIA T4 16GB</span>
+        </div>
+        <div class="w-full bg-surface-container-high h-1.5 rounded overflow-hidden">
+            <div class="bg-primary-container h-full w-[41.8%]"></div>
+        </div>
+        <div class="flex items-center justify-between text-label-sm text-outline">
+            <span>VRAM: 6.7 / 16.0 GB</span>
+            <span class="text-on-surface font-semibold">41.8%</span>
+        </div>
+        <div class="flex items-center justify-center gap-2 rounded h-8 px-2 bg-primary-container/10 border border-primary-container/30 text-primary-container text-[11px] font-bold tracking-wider uppercase">
+            <span class="size-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>ESTADO: EN LÍNEA (GPU T4)</span>
+        </div>
+    </div>
+</aside>

@@ -1,0 +1,168 @@
+<!-- NÚCLEO INTERACTIVO: INFERENCIA SEMÁNTICA NLP (RESPONSIVO CON ASÍNCRONO FETCH) -->
+<section class="flex flex-col gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div class="flex items-center gap-3">
+            <div class="size-2.5 rounded-full bg-primary-container animate-pulse"></div>
+            <h2 class="text-sm sm:text-headline-sm uppercase text-on-surface font-bold tracking-tight font-headline-sm">
+                Núcleo Interactivo // Inferencia Semántica NLP &amp; Asignación de Modus Operandi
+            </h2>
+        </div>
+        <span class="text-[11px] font-data-code text-outline bg-surface-container-high px-2.5 py-1 rounded border border-outline-variant/40 self-start sm:self-auto">
+            PIPELINE: TF-IDF VECTORIZER &gt; K-MEANS PREDICT
+        </span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-surface-container p-4 sm:p-6 rounded-xl border border-outline-variant/40 shadow-xl">
+        <!-- Columna Izquierda: Input y Casos de Estudio (7 cols en desktop) -->
+        <div class="lg:col-span-7 flex flex-col gap-4">
+            <div class="flex items-center justify-between">
+                <label class="text-xs sm:text-label-md font-data-code text-on-surface font-semibold flex items-center gap-2" for="incident-input">
+                    <span class="material-symbols-outlined text-primary-container text-base">text_snippet</span>
+                    <span>DESPACHO POLICIAL RMS / 911:</span>
+                </label>
+                <span class="text-[11px] font-data-code text-outline" id="char-counter">142 caracteres</span>
+            </div>
+
+            <!-- Textarea táctica de despacho -->
+            <div class="relative">
+                <textarea class="w-full bg-surface-container-lowest border border-outline-variant/60 rounded-lg p-3 sm:p-4 font-data-code text-xs sm:text-sm text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all resize-none leading-relaxed uppercase"
+                          id="incident-input"
+                          placeholder="Ingrese reporte de incidente o transcripción de despacho policial..."
+                          rows="4">ARMED ROBBERY AT GAS STATION CONVENIENCE STORE. TWO SUSPECTS WITH HANDGUN DISPLAYED, DEMANDED CASH DRAWER, FLED ON FOOT SOUTHBOUND.</textarea>
+                
+                <button type="button" 
+                        id="btn-clear-input"
+                        class="absolute right-3 bottom-3 text-xs font-data-code text-outline hover:text-on-surface flex items-center gap-1 bg-surface-container-high hover:bg-surface-container-highest px-2 py-1 rounded border border-outline-variant/40 transition-colors"
+                        title="Limpiar texto">
+                    <span class="material-symbols-outlined text-xs">clear</span>
+                    <span>Limpiar</span>
+                </button>
+            </div>
+
+            <!-- Chips de Ejemplos Tácticos (Diseñados para touch en móvil >= 44px de altura) -->
+            <div class="flex flex-col gap-2">
+                <span class="text-[11px] font-data-code text-outline uppercase tracking-wider">CARGAR CASOS DE ESTUDIO TÍPICOS:</span>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <button type="button" 
+                            class="min-h-[44px] text-left p-2.5 rounded-lg bg-surface-container-low border border-outline-variant/40 hover:border-primary-container/60 hover:bg-surface-container transition-all flex items-start gap-2.5 group"
+                            onclick="loadExample(1)">
+                        <span class="material-symbols-outlined text-cyan-400 text-sm mt-0.5 group-hover:scale-110 transition-transform">shopping_bag</span>
+                        <div>
+                            <p class="text-xs font-data-code text-on-surface font-medium">Ejemplo 1: Hurto menor retail</p>
+                            <p class="text-[10px] text-outline font-data-code truncate">Target &bull; Mochila con cosméticos</p>
+                        </div>
+                    </button>
+
+                    <button type="button" 
+                            class="min-h-[44px] text-left p-2.5 rounded-lg bg-surface-container-low border border-outline-variant/40 hover:border-primary-container/60 hover:bg-surface-container transition-all flex items-start gap-2.5 group"
+                            onclick="loadExample(2)">
+                        <span class="material-symbols-outlined text-rose-400 text-sm mt-0.5 group-hover:scale-110 transition-transform">warning</span>
+                        <div>
+                            <p class="text-xs font-data-code text-on-surface font-medium">Ejemplo 2: Asalto armado (Gas Station)</p>
+                            <p class="text-[10px] text-outline font-data-code truncate">Arma de fuego &bull; Fuga a pie</p>
+                        </div>
+                    </button>
+
+                    <button type="button" 
+                            class="min-h-[44px] text-left p-2.5 rounded-lg bg-surface-container-low border border-outline-variant/40 hover:border-primary-container/60 hover:bg-surface-container transition-all flex items-start gap-2.5 group"
+                            onclick="loadExample(3)">
+                        <span class="material-symbols-outlined text-amber-400 text-sm mt-0.5 group-hover:scale-110 transition-transform">home</span>
+                        <div>
+                            <p class="text-xs font-data-code text-on-surface font-medium">Ejemplo 3: Violencia doméstica</p>
+                            <p class="text-[10px] text-outline font-data-code truncate">Apartamento &bull; Altercado verbal escalado</p>
+                        </div>
+                    </button>
+
+                    <button type="button" 
+                            class="min-h-[44px] text-left p-2.5 rounded-lg bg-surface-container-low border border-outline-variant/40 hover:border-primary-container/60 hover:bg-surface-container transition-all flex items-start gap-2.5 group"
+                            onclick="loadExample(4)">
+                        <span class="material-symbols-outlined text-purple-400 text-sm mt-0.5 group-hover:scale-110 transition-transform">directions_car</span>
+                        <div>
+                            <p class="text-xs font-data-code text-on-surface font-medium">Ejemplo 4: Daño a vehículo / Autopartes</p>
+                            <p class="text-[10px] text-outline font-data-code truncate">Vía pública &bull; Catalizador cortado</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Botón de Análisis -->
+            <button type="button" 
+                    id="btn-analyze-text"
+                    class="min-h-[44px] w-full py-2.5 rounded-lg bg-primary-container text-surface-container-lowest font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:brightness-110 transition-all shadow-md font-data-code">
+                <span class="material-symbols-outlined text-lg">bolt</span>
+                <span id="analyze-btn-text">EJECUTAR INFERENCIA NLP</span>
+            </button>
+        </div>
+
+        <!-- Columna Derecha: Tarjeta de Resultado Dinámico (5 cols en desktop) -->
+        <div class="lg:col-span-5 flex flex-col gap-4 bg-surface-container-lowest p-4 sm:p-5 rounded-lg border border-outline-variant/50">
+            <div class="flex items-center justify-between pb-2 border-b border-outline-variant/40">
+                <span class="text-xs font-data-code text-outline uppercase font-semibold">DIAGNÓSTICO EN TIEMPO REAL</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold font-data-code bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                    <span class="size-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    MATCH ENCONTRADO
+                </span>
+            </div>
+
+            <!-- Información del Cluster -->
+            <div class="flex flex-col gap-1.5">
+                <span id="res-cluster-code" class="text-xs font-data-code text-primary-container font-bold">KM-02 // ARMED ROBBERY</span>
+                <h3 id="res-cluster-title" class="text-sm sm:text-base font-bold text-on-surface font-headline-sm leading-snug">
+                    CLUSTER #2: ROBO AGRAVADO A MANO ARMADA &amp; ASALTO CALLEJERO
+                </h3>
+                <p id="res-cluster-desc" class="text-xs text-on-surface-variant font-data-code leading-relaxed mt-1">
+                    Atraco violento con exhibición de arma corta o arma blanca contra transeúntes, dependientes de servicentros o repartidores.
+                </p>
+            </div>
+
+            <!-- Barra de Confianza -->
+            <div class="space-y-1 font-data-code text-xs">
+                <div class="flex justify-between items-center">
+                    <span class="text-outline">Probabilidad de Pertinencia Semántica:</span>
+                    <span id="res-confidence-val" class="text-primary-container font-bold">94.2%</span>
+                </div>
+                <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                    <div id="res-confidence-bar" class="h-full bg-primary-container transition-all duration-500 rounded-full" style="width: 94.2%;"></div>
+                </div>
+            </div>
+
+            <!-- Métricas Operativas Asociadas -->
+            <div class="grid grid-cols-2 gap-2 text-xs font-data-code p-2.5 rounded bg-surface-container border border-outline-variant/30">
+                <div>
+                    <span class="text-outline text-[10px] block">Horario Crítico:</span>
+                    <span id="res-peak-hours" class="text-on-surface font-semibold">21:00 - 04:00 hrs</span>
+                </div>
+                <div>
+                    <span class="text-outline text-[10px] block">Tasa de Arresto:</span>
+                    <span id="res-arrest-prob" class="text-rose-400 font-semibold">24.8% (Alta gravedad)</span>
+                </div>
+                <div class="col-span-2 pt-1 border-t border-outline-variant/20">
+                    <span class="text-outline text-[10px] block">Focos de Ocurrencia:</span>
+                    <span id="res-location-focus" class="text-on-surface-variant truncate block">Gas Station, Sidewalk, Street, Convenience Store</span>
+                </div>
+            </div>
+
+            <!-- Palabras Clave TF-IDF -->
+            <div>
+                <span class="text-[11px] font-data-code text-outline uppercase block mb-1.5">Términos Clave TF-IDF Detectados:</span>
+                <div id="res-keywords-container" class="flex flex-wrap gap-1.5">
+                    <span class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant/60 text-primary-container font-data-code text-xs font-semibold uppercase flex items-center gap-1">
+                        <span class="size-1.5 rounded-full bg-primary-container"></span>ARMED
+                    </span>
+                    <span class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant/60 text-primary-container font-data-code text-xs font-semibold uppercase flex items-center gap-1">
+                        <span class="size-1.5 rounded-full bg-primary-container"></span>ROBBERY
+                    </span>
+                    <span class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant/60 text-primary-container font-data-code text-xs font-semibold uppercase flex items-center gap-1">
+                        <span class="size-1.5 rounded-full bg-primary-container"></span>HANDGUN
+                    </span>
+                    <span class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant/60 text-primary-container font-data-code text-xs font-semibold uppercase flex items-center gap-1">
+                        <span class="size-1.5 rounded-full bg-primary-container"></span>DRAWER
+                    </span>
+                    <span class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant/60 text-primary-container font-data-code text-xs font-semibold uppercase flex items-center gap-1">
+                        <span class="size-1.5 rounded-full bg-primary-container"></span>SOUTHBOUND
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

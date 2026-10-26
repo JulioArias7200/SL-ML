@@ -1,0 +1,252 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}CPD Urban Intelligence // Dashboard General & Centro de Mando{% endblock %}
+
+{% block content %}
+<div class="p-4 sm:p-6 lg:p-8 flex flex-col gap-6 sm:gap-8 max-w-[1700px] w-full mx-auto">
+    <!-- Header del Dashboard -->
+    <section class="flex flex-col gap-3 border-b border-outline-variant/30 pb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="text-label-sm font-data-code px-2 py-0.5 rounded bg-primary-container/10 text-primary-container border border-primary-container/30 uppercase tracking-widest">
+                        CENTRO DE MANDO // NIVEL ESTRATÉGICO
+                    </span>
+                    <span class="text-outline text-label-sm font-data-code">•</span>
+                    <span class="text-label-sm font-data-code text-outline">CHICAGO DATA LAKEHOUSE</span>
+                </div>
+                <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-on-surface uppercase mt-1">
+                    SISTEMA DE INTELIGENCIA URBANA &amp; APRENDIZAJE NO SUPERVISADO
+                </h1>
+                <p class="text-on-surface-variant text-xs sm:text-sm mt-1 max-w-4xl leading-relaxed">
+                    Consolidado ejecutivo y monitoreo en tiempo real de 842,119 reportes policiales (2020-2025) procesados mediante algoritmos de particionamiento, agrupamiento espacial por densidad y procesamiento de lenguaje natural.
+                </p>
+            </div>
+
+            <!-- Status Pill -->
+            <div class="flex items-center gap-2 self-start sm:self-auto">
+                <span class="px-3 py-1.5 rounded-lg bg-surface-container border border-outline-variant/50 text-xs font-data-code text-on-surface flex items-center gap-2">
+                    <span class="size-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>MOTOR ANALÍTICO LISTO</span>
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 1. Cuadrícula de 4 KPIs Principales (Responsivo: 1 col móvil, 2 cols tablet, 4 cols desktop) -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- KPI 1 -->
+        <div class="p-5 rounded-xl bg-surface-container border border-outline-variant/40 hover:border-primary-container/50 transition-all shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-outline text-xs font-data-code">
+                <span>TOTAL REGISTROS POLICIALES</span>
+                <span class="material-symbols-outlined text-primary-container text-lg">dataset</span>
+            </div>
+            <div class="my-3">
+                <div class="text-2xl sm:text-3xl font-data-display font-bold text-on-surface">
+                    {{ "{:,}".format(summary.total_records) }}
+                </div>
+                <div class="text-xs font-data-code text-emerald-400 mt-1 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">verified</span>
+                    <span>100% Depurado &bull; Snappy Parquet</span>
+                </div>
+            </div>
+            <div class="text-[11px] text-outline font-data-code border-t border-outline-variant/30 pt-2">
+                Período histórico: {{ summary.period }}
+            </div>
+        </div>
+
+        <!-- KPI 2 -->
+        <div class="p-5 rounded-xl bg-surface-container border border-outline-variant/40 hover:border-primary-container/50 transition-all shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-outline text-xs font-data-code">
+                <span>HOTSPOTS ACTIVOS (DBSCAN)</span>
+                <span class="material-symbols-outlined text-rose-400 text-lg">radar</span>
+            </div>
+            <div class="my-3">
+                <div class="text-2xl sm:text-3xl font-data-display font-bold text-on-surface">
+                    {{ summary.active_hotspots }} <span class="text-base text-outline font-normal">Zonas</span>
+                </div>
+                <div class="text-xs font-data-code text-rose-400 mt-1 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">crisis_alert</span>
+                    <span>Métrica Haversine: 300m</span>
+                </div>
+            </div>
+            <div class="text-[11px] text-outline font-data-code border-t border-outline-variant/30 pt-2">
+                Ruido detectado: {{ summary.noise_records }} pts ({{ summary.noise_pct }}%)
+            </div>
+        </div>
+
+        <!-- KPI 3 -->
+        <div class="p-5 rounded-xl bg-surface-container border border-outline-variant/40 hover:border-primary-container/50 transition-all shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-outline text-xs font-data-code">
+                <span>TASA DE ARRESTO EFECTIVO</span>
+                <span class="material-symbols-outlined text-amber-400 text-lg">gavel</span>
+            </div>
+            <div class="my-3">
+                <div class="text-2xl sm:text-3xl font-data-display font-bold text-on-surface">
+                    {{ summary.arrest_rate }}%
+                </div>
+                <div class="text-xs font-data-code text-amber-400 mt-1 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">trending_up</span>
+                    <span>Mayor tasa en narcóticos (78.6%)</span>
+                </div>
+            </div>
+            <div class="text-[11px] text-outline font-data-code border-t border-outline-variant/30 pt-2">
+                Violencia doméstica: {{ summary.domestic_pct }}%
+            </div>
+        </div>
+
+        <!-- KPI 4 -->
+        <div class="p-5 rounded-xl bg-surface-container border border-outline-variant/40 hover:border-primary-container/50 transition-all shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-outline text-xs font-data-code">
+                <span>DISTRITOS TAXONÓMICOS</span>
+                <span class="material-symbols-outlined text-purple-400 text-lg">account_tree</span>
+            </div>
+            <div class="my-3">
+                <div class="text-2xl sm:text-3xl font-data-display font-bold text-on-surface">
+                    {{ summary.districts_count }} <span class="text-base text-outline font-normal">Sectores</span>
+                </div>
+                <div class="text-xs font-data-code text-emerald-400 mt-1 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">check_circle</span>
+                    <span>3 Macro-Clusters (Ward Linkage)</span>
+                </div>
+            </div>
+            <div class="text-[11px] text-outline font-data-code border-t border-outline-variant/30 pt-2">
+                Correlación Cofenética: r = 0.812
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Tarjetas de Acceso Directo a los Módulos Principales -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Módulo 1 Card -->
+        <div class="p-6 rounded-xl bg-surface-container border border-outline-variant/40 hover:border-primary-container/60 transition-all flex flex-col justify-between group">
+            <div>
+                <div class="flex items-center justify-between pb-3 border-b border-outline-variant/30">
+                    <div class="flex items-center gap-3">
+                        <div class="size-10 rounded-lg bg-primary-container/10 border border-primary-container/30 flex items-center justify-center text-primary-container">
+                            <span class="material-symbols-outlined text-2xl">memory</span>
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-data-code text-primary-container font-semibold uppercase">Módulo #02 // NLP &amp; K-Means</span>
+                            <h2 class="text-lg font-bold text-on-surface font-headline-sm">Segmentación Particional &amp; Minería Semántica</h2>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined text-outline group-hover:text-primary-container group-hover:translate-x-1 transition-all">arrow_forward</span>
+                </div>
+
+                <p class="text-on-surface-variant text-xs sm:text-sm mt-4 leading-relaxed">
+                    Evaluación multivariable de hiperparámetros de clustering (Inercia WSS, Coeficiente de Silueta 0.584 y Davies-Bouldin 0.72) junto al clasificador interactivo en tiempo real de lenguaje natural policial (TF-IDF y proyección LSA).
+                </p>
+
+                <div class="flex flex-wrap gap-2 mt-4 font-data-code text-[11px]">
+                    <span class="px-2.5 py-1 rounded bg-surface-container-high border border-outline-variant/40 text-on-surface">k=5 Óptimo</span>
+                    <span class="px-2.5 py-1 rounded bg-surface-container-high border border-outline-variant/40 text-on-surface">1,000 Features TF-IDF</span>
+                    <span class="px-2.5 py-1 rounded bg-surface-container-high border border-outline-variant/40 text-on-surface">Inferencia &lt;18ms</span>
+                </div>
+            </div>
+
+            <a href="{{ url_for('kmeans_nlp_bp.view') }}" 
+               class="mt-6 w-full py-2.5 rounded-lg bg-primary-container text-surface-container-lowest font-bold text-xs uppercase tracking-wider text-center flex items-center justify-center gap-2 hover:brightness-110 transition-all shadow-sm">
+                <span>Ingresar al Módulo K-Means &amp; NLP</span>
+                <span class="material-symbols-outlined text-base">arrow_forward</span>
+            </a>
+        </div>
+
+        <!-- Módulo 2 Card -->
+        <div class="p-6 rounded-xl bg-surface-container border border-outline-variant/40 hover:border-primary-container/60 transition-all flex flex-col justify-between group">
+            <div>
+                <div class="flex items-center justify-between pb-3 border-b border-outline-variant/30">
+                    <div class="flex items-center gap-3">
+                        <div class="size-10 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                            <span class="material-symbols-outlined text-2xl">explore</span>
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-data-code text-rose-400 font-semibold uppercase">Módulo #03 // Geoespacial</span>
+                            <h2 class="text-lg font-bold text-on-surface font-headline-sm">Análisis Geoespacial de Densidad &amp; Taxonomía</h2>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined text-outline group-hover:text-primary-container group-hover:translate-x-1 transition-all">arrow_forward</span>
+                </div>
+
+                <p class="text-on-surface-variant text-xs sm:text-sm mt-4 leading-relaxed">
+                    Detección cartográfica de puntos calientes mediante DBSCAN con métrica esférica Haversine (&epsilon;=300m, MinPts=25), visor interactivo de Folium con capas conmutables y dendrograma aglomerativo distrital (Ward).
+                </p>
+
+                <div class="flex flex-wrap gap-2 mt-4 font-data-code text-[11px]">
+                    <span class="px-2.5 py-1 rounded bg-surface-container-high border border-outline-variant/40 text-on-surface">148 Hotspots Activos</span>
+                    <span class="px-2.5 py-1 rounded bg-surface-container-high border border-outline-variant/40 text-on-surface">22 Distritos Agrupados</span>
+                    <span class="px-2.5 py-1 rounded bg-surface-container-high border border-outline-variant/40 text-on-surface">HUD Táctico Haversine</span>
+                </div>
+            </div>
+
+            <a href="{{ url_for('spatial_density_bp.view') }}" 
+               class="mt-6 w-full py-2.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant/60 text-on-surface font-bold text-xs uppercase tracking-wider text-center flex items-center justify-center gap-2 transition-all shadow-sm">
+                <span>Ingresar al Módulo Geoespacial</span>
+                <span class="material-symbols-outlined text-base">arrow_forward</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 3. Desglose de Tipologías Delictivas & Telemetría -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Gráfica de Barras de Tipología Delictiva -->
+        <div class="lg:col-span-2 p-5 rounded-xl bg-surface-container border border-outline-variant/40 flex flex-col gap-4">
+            <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="size-2 rounded-full bg-primary-container"></span>
+                    <h3 class="text-sm font-bold text-on-surface font-headline-sm uppercase">Distribución de Incidentes por Tipología Principal</h3>
+                </div>
+                <span class="text-xs font-data-code text-outline">Dataset 842k</span>
+            </div>
+
+            <div class="space-y-3 font-data-code text-xs">
+                {% for crime in summary.top_crimes %}
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-on-surface font-medium">{{ crime.name }}</span>
+                        <span class="text-outline">{{ "{:,}".format(crime.count) }} ({{ crime.pct }}%)</span>
+                    </div>
+                    <div class="w-full bg-surface-container-lowest h-2 rounded overflow-hidden">
+                        <div class="h-full rounded transition-all duration-500" style="width: {{ crime.pct }}%; background-color: {{ crime.color }};"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Telemetría & Entorno de Ejecución -->
+        <div class="p-5 rounded-xl bg-surface-container border border-outline-variant/40 flex flex-col justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2 pb-3 border-b border-outline-variant/30">
+                    <span class="material-symbols-outlined text-primary-container text-lg">terminal</span>
+                    <h3 class="text-sm font-bold text-on-surface font-headline-sm uppercase">Arquitectura del Servidor</h3>
+                </div>
+
+                <div class="space-y-3 mt-4 text-xs font-data-code">
+                    <div class="flex justify-between items-center p-2.5 rounded bg-surface-container-low border border-outline-variant/30">
+                        <span class="text-outline">Framework Web:</span>
+                        <span class="text-primary-container font-bold">Flask 3.1 (Blueprints)</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2.5 rounded bg-surface-container-low border border-outline-variant/30">
+                        <span class="text-outline">Motor Numérico:</span>
+                        <span class="text-on-surface font-bold">Scikit-Learn &bull; SciPy</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2.5 rounded bg-surface-container-low border border-outline-variant/30">
+                        <span class="text-outline">Cartografía GIS:</span>
+                        <span class="text-on-surface font-bold">Folium / Leaflet WGS84</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2.5 rounded bg-surface-container-low border border-outline-variant/30">
+                        <span class="text-outline">Latencia Media:</span>
+                        <span class="text-emerald-400 font-bold">&lt; 18.2 ms</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/40 text-[11px] text-outline font-data-code flex items-center justify-between">
+                <span>Modo de Ejecución:</span>
+                <span class="text-emerald-400 font-bold uppercase">Producción Local</span>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

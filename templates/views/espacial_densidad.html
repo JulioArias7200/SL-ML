@@ -1,0 +1,101 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}CPD Urban Intelligence // Módulo #03: Geoespacial &amp; Densidad{% endblock %}
+
+{% block content %}
+<div class="flex flex-col min-w-0 bg-surface">
+    <!-- 1. ENCABEZADO TÁCTICO DEL MÓDULO GEOESPACIAL -->
+    <section class="border-b border-outline-variant/80 bg-surface-container-lowest/80 px-4 sm:px-6 lg:px-8 py-5">
+        <nav class="flex items-center gap-2 text-xs font-data-code text-outline mb-2">
+            <a class="hover:text-primary-container transition-colors" href="{{ url_for('dashboard_bp.index') }}">Inicio</a>
+            <span>/</span>
+            <span class="text-primary-container font-semibold">Módulo #03: Geoespacial &amp; Densidad</span>
+        </nav>
+
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-on-surface text-lg sm:text-xl md:text-2xl lg:text-3xl font-black tracking-tight font-headline-lg flex items-center gap-3">
+                    MÓDULO ANALÍTICO #03 // ANÁLISIS GEOESPACIAL DE DENSIDAD &amp; TAXONOMÍA DISTRITAL
+                </h1>
+                <p class="text-on-surface-variant text-xs sm:text-sm mt-1 max-w-4xl leading-relaxed">
+                    Clustering Espacial Basado en Densidad con Métrica Haversine (DBSCAN/HDBSCAN) y Segmentación Jerárquica Aglomerativa (Ward) sobre la Red Urbana de Chicago.
+                </p>
+            </div>
+        </div>
+
+        <!-- Telemetría & Badges -->
+        <div class="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-outline-variant/40 font-data-code text-xs">
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-outline-variant text-on-surface">
+                <span class="material-symbols-outlined text-[14px] text-primary-container">straighten</span>
+                <span>Métrica: <strong class="text-primary-container">Haversine Calibrada</strong> (&epsilon;=300m / 0.000047 rad, MinPts=25)</span>
+            </div>
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-outline-variant text-on-surface">
+                <span class="material-symbols-outlined text-[14px] text-emerald-400">dataset</span>
+                <span>Inferencia: <strong class="text-emerald-400">50,000 muestra Folium</strong></span>
+            </div>
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-outline-variant text-on-surface">
+                <span class="material-symbols-outlined text-[14px] text-amber-400">verified</span>
+                <span>Validación: <strong class="text-amber-300">Silhouette 0.612</strong> | Cophenetic 0.812</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. CONTENIDO PRINCIPAL: MAPA, DENDROGRAMA Y TABLA -->
+    <div class="p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1700px] w-full mx-auto">
+        <!-- Visor Cartográfico Táctico con HUD Móvil Adaptativo -->
+        {% include 'components/map_viewport_tactical.html' %}
+
+        <!-- Panel del Dendrograma Jerárquico Aglomerativo (Ward Linkage) -->
+        {% include 'components/dendrogram_card.html' %}
+
+        <!-- Tabla de Taxonomía Distrital de los 22 Distritos Policiales -->
+        {% include 'components/district_table.html' %}
+
+        <!-- Comparativa Técnica: DBSCAN vs HDBSCAN vs OPTICS -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-4 font-data-code text-xs">
+            <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/40 flex flex-col gap-2 shadow-sm">
+                <span class="text-primary-container font-bold text-xs uppercase flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-base">radar</span>
+                    DBSCAN ESTÁNDAR (HAVERSINE)
+                </span>
+                <p class="text-on-surface-variant text-[11px] leading-relaxed">
+                    Excelente para detectar zonas de delincuencia continua y clasificar incidentes aislados como ruido (-1). Requiere calibrar radio &epsilon; global fijo.
+                </p>
+                <div class="mt-auto pt-2 border-t border-outline-variant/30 text-outline text-[10px]">
+                    Hiperparámetros: &epsilon;=300m | MinPts=25
+                </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/40 flex flex-col gap-2 shadow-sm">
+                <span class="text-emerald-400 font-bold text-xs uppercase flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-base">hub</span>
+                    HDBSCAN (DENSIDADES VARIABLES)
+                </span>
+                <p class="text-on-surface-variant text-[11px] leading-relaxed">
+                    Construye el Minimum Spanning Tree (MST) con distancia de alcanzabilidad mutua. Resuelve el contraste entre el centro hiperdenso (Loop) y periferias difusas.
+                </p>
+                <div class="mt-auto pt-2 border-t border-outline-variant/30 text-outline text-[10px]">
+                    Métrica: Estabilidad &lambda; = 1/distancia
+                </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/40 flex flex-col gap-2 shadow-sm">
+                <span class="text-amber-400 font-bold text-xs uppercase flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-base">analytics</span>
+                    OPTICS (ORDENAMIENTO ESPACIAL)
+                </span>
+                <p class="text-on-surface-variant text-[11px] leading-relaxed">
+                    Genera el Reachability Plot (gráfico de alcanzabilidad). Los valles representan núcleos densos y los picos marcan valles de transición o vacío urbano.
+                </p>
+                <div class="mt-auto pt-2 border-t border-outline-variant/30 text-outline text-[10px]">
+                    Método de corte: Xi (&xi;) adaptativo
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/spatial_controls.js') }}"></script>
+{% endblock %}
