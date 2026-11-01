@@ -2,8 +2,23 @@ from flask import Blueprint, request, jsonify
 from modules.services.kmeans_nlp_service import KMeansNLPService
 from modules.services.spatial_service import SpatialDensityService
 from modules.services.data_service import DataService
+from modules.services.webgis_service import WebGISService
 
 api_bp = Blueprint('api_bp', __name__, url_prefix='/api/v1')
+
+@api_bp.route('/webgis/geojson', methods=['GET'])
+def webgis_geojson():
+    bbox = request.args.get('bbox')
+    categoria = request.args.get('categoria')
+    ciudad = request.args.get('ciudad')
+    geojson_data = WebGISService.get_geojson(bbox=bbox, categoria=categoria, ciudad=ciudad)
+    return jsonify(geojson_data)
+
+@api_bp.route('/webgis/metadata', methods=['GET'])
+def webgis_metadata():
+    metadata = WebGISService.get_metadata()
+    return jsonify(metadata)
+
 
 @api_bp.route('/predict_nlp', methods=['POST'])
 def predict_nlp():

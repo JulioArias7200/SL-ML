@@ -35,6 +35,13 @@
                 <span class="{{ 'text-primary-container font-bold' if active_page == 'espacial-densidad' else '' }}">Geoespacial & Densidad</span>
             </a>
 
+            <!-- Módulo Globo 3D & Noticias WebGIS -->
+            <a href="{{ url_for('webgis_bp.globo_3d') }}" 
+               class="flex items-center gap-3 px-3 py-2.5 rounded transition-all {{ 'bg-surface-container-high border-l-2 border-primary-container text-white font-semibold shadow-sm' if active_page == 'globo-3d' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                <span class="material-symbols-outlined text-xl {{ 'text-primary-container' if active_page == 'globo-3d' else '' }}">public</span>
+                <span class="{{ 'text-primary-container font-bold' if active_page == 'globo-3d' else '' }}">Globo 3D // Bolivia</span>
+            </a>
+
             <div class="my-2 border-t border-outline-variant/30"></div>
 
             <a href="#" class="flex items-center gap-3 px-3 py-2 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-all text-xs">

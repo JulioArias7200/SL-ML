@@ -1,0 +1,110 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}CPD Urban Intelligence // Globo 3D & Noticias WebGIS (Bolivia){% endblock %}
+
+{% block extra_head %}
+<!-- MapLibre GL JS v4.7.1 CSS (Soporte Nativo 3D Globe) -->
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/globo_3d.css') }}">
+{% endblock %}
+
+{% block content %}
+<div id="globo-viewport">
+    <!-- Contenedor del Mapa WebGL -->
+    <div id="map-container"></div>
+
+    <!-- HUD Superior Izquierdo: Telemetría y Resumen Táctico -->
+    <div class="tactical-hud hud-top-left">
+        <div class="hud-card space-y-2.5">
+            <div class="flex items-center justify-between">
+                <div class="hud-badge">
+                    <span class="radar-dot"></span>
+                    <span>INTEL // WEBGIS 3D</span>
+                </div>
+                <span class="text-[11px] text-outline font-data-code">BOLIVIA ML-OPS</span>
+            </div>
+
+            <div class="flex items-baseline justify-between pt-1 border-t border-outline-variant/30">
+                <span class="text-xs text-on-surface-variant font-medium">Hechos Geolocalizados:</span>
+                <span id="stat-total-events" class="text-lg font-bold font-data-code text-primary-container">
+                    {{ metadata.total_eventos }}
+                </span>
+            </div>
+
+            <p class="text-[11px] text-outline leading-tight">
+                Transición esférica 3D a resolución vectorial de calles con clustering WebGL y minería no supervisada de fuentes de prensa nacional.
+            </p>
+        </div>
+    </div>
+
+    <!-- HUD Superior Derecho: Filtros Dinámicos -->
+    <div class="tactical-hud hud-top-right">
+        <!-- Filtro por Delito Principal -->
+        <select id="filter-category" class="hud-select shadow-lg">
+            <option value="todos">⚡ Todos los Delitos</option>
+            {% for cat in metadata.categorias %}
+            <option value="{{ cat.nombre }}">{{ cat.nombre }} ({{ cat.count }})</option>
+            {% endfor %}
+        </select>
+
+        <!-- Filtro por Ciudad / Eje Troncal -->
+        <select id="filter-city" class="hud-select shadow-lg">
+            <option value="todas">🏛️ Todas las Ciudades</option>
+            {% for c in metadata.ciudades %}
+            <option value="{{ c.nombre }}">{{ c.nombre }} ({{ c.count }})</option>
+            {% endfor %}
+        </select>
+
+        <!-- Conmutador 3D / 2D -->
+        <button id="btn-toggle-projection" class="hud-select flex items-center justify-center gap-2 hover:border-primary-container shadow-lg">
+            <span class="material-symbols-outlined text-sm">public</span>
+            <span>3D Globe</span>
+        </button>
+    </div>
+
+    <!-- HUD Inferior Central: Navegación Táctica por Centros Urbanos -->
+    <div class="tactical-hud hud-bottom-controls">
+        <button type="button" class="hud-nav-btn hud-city-btn" data-city="global">
+            <span class="material-symbols-outlined text-sm">public</span>
+            <span>Global</span>
+        </button>
+        <button type="button" class="hud-nav-btn hud-city-btn active" data-city="bolivia">
+            <span class="material-symbols-outlined text-sm">flag</span>
+            <span>Bolivia</span>
+        </button>
+        <button type="button" class="hud-nav-btn hud-city-btn" data-city="santa cruz">
+            <span>Santa Cruz</span>
+        </button>
+        <button type="button" class="hud-nav-btn hud-city-btn" data-city="la paz">
+            <span>La Paz</span>
+        </button>
+        <button type="button" class="hud-nav-btn hud-city-btn" data-city="cochabamba">
+            <span>Cochabamba</span>
+        </button>
+    </div>
+
+    <!-- HUD Inferior Izquierdo: Leyenda de Clusters y Severidad -->
+    <div class="tactical-hud hud-legend hud-card">
+        <span class="text-[10px] text-outline uppercase tracking-wider block font-bold mb-1">Densidad de Hechos</span>
+        <div class="legend-item">
+            <span class="legend-dot bg-[#00e5ff]"></span>
+            <span class="text-on-surface text-[11px]">&lt; 5 incidentes</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot bg-[#fbbf24]"></span>
+            <span class="text-on-surface text-[11px]">5 - 15 incidentes</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot bg-[#ff3366]"></span>
+            <span class="text-on-surface text-[11px]">&gt; 15 incidentes (Hotspot)</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- MapLibre GL JS v4.7.1 JS (Motor WebGL) -->
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="{{ url_for('static', filename='js/globo_3d.js') }}"></script>
+{% endblock %}
+

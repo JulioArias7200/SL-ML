@@ -1,0 +1,290 @@
+/* GLOBO 3D TÁCTICO & WEBGIS ESTILOS */
+
+#globo-viewport {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 65px); /* Descontando el navbar superior */
+    overflow: hidden;
+    background-color: #050811;
+}
+
+#map-container {
+    width: 100%;
+    height: 100%;
+}
+
+/* HUD Superior Izquierdo: Telemetría de Satélite */
+.tactical-hud {
+    position: absolute;
+    z-index: 20;
+    pointer-events: auto;
+}
+
+.hud-top-left {
+    top: 16px;
+    left: 16px;
+    max-width: 380px;
+}
+
+.hud-card {
+    background: rgba(15, 19, 28, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(0, 229, 255, 0.25);
+    border-radius: 8px;
+    padding: 14px 16px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), 0 0 15px rgba(0, 229, 255, 0.08);
+}
+
+.hud-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(0, 229, 255, 0.12);
+    border: 1px solid rgba(0, 229, 255, 0.35);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #00e5ff;
+    letter-spacing: 0.05em;
+}
+
+.radar-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #00e5ff;
+    box-shadow: 0 0 8px #00e5ff;
+    animation: radarPulse 1.8s infinite ease-in-out;
+}
+
+@keyframes radarPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(0.7); opacity: 0.35; }
+}
+
+/* HUD Superior Derecho: Filtros y Selectores */
+.hud-top-right {
+    top: 16px;
+    right: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.hud-select {
+    background: rgba(24, 27, 37, 0.9);
+    border: 1px solid rgba(132, 147, 150, 0.35);
+    color: #dfe2ef;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.hud-select:hover, .hud-select:focus {
+    border-color: #00e5ff;
+}
+
+/* HUD Inferior: Controles de Navegación */
+.hud-bottom-controls {
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(15, 19, 28, 0.9);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    border-radius: 30px;
+    padding: 6px 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+}
+
+.hud-nav-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #bac9cc;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hud-nav-btn:hover {
+    background: rgba(0, 229, 255, 0.15);
+    color: #00e5ff;
+    border-color: rgba(0, 229, 255, 0.3);
+}
+
+.hud-nav-btn.active {
+    background: #00e5ff;
+    color: #0a0e17;
+    font-weight: 700;
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+}
+
+/* Leyenda de Severidad */
+.hud-legend {
+    bottom: 24px;
+    left: 16px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+/* Popups personalizados de MapLibre */
+.maplibregl-popup {
+    max-width: 340px !important;
+    z-index: 50;
+}
+
+.maplibregl-popup-content {
+    background: rgba(15, 19, 28, 0.96) !important;
+    backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(0, 229, 255, 0.35) !important;
+    border-radius: 8px !important;
+    padding: 16px !important;
+    color: #dfe2ef !important;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.8), 0 0 20px rgba(0, 229, 255, 0.15) !important;
+}
+
+.maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
+    border-top-color: rgba(15, 19, 28, 0.96) !important;
+}
+.maplibregl-popup-anchor-top .maplibregl-popup-tip {
+    border-bottom-color: rgba(15, 19, 28, 0.96) !important;
+}
+.maplibregl-popup-anchor-left .maplibregl-popup-tip {
+    border-right-color: rgba(15, 19, 28, 0.96) !important;
+}
+.maplibregl-popup-anchor-right .maplibregl-popup-tip {
+    border-left-color: rgba(15, 19, 28, 0.96) !important;
+}
+
+.maplibregl-popup-close-button {
+    color: #849396 !important;
+    font-size: 18px !important;
+    padding: 6px 10px !important;
+    outline: none !important;
+}
+
+.maplibregl-popup-close-button:hover {
+    color: #00e5ff !important;
+}
+
+.news-popup-category {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #ff3366;
+    background: rgba(255, 51, 102, 0.15);
+    border: 1px solid rgba(255, 51, 102, 0.35);
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+}
+
+.news-popup-title {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.45;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.news-popup-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: #849396;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(59, 73, 76, 0.4);
+}
+
+.news-popup-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    background: rgba(0, 229, 255, 0.12);
+    border: 1px solid #00e5ff;
+    color: #00e5ff;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 7px 0;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.news-popup-link:hover {
+    background: #00e5ff;
+    color: #0a0e17;
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
+}
+
+/* Controles MapLibre integrados */
+.maplibregl-ctrl-group {
+    background: rgba(15, 19, 28, 0.85) !important;
+    border: 1px solid rgba(0, 229, 255, 0.25) !important;
+    border-radius: 6px !important;
+}
+
+.maplibregl-ctrl-group button {
+    border-bottom: 1px solid rgba(59, 73, 76, 0.3) !important;
+}
+
+.maplibregl-ctrl-icon {
+    filter: invert(0.8) hue-rotate(180deg);
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+    .hud-top-left {
+        max-width: calc(100% - 32px);
+    }
+    .hud-bottom-controls {
+        bottom: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+        border-radius: 12px;
+        padding: 6px;
+    }
+    .hud-legend {
+        display: none;
+    }
+}
+
