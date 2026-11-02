@@ -1,0 +1,361 @@
+<!-- COMPONENTE: ALGORITMO OPTICS // REACHABILITY PLOT & INSPECTOR DE VALLES JERÁRQUICOS -->
+<section id="optics-container" class="rounded-xl border border-outline-variant bg-surface-container p-4 sm:p-6 shadow-xl relative font-data-code">
+    <!-- Header del Módulo OPTICS -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-4 mb-4 border-b border-outline-variant/70 gap-3">
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="size-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">
+                    ANÁLISIS DE DENSIDAD MULTIESCALA // MODELO OPTICS
+                </span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">
+                    {{ 'BOLIVIA' if current_context != 'chicago' else 'CHICAGO CPD' }}
+                </span>
+            </div>
+            <h2 class="text-base sm:text-lg lg:text-xl font-bold font-headline-md text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-amber-400 text-xl">analytics</span>
+                DIAGRAMA DE ALCANZABILIDAD (REACHABILITY PLOT) &amp; DETECCIÓN DE VALLES &xi;
+            </h2>
+            <p class="text-xs text-on-surface-variant font-data-code mt-0.5 max-w-4xl leading-relaxed">
+                El ordenamiento OPTICS genera una representación 1D de la topografía de densidad. Las <strong>cuencas/valles</strong> delimitan núcleos criminales hiperdensos, los <strong>escalones internos</strong> revelan sub-clusters anidados y los <strong>picos</strong> corresponden a vacíos urbanos, corredores de tránsito o ruido espacial (-1).
+            </p>
+        </div>
+
+        <!-- Telemetría de Valles y Ruido -->
+        <div class="flex flex-wrap items-center gap-2 self-start lg:self-center font-data-code text-xs">
+            <div class="px-3 py-1.5 rounded-lg bg-surface-container-high border border-outline-variant/80 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm text-cyan-400">landscape</span>
+                <span class="text-outline">Valles &xi;:</span>
+                <strong id="optics-valleys-count" class="text-cyan-400 font-bold">{{ optics_data.active_valleys_count }} Activos</strong>
+            </div>
+            <div class="px-3 py-1.5 rounded-lg bg-surface-container-high border border-outline-variant/80 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm text-slate-400">filter_alt</span>
+                <span class="text-outline">Ruido/Picos:</span>
+                <strong id="optics-noise-count" class="text-rose-400 font-bold">{{ optics_data.noise_count }} ({{ optics_data.noise_pct }}%)</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de Controles de Hiperparámetros OPTICS (Gradiente Xi & Método) -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 p-3.5 rounded-xl bg-surface-container-lowest/80 border border-outline-variant/60 mb-5">
+        <!-- Control 1: Slider Gradiente Xi -->
+        <div class="md:col-span-5 flex flex-col justify-center">
+            <div class="flex justify-between items-center mb-1 text-xs">
+                <label for="slider-xi" class="text-on-surface flex items-center gap-1.5 font-semibold">
+                    <span class="material-symbols-outlined text-sm text-amber-400">tune</span>
+                    Gradiente de Extracción &xi; (Xi-Steepness):
+                </label>
+                <span id="val-xi-display" class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30 text-xs">
+                    &xi; = {{ optics_data.xi }}
+                </span>
+            </div>
+            <input id="slider-xi" 
+                   type="range" 
+                   min="0.01" 
+                   max="0.20" 
+                   step="0.01" 
+                   value="{{ optics_data.xi }}"
+                   class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-amber-400">
+            <div class="flex justify-between text-[10px] text-outline mt-1 font-mono">
+                <span>0.01 (Micro-valles finos)</span>
+                <span>0.10 (Equilibrado)</span>
+                <span>0.20 (Macro-cuencas)</span>
+            </div>
+        </div>
+
+        <!-- Control 2: Método de Extracción -->
+        <div class="md:col-span-4 flex flex-col justify-center">
+            <label class="text-on-surface text-xs font-semibold mb-1 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sm text-primary-container">alt_route</span>
+                Método de Extracción de Clusters:
+            </label>
+            <div class="flex gap-1.5">
+                <button type="button" 
+                        id="btn-optics-method-xi" 
+                        class="flex-1 py-1 px-2.5 rounded bg-amber-400/20 border border-amber-400/50 text-amber-300 text-[11px] font-bold text-center transition-colors">
+                    Algoritmo &xi; (Jerárquico)
+                </button>
+                <button type="button" 
+                        id="btn-optics-method-eps" 
+                        class="flex-1 py-1 px-2.5 rounded bg-surface-container border border-outline-variant text-outline hover:text-on-surface text-[11px] text-center transition-colors">
+                    Corte &epsilon; Fijo (DBSCAN)
+                </button>
+            </div>
+            <div class="text-[10px] text-outline mt-1">
+                Extracción automática de pendientes descendentes y ascendentes.
+            </div>
+        </div>
+
+        <!-- Control 3: Umbral y Acción -->
+        <div class="md:col-span-3 flex flex-col justify-center border-t md:border-t-0 md:border-l border-outline-variant/40 pt-2 md:pt-0 md:pl-4">
+            <span class="text-outline text-[11px] block">Umbral Dinámico de Corte:</span>
+            <span id="optics-threshold-val" class="text-base font-bold text-on-surface tracking-tight">
+                {{ "{:,}".format(optics_data.threshold_m) }} m
+            </span>
+            <span class="text-[10px] text-outline">
+                Distancia crítica &le; umbral &rarr; Núcleo
+            </span>
+        </div>
+    </div>
+
+    <!-- ESCENARIO VECTORIAL DEL REACHABILITY PLOT CON SCROLL RESPONSIVO -->
+    <div class="w-full bg-surface-container-lowest rounded-xl border border-outline-variant/80 p-3 sm:p-5 overflow-hidden shadow-inner">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 mb-2 border-b border-outline-variant/40 text-[11px] text-outline gap-2">
+            <div class="flex items-center gap-2">
+                <span class="size-2 rounded-full bg-primary-container"></span>
+                <span>Eje Y: Distancia de Alcanzabilidad (m)</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-primary-container font-semibold">
+                    <span class="inline-block w-3 h-0.5 bg-primary-container border-b border-dashed mr-1"></span>
+                    Línea de Umbral &xi;
+                </span>
+                <span class="hidden sm:inline">Pase el cursor sobre las barras para inspeccionar muestras</span>
+            </div>
+        </div>
+
+        <!-- SVG Container Responsivo -->
+        <div class="relative w-full overflow-x-auto custom-scrollbar select-none">
+            <div class="min-w-[700px] lg:min-w-[900px] h-72 relative">
+                <!-- SVG Vectorial del Reachability Plot -->
+                <svg id="optics-reachability-svg" 
+                     class="w-full h-full" 
+                     viewBox="0 0 900 240" 
+                     preserveAspectRatio="none">
+                    <defs>
+                        <!-- Gradientes sutiles para los valles -->
+                        <linearGradient id="valleyGlowCyan" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.25"></stop>
+                            <stop offset="100%" stop-color="#00e5ff" stop-opacity="0.02"></stop>
+                        </linearGradient>
+                        <linearGradient id="valleyGlowRose" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#ff3366" stop-opacity="0.25"></stop>
+                            <stop offset="100%" stop-color="#ff3366" stop-opacity="0.02"></stop>
+                        </linearGradient>
+                        <linearGradient id="valleyGlowAmber" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#ffaa00" stop-opacity="0.25"></stop>
+                            <stop offset="100%" stop-color="#ffaa00" stop-opacity="0.02"></stop>
+                        </linearGradient>
+                        <linearGradient id="valleyGlowEmerald" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#34d399" stop-opacity="0.25"></stop>
+                            <stop offset="100%" stop-color="#34d399" stop-opacity="0.02"></stop>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Líneas Guía Horizontales de Referencia -->
+                    {% set max_scale = optics_data.max_reach_scale %}
+                    <g class="stroke-outline-variant/30" stroke-dasharray="2,4" stroke-width="0.8">
+                        <!-- 75% escala -->
+                        <line x1="40" y1="50" x2="890" y2="50"></line>
+                        <text x="5" y="54" fill="#64748b" font-family="'JetBrains Mono'" font-size="9">{{ (max_scale * 0.75)|int }}m</text>
+
+                        <!-- 50% escala -->
+                        <line x1="40" y1="110" x2="890" y2="110"></line>
+                        <text x="5" y="114" fill="#64748b" font-family="'JetBrains Mono'" font-size="9">{{ (max_scale * 0.50)|int }}m</text>
+
+                        <!-- 25% escala -->
+                        <line x1="40" y1="165" x2="890" y2="165"></line>
+                        <text x="5" y="169" fill="#64748b" font-family="'JetBrains Mono'" font-size="9">{{ (max_scale * 0.25)|int }}m</text>
+
+                        <!-- Base 0m -->
+                        <line x1="40" y1="215" x2="890" y2="215" stroke="#334155" stroke-dasharray="none" stroke-width="1.2"></line>
+                    </g>
+
+                    <!-- Línea de Umbral de Corte Xi (Horizontal Dinámica) -->
+                    {% set th_y = 215 - (optics_data.threshold_m / max_scale * 165) %}
+                    {% if th_y < 20 %}{% set th_y = 20 %}{% endif %}
+                    {% if th_y > 215 %}{% set th_y = 215 %}{% endif %}
+                    <g id="optics-threshold-group">
+                        <line id="optics-threshold-line" 
+                              x1="40" 
+                              y1="{{ th_y|round(1) }}" 
+                              x2="890" 
+                              y2="{{ th_y|round(1) }}" 
+                              stroke="#00e5ff" 
+                              stroke-dasharray="5,4" 
+                              stroke-width="2"></line>
+                        <rect id="optics-threshold-badge" 
+                              x="710" 
+                              y="{{ (th_y - 18)|round(1) }}" 
+                              width="170" 
+                              height="16" 
+                              rx="3" 
+                              fill="#082f49" 
+                              stroke="#00e5ff" 
+                              stroke-width="1"></rect>
+                        <text id="optics-threshold-text" 
+                              x="716" 
+                              y="{{ (th_y - 6)|round(1) }}" 
+                              fill="#38bdf8" 
+                              font-family="'JetBrains Mono'" 
+                              font-size="9" 
+                              font-weight="700">
+                            UMBRAL &xi; CUT: {{ optics_data.threshold_m }} m
+                        </text>
+                    </g>
+
+                    <!-- Barras Verticales de Alcanzabilidad por Cada Punto del Traversal Stream -->
+                    {% set num_pts = optics_data.reachability_points|length %}
+                    {% set bar_width = (840 / num_pts)|round(1) %}
+                    {% set bar_spacing = (bar_width * 0.25)|round(1) %}
+                    {% if bar_spacing < 1 %}{% set bar_spacing = 1 %}{% endif %}
+                    {% set inner_w = bar_width - bar_spacing %}
+                    {% if inner_w < 2 %}{% set inner_w = 2 %}{% endif %}
+
+                    <g id="optics-bars-group">
+                        {% for pt in optics_data.reachability_points %}
+                            {% set bar_h = (pt.reach_m / max_scale * 165)|round(1) %}
+                            {% if bar_h > 185 %}{% set bar_h = 185 %}{% endif %}
+                            {% if bar_h < 4 %}{% set bar_h = 4 %}{% endif %}
+                            {% set bar_x = 45 + (loop.index0 * bar_width) %}
+                            {% set bar_y = 215 - bar_h %}
+
+                            <rect class="optics-bar transition-all duration-150 cursor-pointer"
+                                  data-idx="{{ pt.index }}"
+                                  data-reach="{{ pt.reach_m }}"
+                                  data-cluster="{{ pt.cluster_id }}"
+                                  data-zone="{{ pt.zone_name }}"
+                                  data-sub="{{ pt.sub_cluster }}"
+                                  data-noise="{{ 'true' if pt.is_noise else 'false' }}"
+                                  x="{{ bar_x|round(1) }}"
+                                  y="{{ bar_y|round(1) }}"
+                                  width="{{ inner_w|round(1) }}"
+                                  height="{{ bar_h|round(1) }}"
+                                  rx="1"
+                                  fill="{{ pt.color }}"
+                                  opacity="{{ '0.45' if pt.is_noise else '0.90' }}">
+                            </rect>
+                        {% endfor %}
+                    </g>
+
+                    <!-- Eje X: Etiquetas de Secuencia / Valles -->
+                    <text x="45" y="232" fill="#64748b" font-family="'JetBrains Mono'" font-size="9">0</text>
+                    <text x="430" y="235" fill="#94a3b8" font-family="'JetBrains Mono'" font-size="9" text-anchor="middle">
+                        ORDEN DE RECORRIDO ESPACIAL OPTICS (SECUENCIA TEMPORAL/TOPOLÓGICA)
+                    </text>
+                    <text x="880" y="232" fill="#64748b" font-family="'JetBrains Mono'" font-size="9" text-anchor="end">
+                        N={{ num_pts }}
+                    </text>
+                </svg>
+
+                <!-- Tooltip Dinámico Flotante en el SVG -->
+                <div id="optics-tooltip" 
+                     class="hidden absolute z-30 pointer-events-none bg-surface-container-highest/95 backdrop-blur-md border border-cyan-400 p-2.5 rounded-lg shadow-2xl text-[11px] font-data-code max-w-xs transition-opacity duration-100">
+                    <div class="flex items-center justify-between gap-3 border-b border-outline-variant/60 pb-1 mb-1">
+                        <span id="tooltip-point-id" class="font-bold text-cyan-400">Punto #12</span>
+                        <span id="tooltip-cluster-badge" class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300">Valle #1</span>
+                    </div>
+                    <div class="space-y-0.5">
+                        <div class="text-on-surface font-semibold" id="tooltip-zone-name">Central Loop</div>
+                        <div class="text-outline text-[10px]" id="tooltip-sub-name">Sub-Cluster: Core</div>
+                        <div class="text-primary-container font-mono text-[11px] pt-1" id="tooltip-reach-dist">Alcanzabilidad: 88 m</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leyenda de Valles Detectados -->
+        <div class="mt-3 pt-3 border-t border-outline-variant/40 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div class="flex flex-wrap items-center gap-3">
+                {% for v in optics_data.valleys %}
+                <button type="button" 
+                        class="optics-valley-filter-btn flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-outline-variant/60 hover:border-outline transition-colors"
+                        data-valley-id="{{ v.id }}">
+                    <span class="size-2 rounded-full" style="background-color: {{ v.hex }}; box-shadow: 0 0 6px {{ v.hex }};"></span>
+                    <span class="text-on-surface font-semibold text-[11px]">{{ v.name.split(':')[0] }}</span>
+                    <span class="text-outline text-[10px]">(&mu;={{ v.depth_m }}m)</span>
+                </button>
+                {% endfor %}
+                <div class="flex items-center gap-1.5 px-2 py-1 text-outline text-[11px]">
+                    <span class="size-2 rounded-full bg-slate-500"></span>
+                    <span>Picos Ruido (-1)</span>
+                </div>
+            </div>
+
+            <div class="text-[11px] text-outline font-data-code">
+                Métrica: <span class="text-on-surface font-bold">Haversine Multiescala</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLA DE DIAGNÓSTICO DE VALLES (VALLEY INSPECTOR) -->
+    <div class="mt-6 pt-5 border-t border-outline-variant/60">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-3 border-b border-outline-variant/40 gap-2">
+            <div>
+                <h3 class="text-sm sm:text-base font-bold font-headline-md text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-cyan-400 text-lg">view_stream</span>
+                    TAXONOMÍA DE VALLES EXTRAÍDOS &amp; JERARQUÍA ANIDADA
+                </h3>
+                <span class="text-xs text-outline font-data-code">
+                    Cuencas detectadas por gradiente de corte &xi; // Descenso y ascenso de densidad
+                </span>
+            </div>
+            <span class="text-[11px] font-data-code text-cyan-300 bg-cyan-950/40 border border-cyan-800/50 px-2.5 py-1 rounded self-start sm:self-auto">
+                Algoritmo &xi; Activo
+            </span>
+        </div>
+
+        <div class="w-full overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left font-data-code text-xs border-collapse min-w-[720px]">
+                <thead>
+                    <tr class="border-b border-outline-variant/60 text-outline text-[11px] uppercase tracking-wider bg-surface-container-high/40">
+                        <th class="py-2.5 px-3">Valle / Cluster</th>
+                        <th class="py-2.5 px-3">Zona Primaria</th>
+                        <th class="py-2.5 px-3">Profundidad Media ($d_{reach}$)</th>
+                        <th class="py-2.5 px-3">Sub-Clusters Jerárquicos</th>
+                        <th class="py-2.5 px-3">Volumen Muestras</th>
+                        <th class="py-2.5 px-3">Evaluación de Densidad</th>
+                        <th class="py-2.5 px-3">Estado Táctico</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant/30">
+                    {% for v in optics_data.valleys %}
+                    <tr class="hover:bg-surface-container-high/50 transition-colors valley-row cursor-pointer" data-valley-id="{{ v.id }}">
+                        <td class="py-2.5 px-3 font-bold text-on-surface flex items-center gap-2">
+                            <span class="size-2 rounded-full" style="background-color: {{ v.hex }};"></span>
+                            <span>{{ v.name.split(':')[0] }}</span>
+                        </td>
+                        <td class="py-2.5 px-3 text-on-surface font-medium">
+                            {{ v.name.split(':')[1] if ':' in v.name else v.name }}
+                        </td>
+                        <td class="py-2.5 px-3 font-semibold text-cyan-400">
+                            {{ v.depth_m }} m <span class="text-[10px] text-outline font-normal">(&le; {{ v.max_reach_m }}m)</span>
+                        </td>
+                        <td class="py-2.5 px-3 text-on-surface-variant text-[11px]">
+                            {{ v.subclusters }}
+                        </td>
+                        <td class="py-2.5 px-3 font-mono text-on-surface">
+                            {{ "{:,}".format(v.incidents) }}
+                        </td>
+                        <td class="py-2.5 px-3 text-[11px] text-outline">
+                            {{ v.density_eval }}
+                        </td>
+                        <td class="py-2.5 px-3">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold border
+                                {% if 'ROJA' in v.status %}bg-rose-500/15 text-rose-300 border-rose-500/30
+                                {% elif 'VIGILANCIA' in v.status %}bg-cyan-500/15 text-cyan-300 border-cyan-500/30
+                                {% else %}bg-emerald-500/15 text-emerald-300 border-emerald-500/30{% endif %}">
+                                {{ v.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Insight Táctico Explicativo -->
+    <div class="mt-4 p-3.5 rounded-xl bg-surface-container-high/60 border border-outline-variant/50 text-xs flex items-start gap-3">
+        <span class="material-symbols-outlined text-cyan-400 mt-0.5 shrink-0 text-base">info</span>
+        <div>
+            <strong class="text-on-surface font-semibold block text-[11px] uppercase tracking-wide">
+                Interpretación Criminológica del Gráfico de Alcanzabilidad:
+            </strong>
+            <p class="text-on-surface-variant text-[11px] leading-relaxed mt-0.5">
+                {{ optics_data.insights }}
+            </p>
+        </div>
+    </div>
+</section>
+

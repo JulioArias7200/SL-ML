@@ -107,14 +107,58 @@
 
     <!-- Fila 2: Gráfico Interactivo de Dispersión 2D -->
     <div class="p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm">
-        <div class="flex items-center justify-between pb-3 border-b border-outline-variant/20 mb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/20 mb-3 gap-3">
             <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary-container">bubble_chart</span>
                 <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider font-data-code">
                     Plano Bidimensional Proyectado: {{ current_algo.upper() }}
                 </h3>
             </div>
-            <span class="text-xs text-outline font-data-code">Hover sobre los puntos para inspeccionar</span>
+            
+            <!-- Selector de Segmentación y Coloreado Táctico -->
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-outline font-data-code uppercase font-bold tracking-wider">Colorear por:</span>
+                <div class="segmented-control inline-flex rounded-lg bg-surface-container-high p-0.5 border border-outline-variant/40 font-data-code text-xs">
+                    <button type="button" 
+                            id="btn-color-ward" 
+                            class="color-mode-btn px-2.5 py-1 rounded transition-all active bg-primary-container text-surface-container-lowest font-bold" 
+                            data-mode="ward" 
+                            title="Colorear por Macro-Clusters del Dendrograma Jerárquico (Ward k=3)">
+                        <span>Ward (Dendrograma)</span>
+                    </button>
+                    <button type="button" 
+                            id="btn-color-category" 
+                            class="color-mode-btn px-2.5 py-1 rounded transition-all text-on-surface-variant hover:text-on-surface" 
+                            data-mode="category" 
+                            title="Colorear por tipología penal reportada">
+                        <span>Delito</span>
+                    </button>
+                    <button type="button" 
+                            id="btn-color-topic" 
+                            class="color-mode-btn px-2.5 py-1 rounded transition-all text-on-surface-variant hover:text-on-surface" 
+                            data-mode="topic" 
+                            title="Colorear por Tópicos Semánticos LDA (k=5)">
+                        <span>Tópico LDA</span>
+                    </button>
+                    <button type="button" 
+                            id="btn-color-anomaly" 
+                            class="color-mode-btn px-2.5 py-1 rounded transition-all text-on-surface-variant hover:text-on-surface" 
+                            data-mode="anomaly" 
+                            title="Colorear por Anomalía Autoencoder (MSE de Reconstrucción)">
+                        <span>Autoencoder</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Micro-Barra Táctica Informativa de Validación -->
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded bg-surface-container-lowest border border-outline-variant/30 text-[11px] font-data-code mb-3">
+            <span id="info-mode-badge" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40 uppercase">
+                WARD DENDROGRAMA
+            </span>
+            <span id="info-mode-desc" class="text-on-surface-variant">
+                Validación de Conglomerados Jerárquicos: Evaluación de separabilidad en espacio latente {{ current_algo.upper() }} entre Macro A (Casco SCZ), Macro B (CBBA/Plan 3000) y Macro C (Periferias).
+            </span>
         </div>
 
         <!-- Contenedor Plotly -->
@@ -127,44 +171,106 @@ document.addEventListener("DOMContentLoaded", function() {
     const rawData = {{ data.series|tojson }};
     const algoName = "{{ current_algo.upper() }}";
 
-    // Paleta de colores por Delito Principal
-    const colorMap = {
+    // Paletas cromáticas tácticas calibradas
+    const colorMapCategory = {
         'Robo Agravado / Asalto': '#ff3366',
         'Agresión Física y Lesiones': '#fbbf24',
         'Hurto / Descuidismo': '#00e5ff',
         'Homicidio / Asesinato': '#ff0033',
         'Narcotráfico / Drogas': '#34d399',
-        'Judicial / Político': '#9d4edd'
+        'Judicial / Político': '#9d4edd',
+        'Otros': '#64748b'
     };
 
-    // Agrupar por categoría para generar trazas en Plotly con leyenda
-    const categories = {};
-    rawData.forEach(pt => {
-        const cat = pt.category || 'Otros';
-        if (!categories[cat]) {
-            categories[cat] = { x: [], y: [], text: [], customdata: [] };
-        }
-        categories[cat].x.push(pt.x);
-        categories[cat].y.push(pt.y);
-        categories[cat].text.push(`<b>${pt.title}</b><br>Ciudad: ${pt.city}<br>Tópico LDA: #${pt.topic}`);
-        categories[cat].customdata.push(pt);
-    });
+    const colorMapWard = {
+        'Macro A: Casco SCZ (Crítico)': '#ff3366',
+        'Macro B: CBBA & Plan 3000 (Violencia)': '#fbbf24',
+        'Macro C: La Paz & Perif. (Patrimonial)': '#34d399'
+    };
 
-    const traces = Object.keys(categories).map(cat => ({
-        x: categories[cat].x,
-        y: categories[cat].y,
-        text: categories[cat].text,
-        name: cat,
-        mode: 'markers',
-        type: 'scatter',
-        marker: {
-            size: 9,
-            color: colorMap[cat] || '#38bdf8',
-            opacity: 0.85,
-            line: { color: '#0a0e17', width: 1.5 }
-        },
-        hoverinfo: 'text'
-    }));
+    const colorMapTopic = {
+        0: '#ff3366',
+        1: '#9d4edd',
+        2: '#34d399',
+        3: '#fbbf24',
+        4: '#00e5ff'
+    };
+
+    const colorMapAnomaly = {
+        'Anomalía Crítica (MSE > Umbral)': '#ff0033',
+        'Patrón Semántico Regular': '#00e5ff'
+    };
+
+    let currentMode = 'ward';
+
+    // Generar trazas agrupadas según el modo seleccionado
+    function getTraces(mode) {
+        const groups = {};
+
+        rawData.forEach(pt => {
+            let key = '';
+            let groupColor = '#38bdf8';
+            let hoverText = '';
+
+            if (mode === 'ward') {
+                key = pt.ward_label || 'Macro C: La Paz & Perif. (Patrimonial)';
+                groupColor = pt.ward_color || colorMapWard[key] || '#34d399';
+                hoverText = `<b>${pt.title}</b><br>` +
+                            `Macro-Cluster: <b>${key}</b><br>` +
+                            `Zona/Ciudad: ${pt.zone} (${pt.city})<br>` +
+                            `Delito: ${pt.category}<br>` +
+                            `Tópico LDA: ${pt.topic_label}`;
+            } else if (mode === 'category') {
+                key = pt.category || 'Otros';
+                groupColor = colorMapCategory[key] || '#38bdf8';
+                hoverText = `<b>${pt.title}</b><br>` +
+                            `Delito Principal: <b>${key}</b><br>` +
+                            `Ciudad: ${pt.city} (${pt.zone})<br>` +
+                            `Ward: ${pt.ward_label}<br>` +
+                            `Tópico LDA: ${pt.topic_label}`;
+            } else if (mode === 'topic') {
+                key = pt.topic_label || `Tópico #${pt.topic}`;
+                groupColor = pt.topic_color || colorMapTopic[pt.topic] || '#00e5ff';
+                hoverText = `<b>${pt.title}</b><br>` +
+                            `Tema: <b>${key}</b><br>` +
+                            `Delito: ${pt.category}<br>` +
+                            `Ciudad: ${pt.city}<br>` +
+                            `Ward: ${pt.ward_label}`;
+            } else if (mode === 'anomaly') {
+                const isAnom = Boolean(pt.is_anomaly);
+                key = isAnom ? 'Anomalía Crítica (MSE > Umbral)' : 'Patrón Semántico Regular';
+                groupColor = colorMapAnomaly[key];
+                hoverText = `<b>${pt.title}</b><br>` +
+                            `Estado: <b>${isAnom ? 'ANOMALÍA DETECTADA' : 'REGULAR'}</b><br>` +
+                            `Error Reconstrucción MSE: ${(pt.reconstruction_error || 0).toFixed(6)}<br>` +
+                            `Delito: ${pt.category}<br>` +
+                            `Ward: ${pt.ward_label}`;
+            }
+
+            if (!groups[key]) {
+                groups[key] = { x: [], y: [], text: [], color: groupColor };
+            }
+            groups[key].x.push(pt.x);
+            groups[key].y.push(pt.y);
+            groups[key].text.push(hoverText);
+        });
+
+        return Object.keys(groups).map(k => ({
+            x: groups[k].x,
+            y: groups[k].y,
+            text: groups[k].text,
+            name: k,
+            mode: 'markers',
+            type: 'scatter',
+            marker: {
+                size: 9.5,
+                color: groups[k].color,
+                opacity: 0.88,
+                line: { color: '#0a0e17', width: 1.5 }
+            },
+            hoverinfo: 'text'
+        }));
+    }
 
     function getPlotlyLayout(isDark) {
         return {
@@ -195,7 +301,71 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const isCurrentDark = document.documentElement.classList.contains('dark');
     const config = { responsive: true, displayModeBar: false };
-    Plotly.newPlot('plot-reduction', traces, getPlotlyLayout(isCurrentDark), config);
+    Plotly.newPlot('plot-reduction', getTraces(currentMode), getPlotlyLayout(isCurrentDark), config);
+
+    // Conmutador interactivo de modos de coloración
+    const modeButtons = {
+        'ward': document.getElementById('btn-color-ward'),
+        'category': document.getElementById('btn-color-category'),
+        'topic': document.getElementById('btn-color-topic'),
+        'anomaly': document.getElementById('btn-color-anomaly')
+    };
+
+    const infoBadge = document.getElementById('info-mode-badge');
+    const infoDesc = document.getElementById('info-mode-desc');
+
+    const modeMetadata = {
+        'ward': {
+            badge: 'WARD DENDROGRAMA',
+            badgeClass: 'px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40 uppercase',
+            desc: `Validación de Conglomerados Jerárquicos: Evaluación de separabilidad en espacio latente ${algoName} entre Macro A (Casco SCZ), Macro B (CBBA/Plan 3000) y Macro C (Periferias).`
+        },
+        'category': {
+            badge: 'TIPOLOGÍA PENAL',
+            badgeClass: 'px-1.5 py-0.5 rounded text-[10px] font-bold bg-primary-container/20 text-primary-container border border-primary-container/40 uppercase',
+            desc: `Separabilidad penal según la categoría principal de hecho delictivo reportado por la policía y fuentes de prensa.`
+        },
+        'topic': {
+            badge: 'TÓPICOS LDA',
+            badgeClass: 'px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase',
+            desc: `Agrupación latente por distribución temática no supervisada de Dirichlet (5 tópicos descubiertos en TF-IDF).`
+        },
+        'anomaly': {
+            badge: 'AUTOENCODER NEURONAL',
+            badgeClass: 'px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 uppercase',
+            desc: `Aislamiento geométrico de noticias con anomalías semánticas severas y alto error de reconstrucción MSE.`
+        }
+    };
+
+    function setMode(newMode) {
+        currentMode = newMode;
+
+        Object.keys(modeButtons).forEach(m => {
+            const btn = modeButtons[m];
+            if (!btn) return;
+            if (m === newMode) {
+                btn.className = 'color-mode-btn px-2.5 py-1 rounded transition-all active bg-primary-container text-surface-container-lowest font-bold';
+            } else {
+                btn.className = 'color-mode-btn px-2.5 py-1 rounded transition-all text-on-surface-variant hover:text-on-surface';
+            }
+        });
+
+        const meta = modeMetadata[newMode];
+        if (meta && infoBadge && infoDesc) {
+            infoBadge.textContent = meta.badge;
+            infoBadge.className = meta.badgeClass;
+            infoDesc.textContent = meta.desc;
+        }
+
+        const isDark = document.documentElement.classList.contains('dark');
+        Plotly.react('plot-reduction', getTraces(newMode), getPlotlyLayout(isDark), config);
+    }
+
+    Object.keys(modeButtons).forEach(m => {
+        if (modeButtons[m]) {
+            modeButtons[m].addEventListener('click', () => setMode(m));
+        }
+    });
 
     // Actualización reactiva al cambiar de tema (Modo Día / Modo Noche)
     window.addEventListener('themeChanged', (e) => {
@@ -205,4 +375,3 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 {% endblock %}
-

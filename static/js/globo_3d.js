@@ -23,6 +23,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnSwitchBolivia = document.getElementById('btn-switch-bolivia');
     const btnSwitchChicago = document.getElementById('btn-switch-chicago');
 
+    // Selectores del Modo Algorítmico (Delito / DBSCAN / OPTICS / GMM / Ward)
+    const btnModeCategory = document.getElementById('btn-mode-category');
+    const btnModeDbscan = document.getElementById('btn-mode-dbscan');
+    const btnModeOptics = document.getElementById('btn-mode-optics');
+    const btnModeGmm = document.getElementById('btn-mode-gmm');
+    const btnModeWard = document.getElementById('btn-mode-ward');
+    const activeModeLabel = document.getElementById('active-mode-label');
+
+    // Secciones de Leyenda
+    const legendCategory = document.getElementById('legend-category-section');
+    const legendDbscan = document.getElementById('legend-dbscan-section');
+    const legendOptics = document.getElementById('legend-optics-section');
+    const legendGmm = document.getElementById('legend-gmm-section');
+    const legendWard = document.getElementById('legend-ward-section');
+
+    let currentClusterMode = 'category';
+
     // Centros urbanos y distritos policiales predefinidos
     const VIEWPORTS = {
         'global': { center: [0, 20], zoom: 1.8, pitch: 0, bearing: 0 },
@@ -218,11 +235,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     'WEAPONS VIOLATION', '#ef4444',
                     /* Default */ '#38bdf8'
                 ],
-                'circle-radius': 7,
+                'circle-radius': 7.5,
                 'circle-stroke-width': 2,
                 'circle-stroke-color': '#ffffff'
             }
         });
+
+        // Aplicar estilo de color según el modo algorítmico activo
+        applyClusterStyle(currentClusterMode);
 
         // Expansión suave al hacer clic en clúster
         map.on('click', 'clusters-core', (e) => {
@@ -242,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Clic en incidente individual: Popup táctico CERO EMOJIS
+        // Clic en incidente individual: Popup táctico enriquecido con DBSCAN, OPTICS y GMM
         map.on('click', 'unclustered-point', (e) => {
             const feature = e.features[0];
             const coords = feature.geometry.coordinates.slice();
@@ -252,18 +272,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 coords[0] += e.lngLat.lng > coords[0] ? 360 : -360;
             }
 
+            const dbscanBadgeClass = (props.dbscan === -1 || props.dbscan === '-1')
+                ? 'bg-slate-700/60 text-slate-300 border-slate-600'
+                : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40';
+
+            const opticsBadgeClass = (props.optics === -1 || props.optics === '-1')
+                ? 'bg-slate-700/60 text-slate-300 border-slate-600'
+                : 'bg-amber-500/20 text-amber-300 border-amber-500/40';
+
+            const gmmBadgeClass = (props.gmm === -1 || props.gmm === '-1')
+                ? 'bg-slate-700/60 text-slate-300 border-slate-600'
+                : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+
+            const wardBadgeClass = props.ward === 'A'
+                ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
+                : (props.ward === 'B'
+                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                    : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40');
+
             const popupContent = `
-                <div class="news-popup-container">
+                <div class="news-popup-container font-data-code">
                     <span class="news-popup-category">${props.category || 'INCIDENTE'}</span>
-                    <h4 class="news-popup-title">${props.title}</h4>
-                    <div class="news-popup-meta">
-                        <div><span class="text-outline uppercase text-[10px] font-data-code tracking-wider">ZONA:</span> <strong class="text-on-surface font-body-md">${props.zone || props.city}</strong></div>
-                        <div><span class="text-outline uppercase text-[10px] font-data-code tracking-wider">FECHA:</span> <strong class="text-on-surface font-data-code">${props.date}</strong></div>
-                        <div><span class="text-outline uppercase text-[10px] font-data-code tracking-wider">CIUDAD:</span> <strong class="text-on-surface font-body-md">${props.city}</strong></div>
-                        <div><span class="text-outline uppercase text-[10px] font-data-code tracking-wider">FUENTE:</span> <strong class="text-primary-container font-data-code">${props.source}</strong></div>
+                    <h4 class="news-popup-title font-sans">${props.title}</h4>
+                    <div class="news-popup-meta text-[11px] space-y-1">
+                        <div><span class="text-outline uppercase text-[10px] tracking-wider">ZONA:</span> <strong class="text-on-surface">${props.zone || props.city}</strong></div>
+                        <div><span class="text-outline uppercase text-[10px] tracking-wider">FECHA:</span> <strong class="text-on-surface">${props.date}</strong></div>
+                        <div><span class="text-outline uppercase text-[10px] tracking-wider">CIUDAD:</span> <strong class="text-on-surface">${props.city}</strong></div>
+                        <div><span class="text-outline uppercase text-[10px] tracking-wider">FUENTE:</span> <strong class="text-primary-container">${props.source}</strong></div>
+                        
+                        <!-- Badges No Supervisados: DBSCAN, OPTICS, GMM & Ward -->
+                        <div class="pt-2 mt-1 border-t border-outline-variant/60 flex flex-col gap-1">
+                            <div class="flex items-center gap-1.5">
+                                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold border ${dbscanBadgeClass}">
+                                    ${props.dbscan_label || ('DBSCAN: Hotspot #' + props.dbscan)}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold border ${opticsBadgeClass}">
+                                    ${props.optics_valley || ('OPTICS: Valle #' + props.optics)}
+                                </span>
+                                ${props.reach_depth_m ? `<span class="text-[9px] text-outline">(&le; ${props.reach_depth_m}m)</span>` : ''}
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold border ${gmmBadgeClass}">
+                                    ${props.gmm_label || ('GMM: Componente #' + props.gmm)}
+                                </span>
+                                ${props.gmm_prob ? `<span class="text-[9px] text-emerald-400 font-bold">(${props.gmm_prob}%)</span>` : ''}
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold border ${wardBadgeClass}">
+                                    ${props.ward_label || ('Ward: Macro ' + props.ward)}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                     ${props.url && props.url !== '#' ? `
-                        <a href="${props.url}" target="_blank" rel="noopener noreferrer" class="news-popup-link">
+                        <a href="${props.url}" target="_blank" rel="noopener noreferrer" class="news-popup-link mt-2 text-xs">
                             <span>Ver Registro Oficial</span>
                             <span class="material-symbols-outlined" style="font-size: 14px;">open_in_new</span>
                         </a>
@@ -282,6 +346,213 @@ document.addEventListener('DOMContentLoaded', () => {
         map.on('mouseenter', 'unclustered-point', () => map.getCanvas().style.cursor = 'pointer');
         map.on('mouseleave', 'unclustered-point', () => map.getCanvas().style.cursor = '');
     }
+
+    // 5. Aplicar Estilos de Shaders Dinámicos (Categoría vs DBSCAN vs OPTICS vs GMM)
+    function applyClusterStyle(mode) {
+        if (!map || !map.getLayer('unclustered-point')) return;
+
+        if (mode === 'category') {
+            map.setPaintProperty('unclustered-point', 'circle-color', [
+                'match',
+                ['get', 'category'],
+                // Bolivia
+                'Robo Agravado / Asalto', '#ff3366',
+                'Agresión Física y Lesiones', '#fbbf24',
+                'Hurto / Descuidismo', '#00e5ff',
+                'Homicidio / Asesinato', '#ff0033',
+                'Narcotráfico / Drogas', '#34d399',
+                // Chicago
+                'THEFT', '#00e5ff',
+                'BATTERY', '#ff3366',
+                'CRIMINAL DAMAGE', '#fbbf24',
+                'ASSAULT', '#ff5c8a',
+                'DECEPTIVE PRACTICE', '#9d4edd',
+                'ROBBERY', '#f97316',
+                'MOTOR VEHICLE THEFT', '#38bdf8',
+                'NARCOTICS', '#34d399',
+                'WEAPONS VIOLATION', '#ef4444',
+                /* Default */ '#38bdf8'
+            ]);
+            map.setPaintProperty('unclustered-point', 'circle-opacity', 1.0);
+            map.setPaintProperty('unclustered-point', 'circle-stroke-color', '#ffffff');
+            map.setPaintProperty('unclustered-point', 'circle-stroke-width', 2);
+
+        } else if (mode === 'dbscan') {
+            if (activeContext === 'chicago') {
+                map.setPaintProperty('unclustered-point', 'circle-color', [
+                    'match',
+                    ['get', 'dbscan'],
+                    1, '#00e5ff',
+                    2, '#ff3366',
+                    3, '#ffaa00',
+                    4, '#a855f7',
+                    /* Ruido */ '#64748b'
+                ]);
+            } else {
+                map.setPaintProperty('unclustered-point', 'circle-color', [
+                    'match',
+                    ['get', 'dbscan'],
+                    0, '#00e5ff',
+                    1, '#34d399',
+                    2, '#ff3366',
+                    3, '#fbbf24',
+                    4, '#10b981',
+                    5, '#818cf8',
+                    /* Ruido */ '#64748b'
+                ]);
+            }
+
+            map.setPaintProperty('unclustered-point', 'circle-opacity', [
+                'case',
+                ['==', ['get', 'dbscan'], -1], 0.40,
+                0.95
+            ]);
+            map.setPaintProperty('unclustered-point', 'circle-stroke-color', [
+                'case',
+                ['==', ['get', 'dbscan'], -1], '#475569',
+                '#ffffff'
+            ]);
+            map.setPaintProperty('unclustered-point', 'circle-stroke-width', 1.8);
+
+        } else if (mode === 'optics') {
+            if (activeContext === 'chicago') {
+                map.setPaintProperty('unclustered-point', 'circle-color', [
+                    'match',
+                    ['get', 'optics'],
+                    1, '#00e5ff',
+                    2, '#ff3366',
+                    3, '#ffaa00',
+                    4, '#a855f7',
+                    /* Ruido */ '#64748b'
+                ]);
+            } else {
+                map.setPaintProperty('unclustered-point', 'circle-color', [
+                    'match',
+                    ['get', 'optics'],
+                    0, '#00e5ff',
+                    1, '#38bdf8',
+                    2, '#ff3366',
+                    3, '#f43f5e',
+                    4, '#10b981',
+                    5, '#818cf8',
+                    6, '#34d399',
+                    7, '#34d399',
+                    /* Ruido */ '#64748b'
+                ]);
+            }
+
+            map.setPaintProperty('unclustered-point', 'circle-opacity', [
+                'case',
+                ['==', ['get', 'optics'], -1], 0.35,
+                0.95
+            ]);
+            map.setPaintProperty('unclustered-point', 'circle-stroke-color', [
+                'case',
+                ['==', ['get', 'optics'], -1], '#334155',
+                '#ffffff'
+            ]);
+            map.setPaintProperty('unclustered-point', 'circle-stroke-width', 2);
+
+        } else if (mode === 'gmm') {
+            // Modo 4: Componentes Gaussianas y Elipses Multivariantes GMM
+            if (activeContext === 'chicago') {
+                map.setPaintProperty('unclustered-point', 'circle-color', [
+                    'match',
+                    ['get', 'gmm'],
+                    1, '#00e5ff',
+                    2, '#ff3366',
+                    3, '#ffaa00',
+                    /* Dispersión */ '#64748b'
+                ]);
+            } else {
+                map.setPaintProperty('unclustered-point', 'circle-color', [
+                    'match',
+                    ['get', 'gmm'],
+                    0, '#00e5ff',
+                    1, '#ff3366',
+                    2, '#34d399',
+                    3, '#818cf8',
+                    /* Dispersión */ '#64748b'
+                ]);
+            }
+
+            map.setPaintProperty('unclustered-point', 'circle-opacity', [
+                'case',
+                ['==', ['get', 'gmm'], -1], 0.35,
+                0.92
+            ]);
+            map.setPaintProperty('unclustered-point', 'circle-stroke-color', [
+                'case',
+                ['==', ['get', 'gmm'], -1], '#334155',
+                '#ffffff'
+            ]);
+            map.setPaintProperty('unclustered-point', 'circle-stroke-width', 2);
+
+        } else if (mode === 'ward') {
+            // Modo 5: Macro-Clusters Jerárquicos Aglomerativos (Ward Linkage k=3)
+            if (activeContext === 'chicago') {
+                map.setPaintProperty('unclustered-point', 'circle-color', [
+                    'match',
+                    ['get', 'ward_macro'],
+                    'A', '#ff3366',
+                    'B', '#00e5ff',
+                    'C', '#34d399',
+                    /* Fallback */ '#94a3b8'
+                ]);
+            } else {
+                map.setPaintProperty('unclustered-point', 'circle-color', [
+                    'match',
+                    ['get', 'ward_macro'],
+                    'A', '#ff3366',
+                    'B', '#fbbf24',
+                    'C', '#34d399',
+                    /* Fallback */ '#94a3b8'
+                ]);
+            }
+
+            map.setPaintProperty('unclustered-point', 'circle-opacity', 0.95);
+            map.setPaintProperty('unclustered-point', 'circle-stroke-color', '#ffffff');
+            map.setPaintProperty('unclustered-point', 'circle-stroke-width', 2);
+        }
+    }
+
+    // 6. Conmutación de Modo Algorítmico (Delito / DBSCAN / OPTICS / GMM / Ward)
+    function setClusterMode(newMode) {
+        currentClusterMode = newMode;
+
+        [btnModeCategory, btnModeDbscan, btnModeOptics, btnModeGmm, btnModeWard].forEach(b => {
+            if (b) b.classList.remove('active');
+        });
+
+        if (newMode === 'category' && btnModeCategory) btnModeCategory.classList.add('active');
+        if (newMode === 'dbscan' && btnModeDbscan) btnModeDbscan.classList.add('active');
+        if (newMode === 'optics' && btnModeOptics) btnModeOptics.classList.add('active');
+        if (newMode === 'gmm' && btnModeGmm) btnModeGmm.classList.add('active');
+        if (newMode === 'ward' && btnModeWard) btnModeWard.classList.add('active');
+
+        if (activeModeLabel) {
+            activeModeLabel.textContent = newMode === 'category' ? 'DELITOS' : newMode.toUpperCase();
+            if (newMode === 'category') activeModeLabel.className = 'text-primary-container font-semibold';
+            else if (newMode === 'dbscan') activeModeLabel.className = 'text-cyan-400 font-bold';
+            else if (newMode === 'optics') activeModeLabel.className = 'text-amber-400 font-bold';
+            else if (newMode === 'gmm') activeModeLabel.className = 'text-emerald-400 font-bold';
+            else if (newMode === 'ward') activeModeLabel.className = 'text-purple-400 font-bold';
+        }
+
+        if (legendCategory) legendCategory.classList.toggle('hidden', newMode !== 'category');
+        if (legendDbscan) legendDbscan.classList.toggle('hidden', newMode !== 'dbscan');
+        if (legendOptics) legendOptics.classList.toggle('hidden', newMode !== 'optics');
+        if (legendGmm) legendGmm.classList.toggle('hidden', newMode !== 'gmm');
+        if (legendWard) legendWard.classList.toggle('hidden', newMode !== 'ward');
+
+        applyClusterStyle(newMode);
+    }
+
+    if (btnModeCategory) btnModeCategory.addEventListener('click', () => setClusterMode('category'));
+    if (btnModeDbscan) btnModeDbscan.addEventListener('click', () => setClusterMode('dbscan'));
+    if (btnModeOptics) btnModeOptics.addEventListener('click', () => setClusterMode('optics'));
+    if (btnModeGmm) btnModeGmm.addEventListener('click', () => setClusterMode('gmm'));
+    if (btnModeWard) btnModeWard.addEventListener('click', () => setClusterMode('ward'));
 
     // 5. Conmutación Dinámica de Dataset en Tiempo Real (Bolivia ↔ Chicago)
     function switchContext(newCtx) {

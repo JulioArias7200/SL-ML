@@ -114,24 +114,69 @@
             </div>
         </div>
 
-        <!-- KPI 4: Partición Territorial -->
-        <div class="p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container/50 transition-colors shadow-sm flex flex-col justify-between">
+        <!-- KPI 4: Partición Territorial & Fidelidad Taxonómica Jerárquica -->
+        <div class="p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant hover:border-purple-500/50 transition-colors shadow-sm flex flex-col justify-between">
             <div class="flex items-center justify-between text-outline text-xs font-data-code">
                 <span>{{ 'SECTORES URBANOS' if current_context != 'chicago' else 'DISTRITOS TAXONÓMICOS' }}</span>
                 <span class="material-symbols-outlined text-purple-400 text-lg">account_tree</span>
             </div>
-            <div class="my-2.5">
-                <div class="text-3xl font-data-display font-bold text-on-surface">
-                    {{ summary.zonas_count if current_context != 'chicago' else summary.districts_count }} <span class="text-sm text-outline font-normal">Sectores</span>
+            <div class="my-2">
+                <div class="flex items-baseline justify-between">
+                    <div class="text-3xl font-data-display font-bold text-on-surface">
+                        {{ summary.zonas_count if current_context != 'chicago' else summary.districts_count }} <span class="text-sm text-outline font-normal">Sectores</span>
+                    </div>
+                    <span class="text-[11px] font-data-code text-purple-400 font-bold px-1.5 py-0.5 rounded bg-purple-500/10 border border-purple-500/30">
+                        k=3 Macro
+                    </span>
                 </div>
-                <div class="text-xs font-data-code text-emerald-400 mt-1 flex items-center gap-1">
-                    <span class="material-symbols-outlined text-sm">check_circle</span>
-                    <span>Ward &bull; Correlación r = 0.81</span>
+                <!-- Sparkline / Comparativa de Enlaces Cofenéticos (Ward vs Average vs Complete) -->
+                <div class="mt-2 pt-2 border-t border-outline-variant/30 space-y-1.5 font-data-code text-[10px]">
+                    <div class="flex justify-between items-center text-outline">
+                        <span>Fidelidad Cofenética (r):</span>
+                        <span class="text-primary-container font-semibold">Ward r=0.81</span>
+                    </div>
+                    <!-- Mini-Barras Comparativas Sparkline -->
+                    <div class="grid grid-cols-3 gap-1.5 pt-0.5">
+                        <div class="flex flex-col gap-0.5" title="Ward (r=0.81) - Varianza Mínima Intraclúster">
+                            <div class="flex justify-between text-[9px]">
+                                <span class="text-purple-300 font-bold">Ward</span>
+                                <span class="text-purple-300">0.81</span>
+                            </div>
+                            <div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden">
+                                <div class="h-full bg-purple-400 rounded" style="width: 81%;"></div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-0.5" title="Average (r=0.83) - Máxima Fidelidad Ultramétrica">
+                            <div class="flex justify-between text-[9px]">
+                                <span class="text-emerald-300 font-bold">Avg</span>
+                                <span class="text-emerald-300">0.83</span>
+                            </div>
+                            <div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden">
+                                <div class="h-full bg-emerald-400 rounded" style="width: 83%;"></div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-0.5" title="Complete (r=0.76) - Diámetro Máximo Compacto">
+                            <div class="flex justify-between text-[9px]">
+                                <span class="text-amber-300 font-bold">Comp</span>
+                                <span class="text-amber-300">0.76</span>
+                            </div>
+                            <div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden">
+                                <div class="h-full bg-amber-400 rounded" style="width: 76%;"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden mt-1">
-                <div class="h-full bg-purple-400 rounded" style="width: 81%;"></div>
-            </div>
+            <!-- Acceso Directo con Umbral Óptimo Precalibrado -->
+            <a href="/jerarquico-densidad?ctx={{ current_context }}" 
+               class="mt-1 flex items-center justify-between w-full px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant/30 text-[10px] font-data-code text-on-surface-variant hover:text-primary-container transition-colors"
+               title="Ver Dendrograma Interactivo con umbral óptimo precalibrado">
+                <span>Dendrograma Interactivo</span>
+                <span class="text-purple-400 font-bold flex items-center gap-0.5">
+                    t = {{ '12.5' if current_context != 'chicago' else '45.0' }}
+                    <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+                </span>
+            </a>
         </div>
     </section>
 
