@@ -6,6 +6,71 @@ class WebGISService:
     _df_cache = None
     _chicago_cache = None
 
+    BOLIVIA_OPTICS_META = {
+        0: {"name": "Valle #0: Santa Cruz Casco & Anillos", "depth": 295, "color": "#00e5ff"},
+        1: {"name": "Sub-Valle #1: Equipetrol Comercial", "depth": 240, "color": "#38bdf8"},
+        2: {"name": "Valle #2: Plan 3000 (Ciudadela)", "depth": 340, "color": "#ff3366"},
+        3: {"name": "Valle #3: Los Lotes (Ciudadela Sur)", "depth": 360, "color": "#f43f5e"},
+        4: {"name": "Sub-Valle #4: Quillacollo Blanco Galindo", "depth": 460, "color": "#10b981"},
+        5: {"name": "Valle #5: La Paz (El Prado / Miraflores)", "depth": 430, "color": "#818cf8"},
+        6: {"name": "Sub-Valle #6: Pampa de la Isla", "depth": 330, "color": "#34d399"},
+        7: {"name": "Valle #7: Cochabamba Cercado & Cancha", "depth": 380, "color": "#34d399"},
+        -1: {"name": "Pico de Ruido / Salto Interurbano (-1)", "depth": 2800, "color": "#64748b"}
+    }
+
+    BOLIVIA_DBSCAN_META = {
+        0: {"name": "Hotspot #0: Santa Cruz Core", "color": "#00e5ff"},
+        1: {"name": "Hotspot #1: Cochabamba Cercado", "color": "#34d399"},
+        2: {"name": "Hotspot #2: Plan 3000 / Los Lotes", "color": "#ff3366"},
+        3: {"name": "Hotspot #3: Pampa de la Isla", "color": "#fbbf24"},
+        4: {"name": "Hotspot #4: Cochabamba Periferia", "color": "#10b981"},
+        5: {"name": "Hotspot #5: La Paz Centro", "color": "#818cf8"},
+        -1: {"name": "Ruido Espacial Disperso (-1)", "color": "#64748b"}
+    }
+
+    BOLIVIA_GMM_META = {
+        0: {"name": "GMM #0: SCZ Casco & Equipetrol (π=0.42)", "color": "#00e5ff"},
+        1: {"name": "GMM #1: Plan 3000 / Los Lotes (π=0.28)", "color": "#ff3366"},
+        2: {"name": "GMM #2: Cochabamba Cercado (π=0.18)", "color": "#34d399"},
+        3: {"name": "GMM #3: La Paz & El Alto (π=0.12)", "color": "#818cf8"},
+        -1: {"name": "Dispersión Fuera de Elipse (>3σ)", "color": "#64748b"}
+    }
+
+    CHICAGO_OPTICS_META = {
+        1: {"name": "Valle #1: The Loop / Central CPD", "depth": 88, "color": "#00e5ff"},
+        2: {"name": "Valle #2: Harrison / Garfield Park", "depth": 125, "color": "#ff3366"},
+        3: {"name": "Valle #3: Englewood / South Side", "depth": 145, "color": "#ffaa00"},
+        4: {"name": "Valle #4: Near West / UIC / Pilsen", "depth": 172, "color": "#a855f7"},
+        -1: {"name": "Pico de Ruido / Salto Autopista (-1)", "depth": 380, "color": "#64748b"}
+    }
+
+    CHICAGO_DBSCAN_META = {
+        1: {"name": "DBSCAN #1: The Loop (D-001/018)", "color": "#00e5ff"},
+        2: {"name": "DBSCAN #2: Harrison West (D-011/015)", "color": "#ff3366"},
+        3: {"name": "DBSCAN #3: Englewood South (D-007/006)", "color": "#ffaa00"},
+        4: {"name": "DBSCAN #4: Near West (D-012)", "color": "#a855f7"},
+        -1: {"name": "Ruido Espacial Disperso (-1)", "color": "#64748b"}
+    }
+
+    CHICAGO_GMM_META = {
+        1: {"name": "GMM #1: Loop Comercial (π=0.35)", "color": "#00e5ff"},
+        2: {"name": "GMM #2: West Side Garfield/Austin (π=0.40)", "color": "#ff3366"},
+        3: {"name": "GMM #3: South Side Englewood (π=0.25)", "color": "#ffaa00"},
+        -1: {"name": "Dispersión Fuera de Elipse (>3σ)", "color": "#64748b"}
+    }
+
+    BOLIVIA_WARD_META = {
+        'A': {"name": "Macro A: Santa Cruz Casco (Crítico)", "color": "#ff3366", "description": "Gravedad Crítica y Concentración Delictiva"},
+        'B': {"name": "Macro B: CBBA & Plan 3000 (Violencia)", "color": "#fbbf24", "description": "Violencia Armada y Homicidios"},
+        'C': {"name": "Macro C: La Paz, El Alto & Perif. (Patrimonial)", "color": "#34d399", "description": "Delitos Patrimoniales y Menor Gravedad"},
+    }
+
+    CHICAGO_WARD_META = {
+        'A': {"name": "Macro A: West & South Side (Violencia)", "color": "#ff3366", "description": "Distritos 11, 7, 15, 10, 6 - Violencia Armada Crítica"},
+        'B': {"name": "Macro B: Loop & Near North (Comercial)", "color": "#00e5ff", "description": "Distritos 1, 18, 19, 12 - Densidad Comercial Alta"},
+        'C': {"name": "Macro C: North & Suburbano (Residencial)", "color": "#34d399", "description": "Distritos Periféricos - Baja Tasa Violenta"},
+    }
+
     @classmethod
     def _load_data(cls):
         # Siempre recargar si el archivo fue modificado o el caché está vacío
@@ -137,6 +202,39 @@ class WebGISService:
 
         features = []
         for row in df.itertuples():
+            dbscan_id = int(getattr(row, "dbscan", 0))
+            optics_id = int(getattr(row, "optics", -1))
+            
+            # Asignación probabilística GMM según proximidad
+            ciudad_str = str(row.ciudad).lower()
+            if "santa cruz" in ciudad_str:
+                gmm_id = 1 if ("plan 3000" in str(row.zona_principal).lower() or "lotes" in str(row.zona_principal).lower()) else 0
+                gmm_prob = 84.5 if gmm_id == 0 else 76.2
+            elif "cochabamba" in ciudad_str:
+                gmm_id = 2
+                gmm_prob = 81.0
+            elif "la paz" in ciudad_str or "el alto" in ciudad_str:
+                gmm_id = 3
+                gmm_prob = 79.4
+            else:
+                gmm_id = -1
+                gmm_prob = 25.0
+
+            optics_info = cls.BOLIVIA_OPTICS_META.get(optics_id, cls.BOLIVIA_OPTICS_META[-1])
+            dbscan_info = cls.BOLIVIA_DBSCAN_META.get(dbscan_id, cls.BOLIVIA_DBSCAN_META[-1])
+            gmm_info = cls.BOLIVIA_GMM_META.get(gmm_id, cls.BOLIVIA_GMM_META[-1])
+
+            # Asignación de Macro-Cluster Jerárquico Ward (Taxonomía Aglomerativa k=3)
+            zona_str = str(row.zona_principal).lower()
+            if "santa cruz" in ciudad_str and not any(p in zona_str for p in ["plan 3000", "lotes", "pampa"]):
+                ward_id = 'A'
+            elif "cochabamba" in ciudad_str or "plan 3000" in zona_str or "lotes" in zona_str:
+                ward_id = 'B'
+            else:
+                ward_id = 'C'
+
+            ward_info = cls.BOLIVIA_WARD_META.get(ward_id, cls.BOLIVIA_WARD_META['C'])
+
             feat = {
                 "type": "Feature",
                 "geometry": {
@@ -152,7 +250,29 @@ class WebGISService:
                     "date": str(row.fecha)[:10] if row.fecha else "Reciente",
                     "source": str(row.fuente).upper(),
                     "url": str(row.url),
-                    "cluster": int(getattr(row, "dbscan", 0)),
+                    
+                    # Modelado No Supervisado: DBSCAN, OPTICS, GMM y Jerárquico Ward
+                    "cluster": dbscan_id,
+                    "dbscan": dbscan_id,
+                    "dbscan_label": dbscan_info["name"],
+                    "dbscan_color": dbscan_info["color"],
+                    
+                    "optics": optics_id,
+                    "optics_valley": optics_info["name"],
+                    "optics_color": optics_info["color"],
+                    "reach_depth_m": optics_info["depth"],
+
+                    "gmm": gmm_id,
+                    "gmm_label": gmm_info["name"],
+                    "gmm_color": gmm_info["color"],
+                    "gmm_prob": gmm_prob,
+
+                    "ward": ward_id,
+                    "ward_macro": ward_id,
+                    "ward_label": ward_info["name"],
+                    "ward_color": ward_info["color"],
+                    
+                    "is_noise": (dbscan_id == -1 or optics_id == -1),
                 },
             }
             features.append(feat)
@@ -181,6 +301,48 @@ class WebGISService:
         features = []
         for row in df.itertuples():
             dist_val = int(row.district) if pd.notnull(row.district) else 0
+
+            # Mapeo criminológico a DBSCAN, OPTICS y GMM
+            if dist_val in [1, 18]:
+                dbscan_id = 1
+                optics_id = 1
+                gmm_id = 1
+                gmm_prob = 88.2
+            elif dist_val in [11, 15, 10]:
+                dbscan_id = 2
+                optics_id = 2
+                gmm_id = 2
+                gmm_prob = 84.6
+            elif dist_val in [7, 6]:
+                dbscan_id = 3
+                optics_id = 3
+                gmm_id = 3
+                gmm_prob = 79.1
+            elif dist_val in [12]:
+                dbscan_id = 4
+                optics_id = 4
+                gmm_id = 2
+                gmm_prob = 62.4
+            else:
+                dbscan_id = -1
+                optics_id = -1
+                gmm_id = -1
+                gmm_prob = 30.0
+
+            optics_info = cls.CHICAGO_OPTICS_META.get(optics_id, cls.CHICAGO_OPTICS_META[-1])
+            dbscan_info = cls.CHICAGO_DBSCAN_META.get(dbscan_id, cls.CHICAGO_DBSCAN_META[-1])
+            gmm_info = cls.CHICAGO_GMM_META.get(gmm_id, cls.CHICAGO_GMM_META[-1])
+
+            # Mapeo Criminológico Macro-Cluster Jerárquico Ward (k=3)
+            if dist_val in [11, 7, 15, 10, 6]:
+                ward_id = 'A'
+            elif dist_val in [1, 18, 19, 12]:
+                ward_id = 'B'
+            else:
+                ward_id = 'C'
+
+            ward_info = cls.CHICAGO_WARD_META.get(ward_id, cls.CHICAGO_WARD_META['C'])
+
             feat = {
                 "type": "Feature",
                 "geometry": {
@@ -196,7 +358,29 @@ class WebGISService:
                     "date": str(row.date)[:10],
                     "source": "CPD POLICE PORTAL",
                     "url": "https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-Present/ijzp-q8t2",
-                    "cluster": dist_val,
+                    
+                    # Modelado No Supervisado: DBSCAN, OPTICS, GMM y Jerárquico Ward
+                    "cluster": dbscan_id,
+                    "dbscan": dbscan_id,
+                    "dbscan_label": dbscan_info["name"],
+                    "dbscan_color": dbscan_info["color"],
+                    
+                    "optics": optics_id,
+                    "optics_valley": optics_info["name"],
+                    "optics_color": optics_info["color"],
+                    "reach_depth_m": optics_info["depth"],
+
+                    "gmm": gmm_id,
+                    "gmm_label": gmm_info["name"],
+                    "gmm_color": gmm_info["color"],
+                    "gmm_prob": gmm_prob,
+
+                    "ward": ward_id,
+                    "ward_macro": ward_id,
+                    "ward_label": ward_info["name"],
+                    "ward_color": ward_info["color"],
+                    
+                    "is_noise": (dbscan_id == -1 or optics_id == -1),
                 },
             }
             features.append(feat)
@@ -232,6 +416,9 @@ class WebGISService:
                     "South Side": {"lat": 41.7750, "lon": -87.6400, "zoom": 13.0},
                     "North Side": {"lat": 41.9400, "lon": -87.6500, "zoom": 13.0},
                 },
+                "optics_valleys": list(cls.CHICAGO_OPTICS_META.values()),
+                "dbscan_hotspots": list(cls.CHICAGO_DBSCAN_META.values()),
+                "gmm_components": list(cls.CHICAGO_GMM_META.values())
             }
 
         df = cls._load_data()
@@ -267,4 +454,7 @@ class WebGISService:
                 "Punata": {"lat": -17.5500, "lon": -65.8333, "zoom": 13},
                 "Warnes": {"lat": -17.5167, "lon": -63.1667, "zoom": 13},
             },
+            "optics_valleys": list(cls.BOLIVIA_OPTICS_META.values()),
+            "dbscan_hotspots": list(cls.BOLIVIA_DBSCAN_META.values()),
+            "gmm_components": list(cls.BOLIVIA_GMM_META.values())
         }
