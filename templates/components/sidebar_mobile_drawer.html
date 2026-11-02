@@ -31,13 +31,13 @@
             <nav class="flex flex-col gap-1 font-body-md text-xs overflow-y-auto max-h-[65vh]">
                 <span class="px-2.5 text-[10px] font-bold uppercase tracking-wider text-outline font-data-code mb-0.5">Exploración Core</span>
 
-                <a href="{{ url_for('dashboard_bp.index') }}" 
+                <a href="{{ url_for('dashboard_bp.index', ctx=current_context) }}" 
                    class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'dashboard' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
                     <span class="material-symbols-outlined text-lg">dashboard</span>
                     <span>Dashboard General</span>
                 </a>
 
-                <a href="{{ url_for('webgis_bp.globo_3d') }}" 
+                <a href="{{ url_for('webgis_bp.globo_3d', ctx=current_context) }}" 
                    class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'globo-3d' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
                     <span class="material-symbols-outlined text-lg">public</span>
                     <span>Globo 3D // WebGIS</span>
@@ -46,20 +46,23 @@
                 <div class="my-1.5 border-t border-outline-variant"></div>
                 <span class="px-2.5 text-[10px] font-bold uppercase tracking-wider text-outline font-data-code mb-0.5">Laboratorio (26/29 Oct)</span>
 
-                <a href="{{ url_for('reduction_bp.view') }}" 
-                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'reduccion-espacios' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                <a href="{{ url_for('reduction_bp.view', ctx=current_context) }}" 
+                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'reduccion-espacios' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}"
+                   title="PCA, TruncatedSVD, t-SNE, UMAP">
                     <span class="material-symbols-outlined text-lg">scatter_plot</span>
                     <span>Reducción 2D (PCA/UMAP)</span>
                 </a>
 
-                <a href="{{ url_for('nlp_topics_bp.view') }}" 
-                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'nlp-topicos' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                <a href="{{ url_for('nlp_topics_bp.view', ctx=current_context) }}" 
+                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'nlp-topicos' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}"
+                   title="Topic Modeling LDA y TF-IDF">
                     <span class="material-symbols-outlined text-lg">article</span>
                     <span>NLP & Tópicos LDA</span>
                 </a>
 
-                <a href="{{ url_for('anomaly_gmm_bp.view') }}" 
-                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'anomalias-probabilistico' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                <a href="{{ url_for('anomaly_gmm_bp.view', ctx=current_context) }}" 
+                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'anomalias-probabilistico' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}"
+                   title="Autoencoders neuronales y superficies de riesgo GMM">
                     <span class="material-symbols-outlined text-lg">crisis_alert</span>
                     <span>Anomalías (AE) & GMM</span>
                 </a>
@@ -67,25 +70,31 @@
                 <div class="my-1.5 border-t border-outline-variant"></div>
                 <span class="px-2.5 text-[10px] font-bold uppercase tracking-wider text-outline font-data-code mb-0.5">Clustering Clásico</span>
 
-                <a href="{{ url_for('spatial_density_bp.view') }}" 
-                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'espacial-densidad' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                <a href="{{ url_for('spatial_density_bp.view', ctx=current_context) }}" 
+                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'espacial-densidad' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}"
+                   title="Dendrograma de Ward y DBSCAN con Haversine">
                     <span class="material-symbols-outlined text-lg">account_tree</span>
                     <span>Jerárquico & Densidad</span>
                 </a>
 
-                <a href="{{ url_for('kmeans_nlp_bp.view') }}" 
-                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'kmeans-nlp' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                <a href="{{ url_for('kmeans_nlp_bp.view', ctx=current_context) }}" 
+                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'kmeans-nlp' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}"
+                   title="Métricas de Codo, Silueta y K-Means">
                     <span class="material-symbols-outlined text-lg">data_thresholding</span>
                     <span>K-Means Codo/Silueta</span>
                 </a>
             </nav>
         </div>
 
-        <!-- Telemetría & Modo Noche en Drawer Móvil -->
-        <div class="flex flex-col gap-2 pt-3 border-t border-outline-variant font-data-code">
+        <!-- Telemetría en Drawer Móvil -->
+        <div class="flex flex-col gap-1.5 pt-3 border-t border-outline-variant font-data-code text-xs text-outline">
             <div class="flex items-center justify-between">
-                <span class="text-xs text-outline">Tema de Interfaz:</span>
-                {% include 'components/theme_toggle.html' %}
+                <span>PIPELINE</span>
+                <span class="text-primary-container font-semibold">ONLINE</span>
+            </div>
+            <div class="flex items-center justify-between text-[11px]">
+                <span>MODO</span>
+                <span class="text-on-surface uppercase">{{ current_context }}</span>
             </div>
         </div>
     </div>

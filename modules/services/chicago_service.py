@@ -121,3 +121,9 @@ class ChicagoService:
             },
             "confidence_interval": "95.4% (Elipse 2σ Covarianza Completa)"
         }
+
+    @classmethod
+    def get_parquet_path(cls):
+        import os
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        return os.path.join(base_dir, 'data', 'chicago_benchmark', 'silver', 'chicago_crimes_curated.parquet')

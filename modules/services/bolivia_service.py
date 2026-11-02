@@ -58,7 +58,9 @@ class BoliviaService:
     @classmethod
     def get_nlp_data(cls):
         if cls._data_nlp is None:
-            fp = os.path.join(cls._get_base_dir(), 'data', 'web_scraping_news', 'dashboard_texto_nlp_bolivia.csv')
+            gold_fp = os.path.join(cls._get_base_dir(), 'data', 'bolivia_news', 'gold', 'nlp_topics_anomalies_bolivia.csv')
+            legacy_fp = os.path.join(cls._get_base_dir(), 'data', 'web_scraping_news', 'dashboard_texto_nlp_bolivia.csv')
+            fp = gold_fp if os.path.exists(gold_fp) else legacy_fp
             if os.path.exists(fp):
                 cls._data_nlp = pd.read_csv(fp)
             else:
@@ -68,7 +70,9 @@ class BoliviaService:
     @classmethod
     def get_clusters_data(cls):
         if cls._data_clusters is None:
-            fp = os.path.join(cls._get_base_dir(), 'data', 'web_scraping_news', 'dashboard_eventos_clusters_bolivia.csv')
+            gold_fp = os.path.join(cls._get_base_dir(), 'data', 'bolivia_news', 'gold', 'spatial_clusters_bolivia.csv')
+            legacy_fp = os.path.join(cls._get_base_dir(), 'data', 'web_scraping_news', 'dashboard_eventos_clusters_bolivia.csv')
+            fp = gold_fp if os.path.exists(gold_fp) else legacy_fp
             if os.path.exists(fp):
                 cls._data_clusters = pd.read_csv(fp)
             else:
@@ -78,7 +82,9 @@ class BoliviaService:
     @classmethod
     def get_zonas_data(cls):
         if cls._data_zonas is None:
-            fp = os.path.join(cls._get_base_dir(), 'data', 'web_scraping_news', 'dashboard_zonas_perfiles_bolivia.csv')
+            gold_fp = os.path.join(cls._get_base_dir(), 'data', 'bolivia_news', 'gold', 'urban_profiles_bolivia.csv')
+            legacy_fp = os.path.join(cls._get_base_dir(), 'data', 'web_scraping_news', 'dashboard_zonas_perfiles_bolivia.csv')
+            fp = gold_fp if os.path.exists(gold_fp) else legacy_fp
             if os.path.exists(fp):
                 cls._data_zonas = pd.read_csv(fp)
             else:

@@ -1,19 +1,19 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}CPD Urban Intelligence // Globo 3D & Noticias WebGIS (Bolivia){% endblock %}
+{% block title %}CPD Urban Intelligence // Globo 3D & WebGIS Dual ({{ 'Chicago Benchmark' if current_context == 'chicago' else 'Bolivia' }}){% endblock %}
 
 {% block extra_head %}
 <!-- MapLibre GL JS v4.7.1 CSS (Soporte Nativo 3D Globe) -->
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
-<link rel="stylesheet" href="{{ url_for('static', filename='css/globo_3d.css') }}?v=4.3.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/globo_3d.css') }}?v=4.4.0">
 {% endblock %}
 
 {% block content %}
-<div id="globo-viewport">
+<div id="globo-viewport" data-context="{{ current_context }}">
     <!-- Contenedor del Mapa WebGL (Intacto bajo estrictas directrices) -->
     <div id="map-container"></div>
 
-    <!-- HUD Superior Izquierdo: Telemetría y Resumen Táctico -->
+    <!-- HUD Superior Izquierdo: Telemetría Táctica & Micro-Chips (High Data-Ink Ratio) -->
     <div class="tactical-hud hud-top-left">
         <div class="hud-card space-y-2">
             <div class="flex items-center justify-between">
@@ -21,29 +21,58 @@
                     <span class="radar-dot"></span>
                     <span>INTEL // WEBGIS 3D</span>
                 </div>
-                <span class="text-[11px] text-outline font-data-code">BOLIVIA ML-OPS</span>
+                <span class="text-[11px] text-outline font-data-code uppercase">
+                    {{ 'US CHICAGO' if current_context == 'chicago' else 'BO BOLIVIA' }}
+                </span>
             </div>
 
             <div class="flex items-baseline justify-between pt-1 border-t border-outline-variant">
-                <span class="text-xs text-on-surface-variant font-medium">Hechos Geolocalizados:</span>
+                <span class="text-xs text-on-surface-variant font-medium">Incidentes Mapeados:</span>
                 <span id="stat-total-events" class="text-base font-bold font-data-code text-primary-container">
                     {{ metadata.total_eventos }}
                 </span>
             </div>
 
-            <p class="text-[11px] text-outline leading-tight font-body-md">
-                Transición esférica 3D a resolución vectorial de calles con clustering WebGL y minería no supervisada de fuentes de prensa nacional.
-            </p>
+            <!-- Micro-Chips Métricos Desaturados (Show, don't tell) -->
+            <div class="flex flex-wrap gap-1.5 pt-1.5 border-t border-outline-variant font-data-code text-[10px]">
+                <span class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant text-primary-container font-semibold">
+                    Clustering WebGL
+                </span>
+                <span class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">
+                    Haversine Esférico
+                </span>
+                <span class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">
+                    {% if current_context == 'chicago' %}22 Distritos CPD{% else %}Georreferencia Real{% endif %}
+                </span>
+            </div>
         </div>
     </div>
 
-    <!-- HUD Superior Derecho: Toolbar Táctico con Jerarquía UI Clara -->
+    <!-- HUD Superior Derecho: Toolbar Táctico -->
     <div class="tactical-hud hud-top-right">
         <div class="hud-toolbar-card">
             <!-- Header de Toolbar -->
             <div class="hud-toolbar-header">
-                <span class="hud-toolbar-title">Filtros & Proyección</span>
+                <span class="hud-toolbar-title">Dataset & Proyección</span>
                 <span class="material-symbols-outlined text-xs text-outline">tune</span>
+            </div>
+
+            <!-- Selector de Contexto Directo en HUD (Bolivia ↔ Chicago) -->
+            <div class="segmented-control font-data-code text-xs shadow-inner w-full flex">
+                <a href="{{ url_for('webgis_bp.globo_3d', ctx='bolivia') }}" 
+                   id="btn-switch-bolivia"
+                   class="segmented-btn btn-tactile flex-1 flex items-center justify-center gap-1.5 py-1.5 {{ 'active' if current_context != 'chicago' else '' }}"
+                   title="Ver mapa de Bolivia">
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-surface-container-high font-bold">BO</span>
+                    <span>Bolivia</span>
+                </a>
+                <a href="{{ url_for('webgis_bp.globo_3d', ctx='chicago') }}" 
+                   id="btn-switch-chicago"
+                   class="segmented-btn btn-tactile flex-1 flex items-center justify-center gap-1.5 py-1.5 {{ 'active' if current_context == 'chicago' else '' }}"
+                   title="Ver mapa de Chicago">
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-surface-container-high font-bold">US</span>
+                    <span>Chicago</span>
+                </a>
             </div>
 
             <!-- Filtro 1: Delito Principal -->
@@ -58,11 +87,11 @@
                 <span class="material-symbols-outlined hud-dropdown-chevron">expand_more</span>
             </div>
 
-            <!-- Filtro 2: Ciudad / Región -->
-            <div class="hud-input-group" title="Filtrar por centro urbano">
+            <!-- Filtro 2: Ciudad / Distrito -->
+            <div class="hud-input-group" title="Filtrar por centro urbano o distrito policial">
                 <span class="material-symbols-outlined hud-input-icon">location_city</span>
                 <select id="filter-city" class="hud-dropdown-select">
-                    <option value="todas">Todas las Ciudades</option>
+                    <option value="todas">{% if current_context == 'chicago' %}Todos los Distritos{% else %}Todas las Ciudades{% endif %}</option>
                     {% for c in metadata.ciudades %}
                     <option value="{{ c.nombre }}">{{ c.nombre }} ({{ c.count }})</option>
                     {% endfor %}
@@ -81,12 +110,35 @@
         </div>
     </div>
 
-    <!-- HUD Inferior Central: Dock de Navegación Urbana (Apple Capsule) -->
+    <!-- HUD Inferior Central: Dock de Navegación Contextual (Apple Capsule) -->
     <div class="tactical-hud hud-bottom-controls">
         <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="global" title="Vista Planeta Completo">
             <span class="material-symbols-outlined text-sm">public</span>
             <span>Global</span>
         </button>
+
+        {% if current_context == 'chicago' %}
+        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn active" data-city="chicago" title="Metro Chicago">
+            <span class="material-symbols-outlined text-sm">location_city</span>
+            <span>Chicago</span>
+        </button>
+        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="the loop" title="Distrito 1 - The Loop">
+            <span class="material-symbols-outlined text-sm">domain</span>
+            <span>The Loop</span>
+        </button>
+        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="west side" title="Distrito 11 - West Side (Garfield / Austin)">
+            <span class="material-symbols-outlined text-sm">warning</span>
+            <span>West Side</span>
+        </button>
+        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="south side" title="Distrito 7 - South Side (Englewood)">
+            <span class="material-symbols-outlined text-sm">near_me</span>
+            <span>South Side</span>
+        </button>
+        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="north side" title="Distrito 19 - North Side (Lincoln / Lakeview)">
+            <span class="material-symbols-outlined text-sm">shield</span>
+            <span>North Side</span>
+        </button>
+        {% else %}
         <button type="button" class="btn-tactile hud-dock-btn hud-city-btn active" data-city="bolivia" title="Enfoque Nacional Bolivia">
             <span class="material-symbols-outlined text-sm">flag</span>
             <span>Bolivia</span>
@@ -95,17 +147,26 @@
             <span class="material-symbols-outlined text-sm">apartment</span>
             <span>Santa Cruz</span>
         </button>
-        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="la paz" title="Área Metropolitana La Paz / El Alto">
+        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="la paz" title="Sede de Gobierno La Paz">
             <span class="material-symbols-outlined text-sm">terrain</span>
             <span>La Paz</span>
         </button>
-        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="cochabamba" title="Área Metropolitana Cochabamba">
+        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="el alto" title="Área Metropolitana El Alto">
+            <span class="material-symbols-outlined text-sm">altitude</span>
+            <span>El Alto</span>
+        </button>
+        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="cochabamba" title="Valle Central de Cochabamba">
             <span class="material-symbols-outlined text-sm">location_on</span>
             <span>Cochabamba</span>
         </button>
+        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="viacha" title="Municipio de Viacha (Lugar del Hecho)">
+            <span class="material-symbols-outlined text-sm">explore</span>
+            <span>Viacha</span>
+        </button>
+        {% endif %}
     </div>
 
-    <!-- HUD Inferior Izquierdo: Leyenda de Clusters y Severidad -->
+    <!-- HUD Inferior Izquierdo: Leyenda de Densidad de Incidentes -->
     <div class="tactical-hud hud-legend hud-card">
         <span class="text-[10px] text-outline uppercase tracking-wider block font-bold mb-1 font-body-md">Densidad de Hechos</span>
         <div class="legend-item">
@@ -127,5 +188,5 @@
 {% block extra_scripts %}
 <!-- MapLibre GL JS v4.7.1 JS (Motor WebGL) -->
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script src="{{ url_for('static', filename='js/globo_3d.js') }}?v=4.3.0"></script>
+<script src="{{ url_for('static', filename='js/globo_3d.js') }}?v=4.4.0"></script>
 {% endblock %}

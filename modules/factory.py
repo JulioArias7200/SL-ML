@@ -30,4 +30,12 @@ def create_app(config_name='dev'):
     app.register_blueprint(spatial_density_bp)
     app.register_blueprint(api_bp)
 
+    @app.context_processor
+    def inject_global_context():
+        from flask import request
+        ctx = request.args.get('ctx', 'bolivia').lower()
+        if ctx not in ['bolivia', 'chicago']:
+            ctx = 'bolivia'
+        return dict(current_context=ctx)
+
     return app

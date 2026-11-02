@@ -37,15 +37,17 @@ def chicago_gmm_predict():
 
 @api_bp.route('/webgis/geojson', methods=['GET'])
 def webgis_geojson():
+    ctx = request.args.get('ctx', 'bolivia').lower()
     bbox = request.args.get('bbox')
     categoria = request.args.get('categoria')
     ciudad = request.args.get('ciudad')
-    geojson_data = WebGISService.get_geojson(bbox=bbox, categoria=categoria, ciudad=ciudad)
+    geojson_data = WebGISService.get_geojson(bbox=bbox, categoria=categoria, ciudad=ciudad, ctx=ctx)
     return jsonify(geojson_data)
 
 @api_bp.route('/webgis/metadata', methods=['GET'])
 def webgis_metadata():
-    metadata = WebGISService.get_metadata()
+    ctx = request.args.get('ctx', 'bolivia').lower()
+    metadata = WebGISService.get_metadata(ctx=ctx)
     return jsonify(metadata)
 
 

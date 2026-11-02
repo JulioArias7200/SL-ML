@@ -10,7 +10,9 @@ class ReductionService:
             return cls._embeddings_cache
         
         base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-        fp = os.path.join(base_dir, 'data', 'web_scraping_news', 'reduction_embeddings.json')
+        gold_fp = os.path.join(base_dir, 'data', 'bolivia_news', 'gold', 'reduction_embeddings.json')
+        legacy_fp = os.path.join(base_dir, 'data', 'web_scraping_news', 'reduction_embeddings.json')
+        fp = gold_fp if os.path.exists(gold_fp) else legacy_fp
         
         if os.path.exists(fp):
             with open(fp, 'r', encoding='utf-8') as f:

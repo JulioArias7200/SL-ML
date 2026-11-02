@@ -24,9 +24,10 @@ htmlcov/
 */.ipynb_checkpoints/*
 
 # Datasets Masivos y Archivos Pesados (> 100 MB límite GitHub)
-# El dataset original de Chicago supera los 324.5 MB y no debe versionarse en Git
+# El dataset original de Chicago supera los 309.5 MB y no debe versionarse en Git (se usa Parquet 20 MB)
+data/chicago_benchmark/bronze/*.csv
+data/**/*.sqlite
 data/*.csv
-data/*.parquet
 data/*.snappy
 data/*.zip
 data/*.tar.gz

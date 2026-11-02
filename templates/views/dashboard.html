@@ -1,30 +1,45 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}CPD Urban Intelligence // Dashboard General & Centro de Mando{% endblock %}
+{% block title %}CPD Urban Intelligence // Centro de Mando No Supervisado{% endblock %}
 
 {% block content %}
 <div class="p-4 sm:p-6 lg:p-8 flex flex-col gap-6 max-w-[1700px] w-full mx-auto select-none">
-    <!-- Header del Dashboard -->
-    <section class="flex flex-col gap-3 border-b border-outline-variant pb-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    
+    <!-- Header Ejecutivo Desaturado (Show, don't tell) -->
+    <section class="flex flex-col gap-3 border-b border-outline-variant pb-4">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2">
-                    <span class="text-[11px] font-data-code px-2 py-0.5 rounded bg-primary-container/10 text-primary-container border border-primary-container/30 uppercase tracking-widest font-bold">
+                    <span class="text-[10px] font-data-code px-2 py-0.5 rounded bg-primary-container/10 text-primary-container border border-primary-container/30 uppercase tracking-widest font-bold">
                         CENTRO DE MANDO // {{ 'EJE PRINCIPAL' if current_context != 'chicago' else 'BENCHMARK SECUNDARIO' }}
                     </span>
                     <span class="text-outline text-xs font-data-code">•</span>
                     <span class="text-xs font-data-code text-outline uppercase">{{ summary.contexto }}</span>
                 </div>
+                
                 <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-on-surface uppercase mt-1">
                     SISTEMA DE INTELIGENCIA URBANA &amp; APRENDIZAJE NO SUPERVISADO
                 </h1>
-                <p class="text-on-surface-variant text-xs sm:text-sm mt-1 max-w-4xl leading-relaxed">
-                    Consolidado ejecutivo y monitoreo en tiempo real de {{ "{:,}".format(summary.total_records) }} registros ({{ summary.period }}) procesados mediante algoritmos de particionamiento, densidad espacial, reducción de dimensionalidad (26 y 29 de octubre) y procesamiento de lenguaje natural.
-                </p>
+
+                <!-- Cinta de Micro-Chips Métricos (Sin saturación de texto) -->
+                <div class="flex flex-wrap items-center gap-2 mt-2 font-data-code text-xs">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container border border-outline-variant text-on-surface">
+                        <span class="material-symbols-outlined text-sm text-primary-container">dataset</span>
+                        <span>Corpus: <strong class="text-on-surface">{{ "{:,}".format(summary.total_records) }}</strong> hechos ({{ summary.period }})</span>
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container border border-outline-variant text-on-surface">
+                        <span class="material-symbols-outlined text-sm text-amber-400">model_training</span>
+                        <span>10 Algoritmos No Supervisados</span>
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container border border-outline-variant text-on-surface">
+                        <span class="material-symbols-outlined text-sm text-emerald-400">bolt</span>
+                        <span>Latencia &lt; 15 ms &bull; En Memoria</span>
+                    </span>
+                </div>
             </div>
 
-            <!-- Status Pill de Motor Analítico -->
-            <div class="flex items-center gap-2 self-start sm:self-auto">
+            <!-- Status de Telemetría -->
+            <div class="flex items-center gap-2 self-start lg:self-center">
                 <span class="px-3 py-1.5 rounded-lg bg-surface-container border border-outline-variant text-xs font-data-code text-on-surface flex items-center gap-2 shadow-sm">
                     <span class="size-2 rounded-full bg-emerald-400 animate-pulse"></span>
                     <span>MOTOR ANALÍTICO LISTO</span>
@@ -33,55 +48,55 @@
         </div>
     </section>
 
-    <!-- 1. Cuadrícula de 4 KPIs Principales -->
+    <!-- 1. Cuadrícula de 4 KPIs con Micro-Indicadores Visuales -->
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- KPI 1 -->
-        <div class="p-5 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container/50 transition-colors shadow-sm flex flex-col justify-between">
+        <!-- KPI 1: Registros -->
+        <div class="p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container/50 transition-colors shadow-sm flex flex-col justify-between">
             <div class="flex items-center justify-between text-outline text-xs font-data-code">
                 <span>TOTAL REGISTROS</span>
                 <span class="material-symbols-outlined text-primary-container text-lg">dataset</span>
             </div>
-            <div class="my-3">
+            <div class="my-2.5">
                 <div class="text-3xl font-data-display font-bold text-on-surface">
                     {{ "{:,}".format(summary.total_records) }}
                 </div>
                 <div class="text-xs font-data-code text-emerald-400 mt-1 flex items-center gap-1">
                     <span class="material-symbols-outlined text-sm">verified</span>
-                    <span>100% Depurado &bull; En Memoria</span>
+                    <span>100% Depurado &bull; Capa Gold</span>
                 </div>
             </div>
-            <div class="text-[11px] text-outline font-data-code border-t border-outline-variant pt-2">
-                Período: {{ summary.period }}
+            <div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden mt-1">
+                <div class="h-full bg-primary-container rounded" style="width: 100%;"></div>
             </div>
         </div>
 
-        <!-- KPI 2 -->
-        <div class="p-5 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container/50 transition-colors shadow-sm flex flex-col justify-between">
+        <!-- KPI 2: Focos Densos -->
+        <div class="p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container/50 transition-colors shadow-sm flex flex-col justify-between">
             <div class="flex items-center justify-between text-outline text-xs font-data-code">
-                <span>HOTSPOTS DENSOS (DBSCAN)</span>
+                <span>HOTSPOTS (DBSCAN)</span>
                 <span class="material-symbols-outlined text-rose-400 text-lg">radar</span>
             </div>
-            <div class="my-3">
+            <div class="my-2.5">
                 <div class="text-3xl font-data-display font-bold text-on-surface">
                     {{ summary.active_hotspots }} <span class="text-sm text-outline font-normal">Focos</span>
                 </div>
                 <div class="text-xs font-data-code text-rose-400 mt-1 flex items-center gap-1">
                     <span class="material-symbols-outlined text-sm">crisis_alert</span>
-                    <span>Métrica Haversine</span>
+                    <span>Métrica Haversine esférica</span>
                 </div>
             </div>
-            <div class="text-[11px] text-outline font-data-code border-t border-outline-variant pt-2">
-                Ruido descartado: {{ summary.noise_records }} pts ({{ summary.noise_pct }}%)
+            <div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden mt-1">
+                <div class="h-full bg-rose-400 rounded" style="width: {{ 100 - summary.noise_pct }}%;"></div>
             </div>
         </div>
 
-        <!-- KPI 3 -->
-        <div class="p-5 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container/50 transition-colors shadow-sm flex flex-col justify-between">
+        <!-- KPI 3: Anomalías o Arrestos -->
+        <div class="p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container/50 transition-colors shadow-sm flex flex-col justify-between">
             <div class="flex items-center justify-between text-outline text-xs font-data-code">
-                <span>{{ 'ANOMALÍAS DETECTADAS' if current_context != 'chicago' else 'TASA DE ARRESTO' }}</span>
+                <span>{{ 'ANOMALÍAS (AUTOENCODER)' if current_context != 'chicago' else 'TASA DE ARRESTO' }}</span>
                 <span class="material-symbols-outlined text-amber-400 text-lg">{{ 'warning' if current_context != 'chicago' else 'gavel' }}</span>
             </div>
-            <div class="my-3">
+            <div class="my-2.5">
                 <div class="text-3xl font-data-display font-bold text-on-surface">
                     {% if current_context != 'chicago' %}
                     {{ summary.anomalias_count }} <span class="text-sm text-outline font-normal">({{ summary.anomalias_pct }}%)</span>
@@ -91,48 +106,48 @@
                 </div>
                 <div class="text-xs font-data-code text-amber-400 mt-1 flex items-center gap-1">
                     <span class="material-symbols-outlined text-sm">trending_up</span>
-                    <span>{{ 'Autoencoder MSE > Umbral' if current_context != 'chicago' else 'Mayor en Narcóticos (78.6%)' }}</span>
+                    <span>{{ 'Error MSE > Umbral Corte' if current_context != 'chicago' else 'Mayor en Narcóticos (78%)' }}</span>
                 </div>
             </div>
-            <div class="text-[11px] text-outline font-data-code border-t border-outline-variant pt-2">
-                {{ 'Red Neuronal D->16->4->16->D' if current_context != 'chicago' else 'Violencia Doméstica: ' ~ summary.domestic_pct ~ '%' }}
+            <div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden mt-1">
+                <div class="h-full bg-amber-400 rounded" style="width: {{ summary.anomalias_pct if current_context != 'chicago' else summary.arrest_rate }}%;"></div>
             </div>
         </div>
 
-        <!-- KPI 4 -->
-        <div class="p-5 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container/50 transition-colors shadow-sm flex flex-col justify-between">
+        <!-- KPI 4: Partición Territorial -->
+        <div class="p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container/50 transition-colors shadow-sm flex flex-col justify-between">
             <div class="flex items-center justify-between text-outline text-xs font-data-code">
-                <span>{{ 'ZONAS URBANAS' if current_context != 'chicago' else 'DISTRITOS TAXONÓMICOS' }}</span>
+                <span>{{ 'SECTORES URBANOS' if current_context != 'chicago' else 'DISTRITOS TAXONÓMICOS' }}</span>
                 <span class="material-symbols-outlined text-purple-400 text-lg">account_tree</span>
             </div>
-            <div class="my-3">
+            <div class="my-2.5">
                 <div class="text-3xl font-data-display font-bold text-on-surface">
                     {{ summary.zonas_count if current_context != 'chicago' else summary.districts_count }} <span class="text-sm text-outline font-normal">Sectores</span>
                 </div>
                 <div class="text-xs font-data-code text-emerald-400 mt-1 flex items-center gap-1">
                     <span class="material-symbols-outlined text-sm">check_circle</span>
-                    <span>3 Macro-Clusters (Ward)</span>
+                    <span>Ward &bull; Correlación r = 0.81</span>
                 </div>
             </div>
-            <div class="text-[11px] text-outline font-data-code border-t border-outline-variant pt-2">
-                Correlación Cofenética: r = 0.812
+            <div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden mt-1">
+                <div class="h-full bg-purple-400 rounded" style="width: 81%;"></div>
             </div>
         </div>
     </section>
 
-    <!-- 2. Hub de Acceso Rápido a Suites Algorítmicas (Design Engineering) -->
+    <!-- 2. Hub de Acceso Rápido a Suites Algorítmicas (Chips de Algoritmos, Cero Muros de Texto) -->
     <section class="space-y-3">
         <div class="flex items-center justify-between">
             <h2 class="text-xs font-bold uppercase tracking-wider text-outline font-data-code flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary-container text-base">hub</span>
                 Suites Algorítmicas No Supervisadas // Acceso Directo
             </h2>
-            <span class="text-[11px] text-outline font-data-code hidden sm:inline">Selecciona una suite para interactuar con los modelos</span>
+            <span class="text-[11px] text-outline font-data-code hidden sm:inline">Selecciona una suite para interactuar</span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Suite 1: Globo 3D -->
-            <a href="{{ url_for('webgis_bp.globo_3d') }}" 
+            <a href="{{ url_for('webgis_bp.globo_3d', ctx=current_context) }}" 
                class="btn-tactile p-4 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container flex flex-col justify-between gap-3 group transition-colors shadow-sm">
                 <div class="flex items-center justify-between">
                     <div class="size-8 rounded-lg bg-primary-container/10 border border-primary-container/30 flex items-center justify-center text-primary-container group-hover:scale-110 transition-transform">
@@ -142,7 +157,12 @@
                 </div>
                 <div>
                     <h3 class="text-sm font-bold text-on-surface group-hover:text-primary-container transition-colors">Globo Terráqueo 3D</h3>
-                    <p class="text-[11px] text-outline mt-1 line-clamp-2">Visualización esférica en WebGL con teselas de calles y clustering concéntrico.</p>
+                    <!-- Chips de Algoritmo en vez de párrafo -->
+                    <div class="flex flex-wrap gap-1 mt-2 font-data-code text-[10px]">
+                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">MapLibre v4</span>
+                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">WebGL</span>
+                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">Haversine</span>
+                    </div>
                 </div>
                 <span class="text-xs text-primary-container font-bold font-data-code flex items-center gap-1 pt-1 border-t border-outline-variant">
                     Explorar Globo ↗
@@ -150,7 +170,7 @@
             </a>
 
             <!-- Suite 2: Reducción 2D -->
-            <a href="{{ url_for('reduction_bp.view') }}" 
+            <a href="{{ url_for('reduction_bp.view', ctx=current_context) }}" 
                class="btn-tactile p-4 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container flex flex-col justify-between gap-3 group transition-colors shadow-sm">
                 <div class="flex items-center justify-between">
                     <div class="size-8 rounded-lg bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
@@ -160,7 +180,14 @@
                 </div>
                 <div>
                     <h3 class="text-sm font-bold text-on-surface group-hover:text-primary-container transition-colors">Reducción 2D</h3>
-                    <p class="text-[11px] text-outline mt-1 line-clamp-2">Comparativa simultánea de PCA, TruncatedSVD, t-SNE y UMAP sobre texto.</p>
+                    <!-- Chips de Algoritmo en vez de párrafo -->
+                    <div class="flex flex-wrap gap-1 mt-2 font-data-code text-[10px]">
+                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">PCA</span>
+                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">SVD</span>
+                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">PPCA</span>
+                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">t-SNE</span>
+                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">UMAP</span>
+                    </div>
                 </div>
                 <span class="text-xs text-amber-400 font-bold font-data-code flex items-center gap-1 pt-1 border-t border-outline-variant">
                     Analizar Espacios ↗
@@ -168,7 +195,7 @@
             </a>
 
             <!-- Suite 3: NLP Tópicos LDA -->
-            <a href="{{ url_for('nlp_topics_bp.view') }}" 
+            <a href="{{ url_for('nlp_topics_bp.view', ctx=current_context) }}" 
                class="btn-tactile p-4 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container flex flex-col justify-between gap-3 group transition-colors shadow-sm">
                 <div class="flex items-center justify-between">
                     <div class="size-8 rounded-lg bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
@@ -178,7 +205,12 @@
                 </div>
                 <div>
                     <h3 class="text-sm font-bold text-on-surface group-hover:text-primary-container transition-colors">NLP &amp; Tópicos LDA</h3>
-                    <p class="text-[11px] text-outline mt-1 line-clamp-2">5 temas latentes sobre el corpus de noticias policiales y clasificador en vivo.</p>
+                    <!-- Chips de Algoritmo en vez de párrafo -->
+                    <div class="flex flex-wrap gap-1 mt-2 font-data-code text-[10px]">
+                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">TF-IDF</span>
+                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">5 Tópicos</span>
+                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">Clasificador</span>
+                    </div>
                 </div>
                 <span class="text-xs text-cyan-400 font-bold font-data-code flex items-center gap-1 pt-1 border-t border-outline-variant">
                     Ver Tópicos ↗
@@ -186,7 +218,7 @@
             </a>
 
             <!-- Suite 4: Anomalías & GMM -->
-            <a href="{{ url_for('anomaly_gmm_bp.view') }}" 
+            <a href="{{ url_for('anomaly_gmm_bp.view', ctx=current_context) }}" 
                class="btn-tactile p-4 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container flex flex-col justify-between gap-3 group transition-colors shadow-sm">
                 <div class="flex items-center justify-between">
                     <div class="size-8 rounded-lg bg-rose-400/10 border border-rose-400/30 flex items-center justify-center text-rose-400 group-hover:scale-110 transition-transform">
@@ -196,7 +228,12 @@
                 </div>
                 <div>
                     <h3 class="text-sm font-bold text-on-surface group-hover:text-primary-container transition-colors">Anomalías &amp; GMM</h3>
-                    <p class="text-[11px] text-outline mt-1 line-clamp-2">Filtro de error de reconstrucción neuronal y simulador de riesgo con elipses 2σ.</p>
+                    <!-- Chips de Algoritmo en vez de párrafo -->
+                    <div class="flex flex-wrap gap-1 mt-2 font-data-code text-[10px]">
+                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">MLP Reconst.</span>
+                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">MSE Error</span>
+                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">Elipses 2σ</span>
+                    </div>
                 </div>
                 <span class="text-xs text-rose-400 font-bold font-data-code flex items-center gap-1 pt-1 border-t border-outline-variant">
                     Revisar Radar ↗
@@ -205,16 +242,16 @@
         </div>
     </section>
 
-    <!-- 3. Desglose de Tipologías Delictivas & Telemetría -->
+    <!-- 3. Distribución Delictiva & Matriz de Cobertura Algorítmica -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Gráfica de Barras de Tipología Delictiva -->
+        <!-- Gráfica de Barras Proporcionales de Tipología Delictiva -->
         <div class="lg:col-span-2 p-5 rounded-xl bg-surface-container border border-outline-variant flex flex-col gap-4 shadow-sm">
             <div class="flex items-center justify-between border-b border-outline-variant pb-3">
                 <div class="flex items-center gap-2">
                     <span class="size-2 rounded-full bg-primary-container"></span>
                     <h3 class="text-sm font-bold text-on-surface font-headline-sm uppercase">Distribución por Tipología Principal</h3>
                 </div>
-                <span class="text-xs font-data-code text-outline">{{ summary.contexto }}</span>
+                <span class="text-xs font-data-code text-outline uppercase">{{ summary.contexto }}</span>
             </div>
 
             <div class="space-y-3 font-data-code text-xs">
@@ -232,37 +269,48 @@
             </div>
         </div>
 
-        <!-- Telemetría & Entorno de Ejecución -->
+        <!-- Matriz de Estado de Algoritmos del Curso (En lugar de texto de servidor) -->
         <div class="p-5 rounded-xl bg-surface-container border border-outline-variant flex flex-col justify-between gap-4 shadow-sm">
             <div>
-                <div class="flex items-center gap-2 pb-3 border-b border-outline-variant">
-                    <span class="material-symbols-outlined text-primary-container text-lg">terminal</span>
-                    <h3 class="text-sm font-bold text-on-surface font-headline-sm uppercase">Arquitectura del Servidor</h3>
+                <div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary-container text-lg">auto_awesome</span>
+                        <h3 class="text-sm font-bold text-on-surface font-headline-sm uppercase">Modelos del Curso</h3>
+                    </div>
+                    <span class="text-[10px] font-data-code text-emerald-400 font-bold uppercase">100% Ajustados</span>
                 </div>
 
-                <div class="space-y-2.5 mt-4 text-xs font-data-code">
+                <div class="space-y-2 mt-3 text-xs font-data-code">
                     <div class="flex justify-between items-center p-2 rounded bg-surface-container-low border border-outline-variant">
-                        <span class="text-outline">Framework Web:</span>
-                        <span class="text-primary-container font-bold">Flask 3.1 (Blueprints)</span>
+                        <span class="text-outline">DBSCAN / HDBSCAN:</span>
+                        <span class="text-emerald-400 font-bold">HAVERSINE</span>
                     </div>
                     <div class="flex justify-between items-center p-2 rounded bg-surface-container-low border border-outline-variant">
-                        <span class="text-outline">Motor Numérico:</span>
-                        <span class="text-on-surface font-bold">Scikit-Learn &bull; SciPy</span>
+                        <span class="text-outline">PCA / SVD / PPCA:</span>
+                        <span class="text-primary-container font-bold">2D LATENTE</span>
                     </div>
                     <div class="flex justify-between items-center p-2 rounded bg-surface-container-low border border-outline-variant">
-                        <span class="text-outline">Cartografía GIS:</span>
-                        <span class="text-on-surface font-bold">MapLibre GL v4 (Globe)</span>
+                        <span class="text-outline">t-SNE &bull; UMAP:</span>
+                        <span class="text-amber-400 font-bold">NO LINEAL</span>
                     </div>
                     <div class="flex justify-between items-center p-2 rounded bg-surface-container-low border border-outline-variant">
-                        <span class="text-outline">Latencia Media:</span>
-                        <span class="text-emerald-400 font-bold">&lt; 15 ms (En Memoria)</span>
+                        <span class="text-outline">LDA Dirichlet:</span>
+                        <span class="text-cyan-400 font-bold">5 TÓPICOS</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2 rounded bg-surface-container-low border border-outline-variant">
+                        <span class="text-outline">Autoencoder MSE:</span>
+                        <span class="text-rose-400 font-bold">TOP 10% ANOM.</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2 rounded bg-surface-container-low border border-outline-variant">
+                        <span class="text-outline">GMM Gaussiano:</span>
+                        <span class="text-purple-400 font-bold">2σ RIESGO</span>
                     </div>
                 </div>
             </div>
 
-            <div class="p-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant text-[11px] text-outline font-data-code flex items-center justify-between">
-                <span>Modo de Ejecución:</span>
-                <span class="text-emerald-400 font-bold uppercase">Producción Local</span>
+            <div class="p-2 rounded-lg bg-surface-container-lowest border border-outline-variant text-[11px] text-outline font-data-code flex items-center justify-between">
+                <span>Motor: Scikit-Learn</span>
+                <span class="text-emerald-400 font-bold uppercase">&lt; 15 ms</span>
             </div>
         </div>
     </section>
