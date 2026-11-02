@@ -5,17 +5,17 @@
 {% block extra_head %}
 <!-- MapLibre GL JS v4.7.1 CSS (Soporte Nativo 3D Globe) -->
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
-<link rel="stylesheet" href="{{ url_for('static', filename='css/globo_3d.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/globo_3d.css') }}?v=4.3.0">
 {% endblock %}
 
 {% block content %}
 <div id="globo-viewport">
-    <!-- Contenedor del Mapa WebGL -->
+    <!-- Contenedor del Mapa WebGL (Intacto bajo estrictas directrices) -->
     <div id="map-container"></div>
 
     <!-- HUD Superior Izquierdo: Telemetría y Resumen Táctico -->
     <div class="tactical-hud hud-top-left">
-        <div class="hud-card space-y-2.5">
+        <div class="hud-card space-y-2">
             <div class="flex items-center justify-between">
                 <div class="hud-badge">
                     <span class="radar-dot"></span>
@@ -24,68 +24,90 @@
                 <span class="text-[11px] text-outline font-data-code">BOLIVIA ML-OPS</span>
             </div>
 
-            <div class="flex items-baseline justify-between pt-1 border-t border-outline-variant/30">
+            <div class="flex items-baseline justify-between pt-1 border-t border-outline-variant">
                 <span class="text-xs text-on-surface-variant font-medium">Hechos Geolocalizados:</span>
-                <span id="stat-total-events" class="text-lg font-bold font-data-code text-primary-container">
+                <span id="stat-total-events" class="text-base font-bold font-data-code text-primary-container">
                     {{ metadata.total_eventos }}
                 </span>
             </div>
 
-            <p class="text-[11px] text-outline leading-tight">
+            <p class="text-[11px] text-outline leading-tight font-body-md">
                 Transición esférica 3D a resolución vectorial de calles con clustering WebGL y minería no supervisada de fuentes de prensa nacional.
             </p>
         </div>
     </div>
 
-    <!-- HUD Superior Derecho: Filtros Dinámicos -->
+    <!-- HUD Superior Derecho: Toolbar Táctico con Jerarquía UI Clara -->
     <div class="tactical-hud hud-top-right">
-        <!-- Filtro por Delito Principal -->
-        <select id="filter-category" class="hud-select shadow-lg">
-            <option value="todos">⚡ Todos los Delitos</option>
-            {% for cat in metadata.categorias %}
-            <option value="{{ cat.nombre }}">{{ cat.nombre }} ({{ cat.count }})</option>
-            {% endfor %}
-        </select>
+        <div class="hud-toolbar-card">
+            <!-- Header de Toolbar -->
+            <div class="hud-toolbar-header">
+                <span class="hud-toolbar-title">Filtros & Proyección</span>
+                <span class="material-symbols-outlined text-xs text-outline">tune</span>
+            </div>
 
-        <!-- Filtro por Ciudad / Eje Troncal -->
-        <select id="filter-city" class="hud-select shadow-lg">
-            <option value="todas">🏛️ Todas las Ciudades</option>
-            {% for c in metadata.ciudades %}
-            <option value="{{ c.nombre }}">{{ c.nombre }} ({{ c.count }})</option>
-            {% endfor %}
-        </select>
+            <!-- Filtro 1: Delito Principal -->
+            <div class="hud-input-group" title="Filtrar por tipología delictiva">
+                <span class="material-symbols-outlined hud-input-icon">category</span>
+                <select id="filter-category" class="hud-dropdown-select">
+                    <option value="todos">Todos los Delitos</option>
+                    {% for cat in metadata.categorias %}
+                    <option value="{{ cat.nombre }}">{{ cat.nombre }} ({{ cat.count }})</option>
+                    {% endfor %}
+                </select>
+                <span class="material-symbols-outlined hud-dropdown-chevron">expand_more</span>
+            </div>
 
-        <!-- Conmutador 3D / 2D -->
-        <button id="btn-toggle-projection" class="hud-select flex items-center justify-center gap-2 hover:border-primary-container shadow-lg">
-            <span class="material-symbols-outlined text-sm">public</span>
-            <span>3D Globe</span>
-        </button>
+            <!-- Filtro 2: Ciudad / Región -->
+            <div class="hud-input-group" title="Filtrar por centro urbano">
+                <span class="material-symbols-outlined hud-input-icon">location_city</span>
+                <select id="filter-city" class="hud-dropdown-select">
+                    <option value="todas">Todas las Ciudades</option>
+                    {% for c in metadata.ciudades %}
+                    <option value="{{ c.nombre }}">{{ c.nombre }} ({{ c.count }})</option>
+                    {% endfor %}
+                </select>
+                <span class="material-symbols-outlined hud-dropdown-chevron">expand_more</span>
+            </div>
+
+            <!-- Botón de Acción Táctil: Conmutador 3D Globe / 2D Plano -->
+            <button id="btn-toggle-projection" type="button" class="btn-tactile hud-action-btn active" title="Alternar entre globo esférico 3D y plano 2D">
+                <div class="flex items-center gap-2">
+                    <span id="proj-icon" class="material-symbols-outlined text-base">public</span>
+                    <span id="proj-label">Proyección</span>
+                </div>
+                <span id="proj-badge" class="hud-action-badge">3D GLOBO</span>
+            </button>
+        </div>
     </div>
 
-    <!-- HUD Inferior Central: Navegación Táctica por Centros Urbanos -->
+    <!-- HUD Inferior Central: Dock de Navegación Urbana (Apple Capsule) -->
     <div class="tactical-hud hud-bottom-controls">
-        <button type="button" class="hud-nav-btn hud-city-btn" data-city="global">
+        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="global" title="Vista Planeta Completo">
             <span class="material-symbols-outlined text-sm">public</span>
             <span>Global</span>
         </button>
-        <button type="button" class="hud-nav-btn hud-city-btn active" data-city="bolivia">
+        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn active" data-city="bolivia" title="Enfoque Nacional Bolivia">
             <span class="material-symbols-outlined text-sm">flag</span>
             <span>Bolivia</span>
         </button>
-        <button type="button" class="hud-nav-btn hud-city-btn" data-city="santa cruz">
+        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="santa cruz" title="Área Metropolitana Santa Cruz">
+            <span class="material-symbols-outlined text-sm">apartment</span>
             <span>Santa Cruz</span>
         </button>
-        <button type="button" class="hud-nav-btn hud-city-btn" data-city="la paz">
+        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="la paz" title="Área Metropolitana La Paz / El Alto">
+            <span class="material-symbols-outlined text-sm">terrain</span>
             <span>La Paz</span>
         </button>
-        <button type="button" class="hud-nav-btn hud-city-btn" data-city="cochabamba">
+        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="cochabamba" title="Área Metropolitana Cochabamba">
+            <span class="material-symbols-outlined text-sm">location_on</span>
             <span>Cochabamba</span>
         </button>
     </div>
 
     <!-- HUD Inferior Izquierdo: Leyenda de Clusters y Severidad -->
     <div class="tactical-hud hud-legend hud-card">
-        <span class="text-[10px] text-outline uppercase tracking-wider block font-bold mb-1">Densidad de Hechos</span>
+        <span class="text-[10px] text-outline uppercase tracking-wider block font-bold mb-1 font-body-md">Densidad de Hechos</span>
         <div class="legend-item">
             <span class="legend-dot bg-[#00e5ff]"></span>
             <span class="text-on-surface text-[11px]">&lt; 5 incidentes</span>
@@ -105,6 +127,5 @@
 {% block extra_scripts %}
 <!-- MapLibre GL JS v4.7.1 JS (Motor WebGL) -->
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script src="{{ url_for('static', filename='js/globo_3d.js') }}"></script>
+<script src="{{ url_for('static', filename='js/globo_3d.js') }}?v=4.3.0"></script>
 {% endblock %}
-

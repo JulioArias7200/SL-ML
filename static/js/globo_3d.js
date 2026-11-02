@@ -280,9 +280,22 @@ document.addEventListener('DOMContentLoaded', () => {
         btnToggleProj.addEventListener('click', () => {
             isGlobeProjection = !isGlobeProjection;
             map.setProjection({ type: isGlobeProjection ? 'globe' : 'mercator' });
-            btnToggleProj.innerHTML = isGlobeProjection 
-                ? '<span class="material-symbols-outlined text-sm">public</span> 3D Globe' 
-                : '<span class="material-symbols-outlined text-sm">map</span> 2D Plano';
+            
+            const projIcon = document.getElementById('proj-icon');
+            const projBadge = document.getElementById('proj-badge');
+            
+            if (projIcon) {
+                projIcon.textContent = isGlobeProjection ? 'public' : 'map';
+            }
+            if (projBadge) {
+                projBadge.textContent = isGlobeProjection ? '3D GLOBO' : '2D PLANO';
+            }
+            
+            if (isGlobeProjection) {
+                btnToggleProj.classList.add('active');
+            } else {
+                btnToggleProj.classList.remove('active');
+            }
         });
     }
 

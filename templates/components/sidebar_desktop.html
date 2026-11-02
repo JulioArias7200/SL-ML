@@ -1,80 +1,88 @@
 <!-- BARRA LATERAL TÁCTICA CPD (Desktop >= 1024px) -->
-<aside class="w-64 shrink-0 hidden lg:flex flex-col justify-between border-r border-outline-variant/40 bg-surface-container-low p-4">
-    <div class="flex flex-col gap-6">
+<aside class="w-64 shrink-0 hidden lg:flex flex-col justify-between border-r border-outline-variant bg-surface-container-low p-4 select-none">
+    <div class="flex flex-col gap-5">
         <!-- Logo de Unidad Policial -->
-        <a href="{{ url_for('dashboard_bp.index') }}" class="flex items-center gap-3 pb-3 border-b border-outline-variant/30 group">
-            <div class="size-10 rounded border border-primary-container/40 bg-surface-container-high flex items-center justify-center text-primary-container group-hover:scale-105 transition-transform shadow-sm">
-                <span class="material-symbols-outlined text-2xl">shield</span>
+        <a href="{{ url_for('dashboard_bp.index') }}" class="btn-tactile flex items-center gap-3 pb-3 border-b border-outline-variant group">
+            <div class="size-9 rounded-lg border border-primary-container/40 bg-surface-container-high flex items-center justify-center text-primary-container group-hover:scale-105 transition-transform shadow-sm">
+                <span class="material-symbols-outlined text-xl">shield</span>
             </div>
             <div class="flex flex-col">
                 <h1 class="text-on-surface text-sm font-bold tracking-tight">CPD ANALYTICS CORE</h1>
-                <p class="text-outline text-label-sm font-data-code">CHICAGO ML-OPS // v4.2</p>
+                <p class="text-outline text-[10px] font-data-code">MULTI-ALGORITHM ML-OPS</p>
             </div>
         </a>
 
-        <!-- Navegación Primaria -->
-        <nav class="flex flex-col gap-1.5 font-label-md">
-            <!-- Dashboard General -->
+        <!-- Navegación Primaria por Suites Algorítmicas -->
+        <nav class="flex flex-col gap-1 font-body-md text-xs">
+            <!-- Bloque 1: Exploración Core -->
+            <span class="px-2.5 text-[10px] font-bold uppercase tracking-wider text-outline font-data-code mb-0.5">Exploración Core</span>
+            
             <a href="{{ url_for('dashboard_bp.index') }}" 
-               class="flex items-center gap-3 px-3 py-2.5 rounded transition-all {{ 'bg-surface-container-high border-l-2 border-primary-container text-white font-semibold shadow-sm' if active_page == 'dashboard' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
-                <span class="material-symbols-outlined text-xl {{ 'text-primary-container' if active_page == 'dashboard' else '' }}">dashboard</span>
-                <span class="{{ 'text-primary-container font-bold' if active_page == 'dashboard' else '' }}">Dashboard General</span>
+               class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-2 border-primary-container text-primary-container font-semibold shadow-sm' if active_page == 'dashboard' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                <span class="material-symbols-outlined text-lg">dashboard</span>
+                <span>Dashboard General</span>
             </a>
 
-            <!-- Módulo K-Means & NLP -->
-            <a href="{{ url_for('kmeans_nlp_bp.view') }}" 
-               class="flex items-center gap-3 px-3 py-2.5 rounded transition-all {{ 'bg-surface-container-high border-l-2 border-primary-container text-white font-semibold shadow-sm' if active_page == 'kmeans-nlp' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
-                <span class="material-symbols-outlined text-xl {{ 'text-primary-container' if active_page == 'kmeans-nlp' else '' }}">memory</span>
-                <span class="{{ 'text-primary-container font-bold' if active_page == 'kmeans-nlp' else '' }}">K-Means & NLP</span>
-            </a>
-
-            <!-- Módulo Geoespacial & Densidad -->
-            <a href="{{ url_for('spatial_density_bp.view') }}" 
-               class="flex items-center gap-3 px-3 py-2.5 rounded transition-all {{ 'bg-surface-container-high border-l-2 border-primary-container text-white font-semibold shadow-sm' if active_page == 'espacial-densidad' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
-                <span class="material-symbols-outlined text-xl {{ 'text-primary-container' if active_page == 'espacial-densidad' else '' }}">explore</span>
-                <span class="{{ 'text-primary-container font-bold' if active_page == 'espacial-densidad' else '' }}">Geoespacial & Densidad</span>
-            </a>
-
-            <!-- Módulo Globo 3D & Noticias WebGIS -->
             <a href="{{ url_for('webgis_bp.globo_3d') }}" 
-               class="flex items-center gap-3 px-3 py-2.5 rounded transition-all {{ 'bg-surface-container-high border-l-2 border-primary-container text-white font-semibold shadow-sm' if active_page == 'globo-3d' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
-                <span class="material-symbols-outlined text-xl {{ 'text-primary-container' if active_page == 'globo-3d' else '' }}">public</span>
-                <span class="{{ 'text-primary-container font-bold' if active_page == 'globo-3d' else '' }}">Globo 3D // Bolivia</span>
+               class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-2 border-primary-container text-primary-container font-semibold shadow-sm' if active_page == 'globo-3d' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                <span class="material-symbols-outlined text-lg">public</span>
+                <span>Globo 3D // WebGIS</span>
             </a>
 
-            <div class="my-2 border-t border-outline-variant/30"></div>
+            <!-- Bloque 2: Suites No Supervisadas de Octubre -->
+            <div class="my-2 border-t border-outline-variant"></div>
+            <span class="px-2.5 text-[10px] font-bold uppercase tracking-wider text-outline font-data-code mb-0.5">Laboratorio (26/29 Oct)</span>
 
-            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-all text-xs">
+            <a href="{{ url_for('reduction_bp.view') }}" 
+               class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-2 border-primary-container text-primary-container font-semibold shadow-sm' if active_page == 'reduccion-espacios' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}"
+               title="PCA, TruncatedSVD, t-SNE, UMAP">
+                <span class="material-symbols-outlined text-lg">scatter_plot</span>
+                <span>Reducción 2D (PCA/UMAP)</span>
+            </a>
+
+            <a href="{{ url_for('nlp_topics_bp.view') }}" 
+               class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-2 border-primary-container text-primary-container font-semibold shadow-sm' if active_page == 'nlp-topicos' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}"
+               title="Topic Modeling LDA y TF-IDF">
+                <span class="material-symbols-outlined text-lg">article</span>
+                <span>NLP & Tópicos LDA</span>
+            </a>
+
+            <a href="{{ url_for('anomaly_gmm_bp.view') }}" 
+               class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-2 border-primary-container text-primary-container font-semibold shadow-sm' if active_page == 'anomalias-probabilistico' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}"
+               title="Autoencoders neuronales y superficies de riesgo GMM">
                 <span class="material-symbols-outlined text-lg">crisis_alert</span>
-                <span>Detección de Anomalías</span>
+                <span>Anomalías (AE) & GMM</span>
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-all text-xs">
-                <span class="material-symbols-outlined text-lg">local_police</span>
-                <span>Patrullaje Preventivo</span>
+
+            <!-- Bloque 3: Taxonomía & Partición Clásica -->
+            <div class="my-2 border-t border-outline-variant"></div>
+            <span class="px-2.5 text-[10px] font-bold uppercase tracking-wider text-outline font-data-code mb-0.5">Clustering Clásico</span>
+
+            <a href="{{ url_for('spatial_density_bp.view') }}" 
+               class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-2 border-primary-container text-primary-container font-semibold shadow-sm' if active_page == 'espacial-densidad' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}"
+               title="Dendrograma de Ward y DBSCAN con Haversine">
+                <span class="material-symbols-outlined text-lg">account_tree</span>
+                <span>Jerárquico & Densidad</span>
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-all text-xs">
-                <span class="material-symbols-outlined text-lg">tune</span>
-                <span>Configuración Pipeline</span>
+
+            <a href="{{ url_for('kmeans_nlp_bp.view') }}" 
+               class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-2 border-primary-container text-primary-container font-semibold shadow-sm' if active_page == 'kmeans-nlp' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}"
+               title="Métricas de Codo, Silueta y K-Means">
+                <span class="material-symbols-outlined text-lg">data_thresholding</span>
+                <span>K-Means Codo/Silueta</span>
             </a>
         </nav>
     </div>
 
-    <!-- Estado Hardware / Telemetría -->
-    <div class="flex flex-col gap-3 pt-4 border-t border-outline-variant/30 font-data-code">
-        <div class="flex items-center justify-between text-label-sm text-outline">
-            <span>GPU ENGINE</span>
-            <span class="text-primary-container font-semibold">NVIDIA T4 16GB</span>
+    <!-- Telemetría en Barra Lateral -->
+    <div class="flex flex-col gap-1.5 pt-3 border-t border-outline-variant font-data-code text-xs text-outline">
+        <div class="flex items-center justify-between">
+            <span>PIPELINE</span>
+            <span class="text-primary-container font-semibold">ONLINE</span>
         </div>
-        <div class="w-full bg-surface-container-high h-1.5 rounded overflow-hidden">
-            <div class="bg-primary-container h-full w-[41.8%]"></div>
-        </div>
-        <div class="flex items-center justify-between text-label-sm text-outline">
-            <span>VRAM: 6.7 / 16.0 GB</span>
-            <span class="text-on-surface font-semibold">41.8%</span>
-        </div>
-        <div class="flex items-center justify-center gap-2 rounded h-8 px-2 bg-primary-container/10 border border-primary-container/30 text-primary-container text-[11px] font-bold tracking-wider uppercase">
-            <span class="size-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>ESTADO: EN LÍNEA (GPU T4)</span>
+        <div class="flex items-center justify-between text-[11px]">
+            <span>ENGINE</span>
+            <span>Scikit-Learn</span>
         </div>
     </div>
 </aside>

@@ -1,0 +1,195 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}CPD Analytics // Detección de Anomalías (Autoencoders) & GMM{% endblock %}
+
+{% block content %}
+<div class="p-4 sm:p-6 lg:p-8 space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-outline-variant/30">
+        <div>
+            <div class="flex items-center gap-2">
+                <span class="inline-flex size-2 rounded-full bg-rose-500 animate-pulse"></span>
+                <span class="text-xs font-bold uppercase tracking-wider text-rose-400 font-data-code">
+                    Modelado Avanzado // Redes Neuronales No Supervisadas & GMM
+                </span>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight text-on-surface mt-1">
+                Detección de Anomalías por Autoencoders & Superficie de Riesgo GMM
+            </h1>
+            <p class="text-xs sm:text-sm text-outline max-w-3xl mt-1">
+                Identificación de reportes atípicos mediante el error cuadrático medio de reconstrucción ($MSE$) de un Autoencoder con cuello de botella ($D \to 16 \to 4 \to 16 \to D$) y modelado estocástico multivariante con mezclas gaussianas.
+            </p>
+        </div>
+
+        <div class="px-3 py-1.5 rounded-lg bg-surface-container border border-outline-variant/40 font-data-code text-xs text-outline">
+            Umbral de Corte: <span class="text-rose-400 font-bold">&gt; {{ anomalies_data.umbral_corte }} MSE</span>
+        </div>
+    </div>
+
+    <!-- Fila 1: KPIs de Detección de Anomalías -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="p-4 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm">
+            <span class="text-[11px] text-outline font-data-code uppercase block mb-1">Notas Analizadas</span>
+            <span class="text-xl font-bold text-on-surface font-data-code">{{ anomalies_data.total_analizados }}</span>
+        </div>
+        <div class="p-4 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm">
+            <span class="text-[11px] text-outline font-data-code uppercase block mb-1">Anomalías Detectadas</span>
+            <span class="text-xl font-bold text-rose-400 font-data-code">{{ anomalies_data.total_anomalias }} (10.1%)</span>
+        </div>
+        <div class="p-4 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm">
+            <span class="text-[11px] text-outline font-data-code uppercase block mb-1">Error Medio Reconstruction</span>
+            <span class="text-xl font-bold text-primary-container font-data-code">{{ anomalies_data.error_medio }}</span>
+        </div>
+        <div class="p-4 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm">
+            <span class="text-[11px] text-outline font-data-code uppercase block mb-1">Error Máximo Registrado</span>
+            <span class="text-xl font-bold text-amber-400 font-data-code">{{ anomalies_data.error_max }}</span>
+        </div>
+    </div>
+
+    <!-- Fila 2: Dos Secciones: Autoencoders (Bolivia) vs GMM (Chicago) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Panel 1: Detección de Anomalías en Noticias (Autoencoder) -->
+        <div class="p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between pb-3 mb-3 border-b border-outline-variant/20">
+                    <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider font-data-code flex items-center gap-2">
+                        <span class="material-symbols-outlined text-rose-400">warning</span>
+                        Noticias Anómalas Detectadas (Bolivia)
+                    </h3>
+                    <span class="text-xs text-outline font-data-code">MSE &gt; Umbral</span>
+                </div>
+                <p class="text-xs text-outline mb-4">
+                    Artículos periodísticos cuya representación vectorial presenta un patrón léxico inusual o delito atípico que la red neuronal no logra comprimir eficientemente.
+                </p>
+
+                <div class="space-y-2.5 max-h-[380px] overflow-y-auto custom-scrollbar pr-1">
+                    {% for anom in anomalies_data.anomalias %}
+                    <div class="p-3 rounded bg-surface-container-high border border-outline-variant/30 hover:border-rose-400/50 transition-colors">
+                        <div class="flex items-center justify-between text-xs mb-1">
+                            <span class="text-rose-400 font-bold font-data-code">ERROR: {{ anom.error }}</span>
+                            <span class="text-outline text-[11px]">{{ anom.ciudad }} // {{ anom.delito }}</span>
+                        </div>
+                        <h4 class="text-xs font-semibold text-on-surface mb-2 leading-snug">
+                            {{ anom.titulo }}
+                        </h4>
+                        <div class="flex items-center justify-between text-[11px] font-data-code">
+                            <span class="text-outline">{{ anom.motivo }}</span>
+                            <a href="{{ anom.url }}" target="_blank" rel="noopener noreferrer" 
+                               class="text-primary-container hover:underline font-bold">
+                                Nota ↗
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-outline-variant/20 font-data-code text-[11px] text-outline flex justify-between">
+                <span>Topología: D(250) → 16 → 4 → 16 → D(250)</span>
+                <span>Optimizador: Adam / MSE</span>
+            </div>
+        </div>
+
+        <!-- Panel 2: Simulador Estocástico GMM (Modelos Mixtos Gaussianos) -->
+        <div class="p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between pb-3 mb-3 border-b border-outline-variant/20">
+                    <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider font-data-code flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary-container">blur_on</span>
+                        Simulador de Riesgo GMM (Chicago Benchmark)
+                    </h3>
+                    <span class="text-xs text-outline font-data-code">Elipses 2σ (95.4%)</span>
+                </div>
+                <p class="text-xs text-outline mb-4">
+                    Inferencia de pertenencia probabilística a focos delictivos modelados mediante una combinación convexa de normales multivariantes: $p(x) = \sum \pi_k \mathcal{N}(x \mid \mu_k, \Sigma_k)$.
+                </p>
+
+                <!-- Formulario de coordenadas -->
+                <div class="grid grid-cols-2 gap-3 mb-4 font-data-code">
+                    <div>
+                        <label class="text-[11px] text-outline block mb-1">Latitud (WGS84):</label>
+                        <input id="gmm-lat" type="number" step="0.0001" value="41.8781" 
+                               class="w-full h-8 px-2.5 bg-surface-container-lowest text-xs text-on-surface rounded border border-outline-variant/40 focus:border-primary-container focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[11px] text-outline block mb-1">Longitud (WGS84):</label>
+                        <input id="gmm-lon" type="number" step="0.0001" value="-87.6298" 
+                               class="w-full h-8 px-2.5 bg-surface-container-lowest text-xs text-on-surface rounded border border-outline-variant/40 focus:border-primary-container focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Botones de coordenadas rápidas -->
+                <div class="flex flex-wrap gap-1.5 mb-4 font-data-code text-xs">
+                    <button type="button" class="btn-preset px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-outline hover:text-on-surface transition-colors" data-lat="41.8818" data-lon="-87.6231">The Loop</button>
+                    <button type="button" class="btn-preset px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-outline hover:text-on-surface transition-colors" data-lat="41.8750" data-lon="-87.7200">Garfield/Austin</button>
+                    <button type="button" class="btn-preset px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-outline hover:text-on-surface transition-colors" data-lat="41.7750" data-lon="-87.6400">Englewood</button>
+                    <button type="button" class="btn-preset px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-outline hover:text-on-surface transition-colors" data-lat="41.9700" data-lon="-87.7700">Jefferson Park</button>
+                </div>
+
+                <button type="button" id="btn-eval-gmm" 
+                        class="w-full py-2.5 rounded bg-primary-container text-surface-container-lowest font-bold font-data-code text-xs uppercase tracking-wider hover:brightness-110 transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-sm">radar</span>
+                    <span>Evaluar Superficie de Riesgo</span>
+                </button>
+
+                <!-- Resultado GMM -->
+                <div id="gmm-results" class="mt-4 p-4 rounded bg-surface-container-high border border-outline-variant/40 font-data-code text-xs space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-outline">Índice de Riesgo Estimado:</span>
+                        <span id="gmm-risk-score" class="text-base font-bold text-amber-400">78.4% (ALTO)</span>
+                    </div>
+                    <div class="space-y-1.5 pt-2 border-t border-outline-variant/20 text-[11px]">
+                        <div class="flex justify-between">
+                            <span class="text-outline">Prob. Loop Comercial:</span>
+                            <span id="prob-loop" class="text-primary-container font-semibold">42.1%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-outline">Prob. West Side (Armado):</span>
+                            <span id="prob-west" class="text-rose-400 font-semibold">39.5%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-outline">Prob. South Side:</span>
+                            <span id="prob-south" class="text-emerald-400 font-semibold">18.4%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-outline-variant/20 font-data-code text-[11px] text-outline flex justify-between">
+                <span>Covarianza: Full + reg_covar=1e-5</span>
+                <span>Optimización: BIC/AIC Criterios</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.btn-preset').forEach(b => {
+    b.addEventListener('click', () => {
+        document.getElementById('gmm-lat').value = b.dataset.lat;
+        document.getElementById('gmm-lon').value = b.dataset.lon;
+        document.getElementById('btn-eval-gmm').click();
+    });
+});
+
+document.getElementById('btn-eval-gmm').addEventListener('click', () => {
+    const lat = document.getElementById('gmm-lat').value;
+    const lon = document.getElementById('gmm-lon').value;
+
+    fetch('/api/v1/chicago/gmm_predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lat: lat, lon: lon })
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('gmm-risk-score').textContent = `${data.risk_score_pct}% (${data.risk_level})`;
+        document.getElementById('prob-loop').textContent = `${data.component_probs.loop_comercial}%`;
+        document.getElementById('prob-west').textContent = `${data.component_probs.west_side}%`;
+        document.getElementById('prob-south').textContent = `${data.component_probs.south_side}%`;
+    })
+    .catch(err => console.error("Error GMM:", err));
+});
+</script>
+{% endblock %}
+

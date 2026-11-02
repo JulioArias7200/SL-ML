@@ -1,11 +1,15 @@
-/* GLOBO 3D TÁCTICO & WEBGIS ESTILOS */
+/* ==========================================================================
+   GLOBO 3D WEBGIS // ESTILOS DEL VISOR Y HUD ADAPTATIVO (LIGHT & DARK THEMES)
+   EL MAPA WEBGL Y SUS TESELAS VECTORIALES NO SE MODIFICAN
+   FILOSOFÍA DESIGN ENGINEERING (EMIL KOWALSKI & APPLE DESIGN)
+   ========================================================================== */
 
 #globo-viewport {
     position: relative;
     width: 100%;
-    height: calc(100vh - 65px); /* Descontando el navbar superior */
+    height: calc(100vh - 58px);
     overflow: hidden;
-    background-color: #050811;
+    background-color: var(--bg-page);
 }
 
 #map-container {
@@ -13,27 +17,59 @@
     height: 100%;
 }
 
-/* HUD Superior Izquierdo: Telemetría de Satélite */
+/* ==========================================================================
+   VARIABLES DE VIDRIO TÁCTICO (ADAPTATIVAS A MODO CLARO Y OSCURO)
+   ========================================================================== */
+:root {
+    --hud-glass-bg: rgba(255, 255, 255, 0.88);
+    --hud-glass-border: rgba(226, 232, 240, 0.9);
+    --hud-glass-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    --hud-control-bg: rgba(241, 245, 249, 0.85);
+    --hud-control-border: rgba(203, 213, 225, 0.7);
+    --hud-control-hover: rgba(226, 232, 240, 0.95);
+    --hud-text: #0f172a;
+    --hud-text-muted: #64748b;
+}
+
+html.dark {
+    --hud-glass-bg: rgba(15, 20, 30, 0.88);
+    --hud-glass-border: rgba(59, 73, 76, 0.6);
+    --hud-glass-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 229, 255, 0.08);
+    --hud-control-bg: rgba(24, 27, 37, 0.85);
+    --hud-control-border: rgba(59, 73, 76, 0.5);
+    --hud-control-hover: rgba(38, 42, 52, 0.95);
+    --hud-text: #dfe2ef;
+    --hud-text-muted: #849396;
+}
+
+/* ==========================================================================
+   HUD FLOTANTE BASE
+   ========================================================================== */
 .tactical-hud {
     position: absolute;
     z-index: 20;
     pointer-events: auto;
 }
 
+/* ==========================================================================
+   TOP-LEFT: TELEMETRÍA E IDENTIFICACIÓN
+   ========================================================================== */
 .hud-top-left {
     top: 16px;
     left: 16px;
-    max-width: 380px;
+    max-width: 360px;
 }
 
 .hud-card {
-    background: rgba(15, 19, 28, 0.88);
+    background: var(--hud-glass-bg);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(0, 229, 255, 0.25);
-    border-radius: 8px;
+    border: 1px solid var(--hud-glass-border);
+    border-radius: 12px;
     padding: 14px 16px;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), 0 0 15px rgba(0, 229, 255, 0.08);
+    color: var(--hud-text);
+    box-shadow: var(--hud-glass-shadow);
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .hud-badge {
@@ -41,22 +77,28 @@
     align-items: center;
     gap: 6px;
     padding: 3px 8px;
-    border-radius: 4px;
-    background: rgba(0, 229, 255, 0.12);
-    border: 1px solid rgba(0, 229, 255, 0.35);
+    border-radius: 6px;
+    background: rgba(2, 132, 199, 0.1);
+    border: 1px solid rgba(2, 132, 199, 0.3);
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     font-weight: 700;
+    color: var(--primary-neon);
+    letter-spacing: 0.04em;
+}
+
+html.dark .hud-badge {
+    background: rgba(0, 229, 255, 0.12);
+    border-color: rgba(0, 229, 255, 0.35);
     color: #00e5ff;
-    letter-spacing: 0.05em;
 }
 
 .radar-dot {
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: #00e5ff;
-    box-shadow: 0 0 8px #00e5ff;
+    background: var(--primary-neon);
+    box-shadow: 0 0 8px var(--primary-neon);
     animation: radarPulse 1.8s infinite ease-in-out;
 }
 
@@ -65,171 +107,320 @@
     50% { transform: scale(0.7); opacity: 0.35; }
 }
 
-/* HUD Superior Derecho: Filtros y Selectores */
+/* ==========================================================================
+   TOP-RIGHT: TOOLBAR DE CONTROLES JERÁRQUICOS (APPLE / EMIL DESIGN)
+   Diferenciación clara entre menús desplegables (<select>) y botones de acción
+   ========================================================================== */
 .hud-top-right {
     top: 16px;
     right: 16px;
+    width: 250px;
+}
+
+.hud-toolbar-card {
+    background: var(--hud-glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--hud-glass-border);
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: var(--hud-glass-shadow);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.hud-select {
-    background: rgba(24, 27, 37, 0.9);
-    border: 1px solid rgba(132, 147, 150, 0.35);
-    color: #dfe2ef;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 12px;
+/* Encabezado sutil de la toolbar */
+.hud-toolbar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 4px 6px;
+    border-bottom: 1px solid var(--hud-glass-border);
+}
+
+.hud-toolbar-title {
+    font-size: 10px;
     font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--hud-text-muted);
+}
+
+/* Input group para dropdowns con icono prefijo y chevron sufijo */
+.hud-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--hud-control-bg);
+    border: 1px solid var(--hud-control-border);
+    border-radius: 8px;
+    padding: 0 8px;
+    transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hud-input-group:focus-within {
+    border-color: var(--primary-neon);
+    box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+}
+
+html.dark .hud-input-group:focus-within {
+    box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.2);
+}
+
+.hud-input-icon {
+    font-size: 16px;
+    color: var(--primary-neon);
+    flex-shrink: 0;
+    margin-right: 6px;
+}
+
+.hud-dropdown-select {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--hud-text);
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    padding: 7px 18px 7px 0;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.hud-dropdown-select option {
+    background: var(--surface-main);
+    color: var(--text-primary);
+}
+
+.hud-dropdown-chevron {
+    position: absolute;
+    right: 8px;
+    font-size: 16px;
+    color: var(--hud-text-muted);
+    pointer-events: none;
+    transition: transform 0.15s ease;
+}
+
+/* Botón de Acción Especial (3D Globe Toggle) */
+.hud-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 7px 12px;
+    border-radius: 8px;
+    background: var(--hud-control-bg);
+    border: 1px solid var(--hud-control-border);
+    color: var(--hud-text);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
     cursor: pointer;
     outline: none;
-    transition: border-color 0.2s;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-.hud-select:hover, .hud-select:focus {
-    border-color: #00e5ff;
+.hud-action-btn:hover {
+    background: var(--hud-control-hover);
+    border-color: var(--primary-neon);
+    color: var(--primary-neon);
 }
 
-/* HUD Inferior: Controles de Navegación */
+.hud-action-btn.active {
+    background: rgba(2, 132, 199, 0.12);
+    border-color: var(--primary-neon);
+    color: var(--primary-neon);
+}
+
+html.dark .hud-action-btn.active {
+    background: rgba(0, 229, 255, 0.12);
+    border-color: rgba(0, 229, 255, 0.4);
+    color: #00e5ff;
+}
+
+.hud-action-badge {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(2, 132, 199, 0.15);
+    color: var(--primary-neon);
+}
+
+html.dark .hud-action-badge {
+    background: rgba(0, 229, 255, 0.2);
+    color: #00e5ff;
+}
+
+/* ==========================================================================
+   BOTTOM-CENTER: DOCK DE NAVEGACIÓN URBANA (APPLE CAPSULE DOCK)
+   ========================================================================== */
 .hud-bottom-controls {
     bottom: 24px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: rgba(15, 19, 28, 0.9);
-    backdrop-filter: blur(14px);
-    border: 1px solid rgba(0, 229, 255, 0.2);
+    gap: 4px;
+    background: var(--hud-glass-bg);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--hud-glass-border);
     border-radius: 30px;
-    padding: 6px 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    padding: 4px 6px;
+    box-shadow: var(--hud-glass-shadow);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.hud-nav-btn {
+.hud-dock-btn {
     background: transparent;
     border: 1px solid transparent;
-    color: #bac9cc;
-    padding: 6px 14px;
+    color: var(--hud-text-muted);
+    padding: 6px 12px;
     border-radius: 20px;
     font-size: 12px;
-    font-weight: 600;
-    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
     cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
+    transition: color 0.15s ease, background-color 0.15s ease, transform 0.08s ease;
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
+    outline: none;
+    white-space: nowrap;
 }
 
-.hud-nav-btn:hover {
-    background: rgba(0, 229, 255, 0.15);
+.hud-dock-btn:hover {
+    color: var(--hud-text);
+    background: rgba(2, 132, 199, 0.08);
+}
+
+html.dark .hud-dock-btn:hover {
     color: #00e5ff;
-    border-color: rgba(0, 229, 255, 0.3);
+    background: rgba(0, 229, 255, 0.12);
 }
 
-.hud-nav-btn.active {
-    background: #00e5ff;
-    color: #0a0e17;
-    font-weight: 700;
-    box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+.hud-dock-btn.active {
+    background: var(--primary-neon);
+    color: var(--primary-contrast);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 
-/* Leyenda de Severidad */
+/* ==========================================================================
+   BOTTOM-LEFT: LEYENDA TÁCTICA DE DENSIDAD
+   ========================================================================== */
 .hud-legend {
     bottom: 24px;
     left: 16px;
     font-size: 11px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Inter', sans-serif;
+    min-width: 175px;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: 4px;
+    margin-top: 6px;
 }
 
 .legend-dot {
-    width: 10px;
-    height: 10px;
+    width: 9px;
+    height: 9px;
     border-radius: 50%;
+    flex-shrink: 0;
 }
 
-/* Popups personalizados de MapLibre */
+/* ==========================================================================
+   POPUPS DE MAPLIBRE GL (ADAPTATIVOS A LIGHT & DARK THEMES)
+   ========================================================================== */
 .maplibregl-popup {
-    max-width: 340px !important;
+    max-width: 320px !important;
     z-index: 50;
+    font-family: 'Inter', sans-serif !important;
 }
 
 .maplibregl-popup-content {
-    background: rgba(15, 19, 28, 0.96) !important;
+    background: var(--hud-glass-bg) !important;
     backdrop-filter: blur(16px) !important;
-    border: 1px solid rgba(0, 229, 255, 0.35) !important;
-    border-radius: 8px !important;
-    padding: 16px !important;
-    color: #dfe2ef !important;
-    box-shadow: 0 16px 40px rgba(0,0,0,0.8), 0 0 20px rgba(0, 229, 255, 0.15) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid var(--hud-glass-border) !important;
+    border-radius: 12px !important;
+    padding: 14px 16px !important;
+    color: var(--hud-text) !important;
+    box-shadow: var(--hud-glass-shadow) !important;
 }
 
 .maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
-    border-top-color: rgba(15, 19, 28, 0.96) !important;
+    border-top-color: var(--hud-glass-bg) !important;
 }
 .maplibregl-popup-anchor-top .maplibregl-popup-tip {
-    border-bottom-color: rgba(15, 19, 28, 0.96) !important;
+    border-bottom-color: var(--hud-glass-bg) !important;
 }
 .maplibregl-popup-anchor-left .maplibregl-popup-tip {
-    border-right-color: rgba(15, 19, 28, 0.96) !important;
+    border-right-color: var(--hud-glass-bg) !important;
 }
 .maplibregl-popup-anchor-right .maplibregl-popup-tip {
-    border-left-color: rgba(15, 19, 28, 0.96) !important;
+    border-left-color: var(--hud-glass-bg) !important;
 }
 
 .maplibregl-popup-close-button {
-    color: #849396 !important;
-    font-size: 18px !important;
-    padding: 6px 10px !important;
+    color: var(--hud-text-muted) !important;
+    font-size: 16px !important;
+    padding: 6px 8px !important;
     outline: none !important;
 }
 
 .maplibregl-popup-close-button:hover {
-    color: #00e5ff !important;
+    color: var(--primary-neon) !important;
 }
 
 .news-popup-category {
     display: inline-block;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Inter', sans-serif;
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    color: #ff3366;
-    background: rgba(255, 51, 102, 0.15);
-    border: 1px solid rgba(255, 51, 102, 0.35);
+    color: #e11d48;
+    background: rgba(225, 29, 72, 0.1);
+    border: 1px solid rgba(225, 29, 72, 0.25);
     padding: 2px 7px;
     border-radius: 4px;
-    margin-bottom: 8px;
-    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+}
+
+html.dark .news-popup-category {
+    color: #ff3366;
+    background: rgba(255, 51, 102, 0.15);
+    border-color: rgba(255, 51, 102, 0.35);
 }
 
 .news-popup-title {
     font-size: 13px;
     font-weight: 600;
-    line-height: 1.45;
-    margin-bottom: 10px;
-    color: #ffffff;
+    line-height: 1.4;
+    margin-bottom: 8px;
+    color: var(--hud-text);
 }
 
 .news-popup-meta {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6px;
+    gap: 4px;
     font-size: 11px;
-    font-family: 'JetBrains Mono', monospace;
-    color: #849396;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(59, 73, 76, 0.4);
+    font-family: 'Inter', sans-serif;
+    color: var(--hud-text-muted);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--hud-glass-border);
 }
 
 .news-popup-link {
@@ -238,53 +429,59 @@
     justify-content: center;
     gap: 6px;
     width: 100%;
-    background: rgba(0, 229, 255, 0.12);
-    border: 1px solid #00e5ff;
-    color: #00e5ff;
+    background: rgba(2, 132, 199, 0.08);
+    border: 1px solid var(--primary-neon);
+    color: var(--primary-neon);
     text-decoration: none;
     font-size: 11px;
-    font-weight: 700;
-    font-family: 'JetBrains Mono', monospace;
-    padding: 7px 0;
-    border-radius: 4px;
-    transition: all 0.2s ease;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    padding: 6px 0;
+    border-radius: 6px;
+    transition: all 0.15s ease;
 }
 
 .news-popup-link:hover {
-    background: #00e5ff;
-    color: #0a0e17;
-    box-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
+    background: var(--primary-neon);
+    color: var(--primary-contrast);
 }
 
-/* Controles MapLibre integrados */
+/* ==========================================================================
+   CONTROLES NATIVOS MAPLIBRE GL
+   ========================================================================== */
 .maplibregl-ctrl-group {
-    background: rgba(15, 19, 28, 0.85) !important;
-    border: 1px solid rgba(0, 229, 255, 0.25) !important;
-    border-radius: 6px !important;
+    background: var(--hud-glass-bg) !important;
+    border: 1px solid var(--hud-glass-border) !important;
+    border-radius: 8px !important;
+    box-shadow: var(--hud-glass-shadow) !important;
 }
 
-.maplibregl-ctrl-group button {
-    border-bottom: 1px solid rgba(59, 73, 76, 0.3) !important;
-}
-
-.maplibregl-ctrl-icon {
+html.dark .maplibregl-ctrl-icon {
     filter: invert(0.8) hue-rotate(180deg);
 }
 
-/* Responsividad para móviles */
+/* ==========================================================================
+   RESPONSIVIDAD MÓVIL
+   ========================================================================== */
 @media (max-width: 768px) {
     .hud-top-left {
         max-width: calc(100% - 32px);
+    }
+    .hud-top-right {
+        top: auto;
+        bottom: 80px;
+        right: 16px;
+        width: calc(100% - 32px);
     }
     .hud-bottom-controls {
         bottom: 12px;
         flex-wrap: wrap;
         justify-content: center;
-        border-radius: 12px;
-        padding: 6px;
+        border-radius: 16px;
+        padding: 4px;
+        max-width: 92vw;
     }
     .hud-legend {
         display: none;
     }
 }
-

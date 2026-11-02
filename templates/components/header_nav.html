@@ -1,50 +1,51 @@
 <!-- HEADER GLOBAL DEL SISTEMA (RESPONSIVO MÓVIL, TABLETA Y DESKTOP) -->
-<header class="flex items-center justify-between border-b border-outline-variant/30 px-4 sm:px-6 lg:px-8 py-3 bg-surface sticky top-0 z-30 backdrop-blur-md">
+<header class="flex items-center justify-between border-b border-outline-variant px-4 sm:px-6 lg:px-8 py-2.5 bg-surface sticky top-0 z-30 backdrop-blur-md">
     <div class="flex items-center gap-3 sm:gap-6">
         <!-- Botón Hamburguesa para Móvil y Tableta (<1024px) -->
         <button type="button" 
                 id="btn-mobile-drawer-open"
-                class="size-9 rounded-lg bg-surface-container border border-outline-variant/50 text-on-surface hover:text-primary-container flex lg:hidden items-center justify-center transition-colors shadow-sm"
+                class="btn-tactile size-8.5 rounded-lg bg-surface-container border border-outline-variant text-on-surface hover:text-primary-container flex lg:hidden items-center justify-center shadow-sm cursor-pointer"
                 title="Abrir Menú">
-            <span class="material-symbols-outlined text-2xl">menu</span>
+            <span class="material-symbols-outlined text-xl">menu</span>
         </button>
 
-        <!-- Brand Táctico en Header (Especial para móviles) -->
-        <div class="flex items-center gap-2">
+        <!-- Brand Táctico en Header -->
+        <a href="{{ url_for('dashboard_bp.index') }}" class="flex items-center gap-2 group">
             <span class="size-2 rounded-full bg-primary-container animate-pulse"></span>
-            <span class="font-headline-sm font-bold text-xs sm:text-sm text-on-surface tracking-tight uppercase">
+            <span class="font-headline-sm font-bold text-xs sm:text-sm text-on-surface tracking-tight uppercase group-hover:text-primary-container transition-colors">
                 CPD Urban Intelligence
             </span>
-            <span class="hidden md:inline text-outline text-xs font-data-code">
+            <span class="hidden md:inline text-outline text-[11px] font-data-code">
                 // v4.2
             </span>
-        </div>
+        </a>
 
-        <!-- Buscador Táctico -->
-        <div class="relative hidden sm:block min-w-48 lg:min-w-64">
-            <span class="material-symbols-outlined absolute left-3 top-2 text-outline text-base">search</span>
-            <input class="w-full h-8 pl-8 pr-3 bg-surface-container text-xs text-on-surface placeholder:text-outline rounded border border-outline-variant/40 focus:outline-none focus:border-primary-container font-label-md transition-colors"
-                   placeholder="Filtrar clusters, vectores, keywords..." 
-                   type="text">
+        <!-- Selector de Contexto estilo Segmented Control (Apple / Emil Design) -->
+        <div class="segmented-control font-data-code text-xs shadow-inner">
+            <a href="{{ url_for('dashboard_bp.index', ctx='bolivia') }}" 
+               class="segmented-btn btn-tactile flex items-center gap-1.5 {{ 'active' if current_context != 'chicago' else '' }}"
+               title="Eje Principal: Inteligencia de Noticias de Bolivia">
+                <span>🇧🇴</span>
+                <span class="hidden sm:inline">Bolivia</span>
+            </a>
+            <a href="{{ url_for('dashboard_bp.index', ctx='chicago') }}" 
+               class="segmented-btn btn-tactile flex items-center gap-1.5 {{ 'active' if current_context == 'chicago' else '' }}"
+               title="Benchmark Secundario: Chicago (840k)">
+                <span>🇺🇸</span>
+                <span class="hidden sm:inline">Chicago</span>
+            </a>
         </div>
     </div>
 
-    <!-- Acciones Derechas: Telemetría, Modo Noche y Notificaciones -->
+    <!-- Acciones Derechas: Telemetría & Modo Noche / Día -->
     <div class="flex items-center gap-2 sm:gap-3">
-        <!-- Status Pill -->
-        <div class="hidden xl:flex items-center gap-2 px-2.5 py-1 rounded bg-surface-container border border-outline-variant/40 font-data-code text-xs text-outline">
+        <!-- Status Pill de Telemetría -->
+        <div class="hidden xl:flex items-center gap-2 px-2.5 py-1 rounded-md bg-surface-container border border-outline-variant font-data-code text-xs text-outline">
             <span class="size-2 rounded-full bg-emerald-400"></span>
-            <span class="text-on-surface">GPU T4: 41.8%</span>
+            <span class="text-on-surface">GPU T4: ONLINE</span>
         </div>
 
         <!-- Toggle Modo Día / Modo Noche -->
         {% include 'components/theme_toggle.html' %}
-
-        <!-- Botón de Notificaciones -->
-        <button type="button" 
-                class="size-8.5 rounded-lg bg-surface-container border border-outline-variant/40 text-on-surface-variant hover:text-white flex items-center justify-center transition-colors"
-                title="Alertas Tácticas">
-            <span class="material-symbols-outlined text-lg">notifications</span>
-        </button>
     </div>
 </header>

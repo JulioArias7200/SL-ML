@@ -40,24 +40,24 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary-container": "#00e5ff",
-                        "primary": "#c3f5ff",
-                        "on-primary": "#00363d",
-                        "surface": "#0f131c",
-                        "surface-container-lowest": "#0a0e17",
-                        "surface-container-low": "#181b25",
-                        "surface-container": "#1c1f29",
-                        "surface-container-high": "#262a34",
-                        "surface-container-highest": "#31353f",
-                        "on-surface": "#dfe2ef",
-                        "on-surface-variant": "#bac9cc",
-                        "outline": "#849396",
-                        "outline-variant": "#3b494c",
+                        "primary-container": "var(--primary-neon)",
+                        "primary": "var(--primary-neon)",
+                        "on-primary": "var(--primary-contrast)",
+                        "surface": "var(--surface-main)",
+                        "surface-container-lowest": "var(--surface-container-lowest)",
+                        "surface-container-low": "var(--surface-container-low)",
+                        "surface-container": "var(--surface-container)",
+                        "surface-container-high": "var(--surface-container-high)",
+                        "surface-container-highest": "var(--surface-container-highest)",
+                        "on-surface": "var(--text-primary)",
+                        "on-surface-variant": "var(--text-muted)",
+                        "outline": "var(--text-muted)",
+                        "outline-variant": "var(--border-color)",
+                        "background": "var(--bg-page)",
                         "secondary": "#cabeff",
                         "secondary-container": "#4a36a0",
                         "tertiary": "#ffe7e6",
-                        "error": "#ffb4ab",
-                        "background": "#0f131c"
+                        "error": "#ffb4ab"
                     },
                     fontFamily: {
                         "body-md": ["Inter", "sans-serif"],
@@ -66,8 +66,8 @@
                         "headline-sm": ["Inter", "sans-serif"],
                         "data-code": ["JetBrains Mono", "monospace"],
                         "data-display": ["JetBrains Mono", "monospace"],
-                        "label-md": ["JetBrains Mono", "monospace"],
-                        "label-sm": ["JetBrains Mono", "monospace"]
+                        "label-md": ["Inter", "sans-serif"],
+                        "label-sm": ["Inter", "sans-serif"]
                     }
                 }
             }
@@ -75,7 +75,7 @@
     </script>
 
     <!-- Estilos Tácticos & Modo Noche -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=4.3.0">
     {% block extra_head %}{% endblock %}
 </head>
 

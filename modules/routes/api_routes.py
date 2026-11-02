@@ -3,8 +3,37 @@ from modules.services.kmeans_nlp_service import KMeansNLPService
 from modules.services.spatial_service import SpatialDensityService
 from modules.services.data_service import DataService
 from modules.services.webgis_service import WebGISService
+from modules.services.reduction_service import ReductionService
+from modules.services.bolivia_service import BoliviaService
+from modules.services.chicago_service import ChicagoService
 
 api_bp = Blueprint('api_bp', __name__, url_prefix='/api/v1')
+
+@api_bp.route('/reduction/data', methods=['GET'])
+def reduction_data():
+    algo = request.args.get('algo', 'pca').lower()
+    data = ReductionService.get_algorithm_data(algo)
+    return jsonify(data)
+
+@api_bp.route('/bolivia/topics', methods=['GET'])
+def bolivia_topics():
+    return jsonify(BoliviaService.LDA_TOPICS)
+
+@api_bp.route('/bolivia/anomalies', methods=['GET'])
+def bolivia_anomalies():
+    return jsonify(BoliviaService.get_anomalies_analysis())
+
+@api_bp.route('/chicago/gmm_predict', methods=['POST'])
+def chicago_gmm_predict():
+    data = request.get_json() or {}
+    try:
+        lat = float(data.get('lat', 41.8781))
+        lon = float(data.get('lon', -87.6298))
+    except (ValueError, TypeError):
+        return jsonify({"error": "Parámetros lat/lon inválidos"}), 400
+    res = ChicagoService.simulate_gmm_risk(lat, lon)
+    return jsonify(res)
+
 
 @api_bp.route('/webgis/geojson', methods=['GET'])
 def webgis_geojson():

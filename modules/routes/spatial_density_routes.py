@@ -4,6 +4,7 @@ from modules.services.data_service import DataService
 
 spatial_density_bp = Blueprint('spatial_density_bp', __name__)
 
+@spatial_density_bp.route('/jerarquico-densidad')
 @spatial_density_bp.route('/espacial-densidad')
 def view():
     telemetry = DataService.get_dashboard_summary()["hardware_telemetry"]

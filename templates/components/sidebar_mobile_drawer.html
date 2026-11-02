@@ -3,76 +3,90 @@
      class="drawer-backdrop fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden flex">
     
     <div id="mobile-drawer-panel" 
-         class="drawer-panel w-72 max-w-[85vw] h-full bg-surface-container-low border-r border-outline-variant/50 p-5 flex flex-col justify-between shadow-2xl relative">
+         class="drawer-panel w-72 max-w-[85vw] h-full bg-surface-container-low border-r border-outline-variant p-4 flex flex-col justify-between shadow-2xl relative select-none">
         
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col gap-5">
             <!-- Header del Drawer con botón de cierre -->
-            <div class="flex items-center justify-between pb-3 border-b border-outline-variant/30">
+            <div class="flex items-center justify-between pb-3 border-b border-outline-variant">
                 <div class="flex items-center gap-2.5">
-                    <div class="size-9 rounded border border-primary-container/40 bg-surface-container-high flex items-center justify-center text-primary-container shadow-sm">
-                        <span class="material-symbols-outlined text-xl">shield</span>
+                    <div class="size-8.5 rounded-lg border border-primary-container/40 bg-surface-container-high flex items-center justify-center text-primary-container shadow-sm">
+                        <span class="material-symbols-outlined text-lg">shield</span>
                     </div>
                     <div>
                         <h2 class="text-on-surface text-sm font-bold tracking-tight">CPD ANALYTICS</h2>
-                        <span class="text-outline text-[10px] font-data-code">CHICAGO ML-OPS</span>
+                        <span class="text-outline text-[10px] font-data-code">MULTI-ALGORITHM ML-OPS</span>
                     </div>
                 </div>
 
                 <!-- Botón de cerrar drawer -->
                 <button type="button" 
                         id="btn-mobile-drawer-close"
-                        class="size-8 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant flex items-center justify-center"
+                        class="btn-tactile size-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant flex items-center justify-center cursor-pointer"
                         title="Cerrar Menú">
                     <span class="material-symbols-outlined text-xl">close</span>
                 </button>
             </div>
 
             <!-- Navegación Móvil -->
-            <nav class="flex flex-col gap-2 font-label-md">
+            <nav class="flex flex-col gap-1 font-body-md text-xs overflow-y-auto max-h-[65vh]">
+                <span class="px-2.5 text-[10px] font-bold uppercase tracking-wider text-outline font-data-code mb-0.5">Exploración Core</span>
+
                 <a href="{{ url_for('dashboard_bp.index') }}" 
-                   class="flex items-center gap-3 px-3.5 py-3 rounded-lg text-sm font-semibold transition-all {{ 'bg-surface-container-high border-l-4 border-primary-container text-primary-container' if active_page == 'dashboard' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
-                    <span class="material-symbols-outlined text-xl">dashboard</span>
+                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'dashboard' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                    <span class="material-symbols-outlined text-lg">dashboard</span>
                     <span>Dashboard General</span>
                 </a>
 
-                <a href="{{ url_for('kmeans_nlp_bp.view') }}" 
-                   class="flex items-center gap-3 px-3.5 py-3 rounded-lg text-sm font-semibold transition-all {{ 'bg-surface-container-high border-l-4 border-primary-container text-primary-container' if active_page == 'kmeans-nlp' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
-                    <span class="material-symbols-outlined text-xl">memory</span>
-                    <span>K-Means & NLP</span>
+                <a href="{{ url_for('webgis_bp.globo_3d') }}" 
+                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'globo-3d' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                    <span class="material-symbols-outlined text-lg">public</span>
+                    <span>Globo 3D // WebGIS</span>
                 </a>
+
+                <div class="my-1.5 border-t border-outline-variant"></div>
+                <span class="px-2.5 text-[10px] font-bold uppercase tracking-wider text-outline font-data-code mb-0.5">Laboratorio (26/29 Oct)</span>
+
+                <a href="{{ url_for('reduction_bp.view') }}" 
+                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'reduccion-espacios' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                    <span class="material-symbols-outlined text-lg">scatter_plot</span>
+                    <span>Reducción 2D (PCA/UMAP)</span>
+                </a>
+
+                <a href="{{ url_for('nlp_topics_bp.view') }}" 
+                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'nlp-topicos' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                    <span class="material-symbols-outlined text-lg">article</span>
+                    <span>NLP & Tópicos LDA</span>
+                </a>
+
+                <a href="{{ url_for('anomaly_gmm_bp.view') }}" 
+                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'anomalias-probabilistico' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                    <span class="material-symbols-outlined text-lg">crisis_alert</span>
+                    <span>Anomalías (AE) & GMM</span>
+                </a>
+
+                <div class="my-1.5 border-t border-outline-variant"></div>
+                <span class="px-2.5 text-[10px] font-bold uppercase tracking-wider text-outline font-data-code mb-0.5">Clustering Clásico</span>
 
                 <a href="{{ url_for('spatial_density_bp.view') }}" 
-                   class="flex items-center gap-3 px-3.5 py-3 rounded-lg text-sm font-semibold transition-all {{ 'bg-surface-container-high border-l-4 border-primary-container text-primary-container' if active_page == 'espacial-densidad' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
-                    <span class="material-symbols-outlined text-xl">explore</span>
-                    <span>Geoespacial & Densidad</span>
+                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'espacial-densidad' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                    <span class="material-symbols-outlined text-lg">account_tree</span>
+                    <span>Jerárquico & Densidad</span>
                 </a>
 
-                <a href="{{ url_for('webgis_bp.globo_3d') }}" 
-                   class="flex items-center gap-3 px-3.5 py-3 rounded-lg text-sm font-semibold transition-all {{ 'bg-surface-container-high border-l-4 border-primary-container text-primary-container' if active_page == 'globo-3d' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
-                    <span class="material-symbols-outlined text-xl">public</span>
-                    <span>Globo 3D // Bolivia</span>
+                <a href="{{ url_for('kmeans_nlp_bp.view') }}" 
+                   class="btn-tactile flex items-center gap-2.5 px-3 py-2 rounded-md transition-colors {{ 'bg-primary-container/10 border-l-3 border-primary-container text-primary-container font-semibold' if active_page == 'kmeans-nlp' else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container' }}">
+                    <span class="material-symbols-outlined text-lg">data_thresholding</span>
+                    <span>K-Means Codo/Silueta</span>
                 </a>
             </nav>
         </div>
 
         <!-- Telemetría & Modo Noche en Drawer Móvil -->
-        <div class="flex flex-col gap-3 pt-4 border-t border-outline-variant/30 font-data-code">
+        <div class="flex flex-col gap-2 pt-3 border-t border-outline-variant font-data-code">
             <div class="flex items-center justify-between">
                 <span class="text-xs text-outline">Tema de Interfaz:</span>
                 {% include 'components/theme_toggle.html' %}
             </div>
-            
-            <div class="p-2.5 rounded bg-surface-container border border-outline-variant/40 text-[11px] text-outline space-y-1">
-                <div class="flex justify-between items-center text-on-surface">
-                    <span class="font-bold text-primary-container">GPU ENGINE</span>
-                    <span class="text-emerald-400 font-semibold text-[10px]">99.4% ONLINE</span>
-                </div>
-                <div class="flex justify-between">
-                    <span>VRAM:</span>
-                    <span class="text-on-surface">6.7 / 16.0 GB (41.8%)</span>
-                </div>
-            </div>
         </div>
-
     </div>
 </div>

@@ -1,0 +1,171 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}CPD Analytics // Minería de Texto & Tópicos LDA (Bolivia){% endblock %}
+
+{% block content %}
+<div class="p-4 sm:p-6 lg:p-8 space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-outline-variant/30">
+        <div>
+            <div class="flex items-center gap-2">
+                <span class="inline-flex size-2 rounded-full bg-primary-container animate-pulse"></span>
+                <span class="text-xs font-bold uppercase tracking-wider text-primary-container font-data-code">
+                    Módulo No Supervisado // Latent Dirichlet Allocation (LDA)
+                </span>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight text-on-surface mt-1">
+                Minería de Texto & Modelado de Tópicos Latentes
+            </h1>
+            <p class="text-xs sm:text-sm text-outline max-w-3xl mt-1">
+                Descubrimiento temático automático sobre el corpus de noticias policiales en Bolivia mediante distribuciones multinomiales de Dirichlet y vectorización TF-IDF.
+            </p>
+        </div>
+
+        <div class="px-3 py-1.5 rounded-lg bg-surface-container border border-outline-variant/40 font-data-code text-xs text-outline">
+            Corpus: <span class="text-primary-container font-bold">{{ total_notes }} notas analizadas</span>
+        </div>
+    </div>
+
+    <!-- Fila 1: Tarjetas de los 5 Tópicos LDA -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {% for tid, topic in topics.items() %}
+        <div class="p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm flex flex-col justify-between hover:border-primary-container/40 transition-all">
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <span class="px-2.5 py-0.5 rounded text-[11px] font-bold font-data-code uppercase" 
+                          style="background: {{ topic.hex }}25; color: {{ topic.hex }}; border: 1px solid {{ topic.hex }}50;">
+                        TÓPICO #{{ topic.id }}
+                    </span>
+                    <span class="text-xs text-outline font-data-code">LDA Dirichlet</span>
+                </div>
+                <h3 class="text-sm font-bold text-on-surface mb-2 leading-snug">
+                    {{ topic.title }}
+                </h3>
+                <p class="text-xs text-on-surface-variant mb-4 leading-relaxed">
+                    {{ topic.desc }}
+                </p>
+            </div>
+
+            <div>
+                <span class="text-[10px] text-outline uppercase font-bold tracking-wider font-data-code block mb-1.5">
+                    Términos Dominantes:
+                </span>
+                <div class="flex flex-wrap gap-1.5">
+                    {% for word in topic.top_words %}
+                    <span class="px-2 py-0.5 rounded bg-surface-container-high text-[11px] font-data-code text-on-surface border border-outline-variant/30">
+                        {{ word }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Fila 2: Clasificador Interactivo & Tabla de Noticias -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Clasificador de Texto en Vivo -->
+        <div class="p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div>
+                <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider font-data-code flex items-center gap-2 mb-2">
+                    <span class="material-symbols-outlined text-primary-container">psychology_alt</span>
+                    Clasificador Semántico en Vivo
+                </h3>
+                <p class="text-xs text-outline mb-4">
+                    Ingresa el fragmento de un nuevo reporte periodístico para proyectarlo sobre los tópicos LDA y estimar su categoría de delito.
+                </p>
+
+                <textarea id="live-text-input" 
+                          class="w-full h-32 p-3 bg-surface-container-lowest text-xs text-on-surface placeholder:text-outline rounded border border-outline-variant/40 focus:border-primary-container focus:outline-none font-label-md resize-none"
+                          placeholder="Ejemplo: Dos sujetos a bordo de una motocicleta amenazaron a una transeúnte con un arma de fuego en el segundo anillo para sustraerle el celular y la cartera..."></textarea>
+            </div>
+
+            <div class="mt-4 space-y-3">
+                <button type="button" 
+                        id="btn-classify-text" 
+                        class="w-full py-2.5 rounded bg-primary-container text-surface-container-lowest font-bold font-data-code text-xs uppercase tracking-wider hover:brightness-110 transition-all flex items-center justify-center gap-2 shadow-sm">
+                    <span class="material-symbols-outlined text-sm">send</span>
+                    <span>Proyectar Tópico & Clúster</span>
+                </button>
+
+                <!-- Resultado de Inferencia -->
+                <div id="classification-result" class="hidden p-3 rounded bg-surface-container-high border border-primary-container/40 font-data-code text-xs space-y-1.5">
+                    <div class="flex justify-between items-center text-primary-container font-bold">
+                        <span id="res-cluster-title">CLUSTER ASIGNADO</span>
+                        <span id="res-confidence">94.2%</span>
+                    </div>
+                    <p id="res-description" class="text-on-surface-variant text-[11px] leading-tight"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Muestra de Artículos Etiquetados -->
+        <div class="lg:col-span-2 p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm">
+            <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider font-data-code mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container">feed</span>
+                Corpus Policial Etiquetado Automáticamente
+            </h3>
+
+            <div class="overflow-x-auto max-h-[380px] custom-scrollbar">
+                <table class="w-full text-left font-label-md text-xs">
+                    <thead class="bg-surface-container-high text-outline text-[11px] uppercase tracking-wider font-data-code sticky top-0">
+                        <tr>
+                            <th class="p-2.5">Título del Hecho</th>
+                            <th class="p-2.5">Ciudad</th>
+                            <th class="p-2.5">Delito</th>
+                            <th class="p-2.5">Tópico LDA</th>
+                            <th class="p-2.5 text-right">Enlace</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-outline-variant/20">
+                        {% for n in sample_notes %}
+                        <tr class="hover:bg-surface-container-high/40 transition-colors">
+                            <td class="p-2.5 text-on-surface font-medium max-w-xs truncate" title="{{ n.titulo }}">
+                                {{ n.titulo }}
+                            </td>
+                            <td class="p-2.5 text-outline whitespace-nowrap">{{ n.ciudad }}</td>
+                            <td class="p-2.5 text-on-surface-variant whitespace-nowrap">{{ n.delito }}</td>
+                            <td class="p-2.5 whitespace-nowrap">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold font-data-code"
+                                      style="background: {{ topics[n.tema_lda].hex }}20; color: {{ topics[n.tema_lda].hex }};">
+                                    #{{ n.tema_lda }}
+                                </span>
+                            </td>
+                            <td class="p-2.5 text-right whitespace-nowrap">
+                                <a href="{{ n.url }}" target="_blank" rel="noopener noreferrer" 
+                                   class="text-primary-container hover:underline font-data-code text-[11px]">
+                                    Ver nota ↗
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('btn-classify-text').addEventListener('click', () => {
+    const text = document.getElementById('live-text-input').value.trim();
+    if (!text) return;
+
+    fetch('/api/v1/predict_nlp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const box = document.getElementById('classification-result');
+        box.classList.remove('hidden');
+        document.getElementById('res-cluster-title').textContent = data.title;
+        document.getElementById('res-confidence').textContent = data.confidence;
+        document.getElementById('res-description').textContent = data.description;
+    })
+    .catch(err => console.error("Error en inferencia:", err));
+});
+</script>
+{% endblock %}
+
