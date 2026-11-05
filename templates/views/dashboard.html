@@ -5,45 +5,78 @@
 {% block content %}
 <div class="p-4 sm:p-6 lg:p-8 flex flex-col gap-6 max-w-[1700px] w-full mx-auto select-none">
     
-    <!-- Header Ejecutivo Desaturado (Show, don't tell) -->
-    <section class="flex flex-col gap-3 border-b border-outline-variant pb-4">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div>
-                <div class="flex items-center gap-2">
-                    <span class="text-[10px] font-data-code px-2 py-0.5 rounded bg-primary-container/10 text-primary-container border border-primary-container/30 uppercase tracking-widest font-bold">
-                        CENTRO DE MANDO // {{ 'EJE PRINCIPAL' if current_context != 'chicago' else 'BENCHMARK SECUNDARIO' }}
-                    </span>
-                    <span class="text-outline text-xs font-data-code">•</span>
-                    <span class="text-xs font-data-code text-outline uppercase">{{ summary.contexto }}</span>
-                </div>
-                
-                <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-on-surface uppercase mt-1">
-                    SISTEMA DE INTELIGENCIA URBANA &amp; APRENDIZAJE NO SUPERVISADO
-                </h1>
+    <!-- HERO SECTION TÁCTICO POLICIAL // CINEMATIC POLICE OPERATIONS & ML CORE -->
+    <section class="relative rounded-2xl overflow-hidden border border-outline-variant/80 shadow-2xl p-6 sm:p-8 lg:p-10 transition-all"
+             style="background-image: linear-gradient(135deg, rgba(3, 7, 18, 0.94) 0%, rgba(10, 15, 29, 0.80) 50%, rgba(3, 7, 18, 0.96) 100%), radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.12) 0%, transparent 60%), url('{{ url_for('static', filename='img/hero_police_security.jpg') }}'); background-size: cover; background-position: center;">
+        
+        <!-- Línea sutil de acento policial superior -->
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-75"></div>
 
-                <!-- Cinta de Micro-Chips Métricos (Sin saturación de texto) -->
-                <div class="flex flex-wrap items-center gap-2 mt-2 font-data-code text-xs">
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container border border-outline-variant text-on-surface">
-                        <span class="material-symbols-outlined text-sm text-primary-container">dataset</span>
-                        <span>Corpus: <strong class="text-on-surface">{{ "{:,}".format(summary.total_records) }}</strong> hechos ({{ summary.period }})</span>
-                    </span>
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container border border-outline-variant text-on-surface">
-                        <span class="material-symbols-outlined text-sm text-amber-400">model_training</span>
-                        <span>10 Algoritmos No Supervisados</span>
-                    </span>
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container border border-outline-variant text-on-surface">
-                        <span class="material-symbols-outlined text-sm text-emerald-400">bolt</span>
-                        <span>Latencia &lt; 15 ms &bull; En Memoria</span>
-                    </span>
-                </div>
+        <div class="relative z-10 flex flex-col gap-4 max-w-5xl">
+            <!-- 1. Tracker Técnico Monospace (Estilo FIRMS NASA) -->
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-data-code text-[11px] font-bold uppercase tracking-widest backdrop-blur-md shadow-sm">
+                    <span class="size-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span>POLICE INTELLIGENCE CORE // {{ 'EJE PRINCIPAL BOLIVIA' if current_context != 'chicago' else 'BENCHMARK CPD CHICAGO' }}</span>
+                </span>
+                <span class="text-slate-500 text-xs font-data-code">•</span>
+                <span class="px-2 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-[10px] font-data-code text-slate-300 uppercase tracking-wider backdrop-blur-sm">
+                    {{ summary.contexto }}
+                </span>
+                <span class="ml-auto hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 font-data-code text-[10px] font-semibold backdrop-blur-sm">
+                    <span class="size-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>MOTOR ANALÍTICO ACTIVO</span>
+                </span>
             </div>
 
-            <!-- Status de Telemetría -->
-            <div class="flex items-center gap-2 self-start lg:self-center">
-                <span class="px-3 py-1.5 rounded-lg bg-surface-container border border-outline-variant text-xs font-data-code text-on-surface flex items-center gap-2 shadow-sm">
-                    <span class="size-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>MOTOR ANALÍTICO LISTO</span>
-                </span>
+            <!-- 2. Título de Gran Impacto (Estilo Sabor Auténtico / FIRMS) -->
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black tracking-tight text-white uppercase leading-tight font-headline-lg drop-shadow-md">
+                SISTEMA DE INTELIGENCIA POLICIAL &amp; PATRONES DELICTIVOS
+            </h1>
+
+            <!-- 3. Subtítulo Descriptivo Ejecutivo -->
+            <p class="text-sm sm:text-base text-slate-300 max-w-3xl font-body-md leading-relaxed font-normal">
+                Dashboard analítico de Machine Learning No Supervisado sobre <strong class="text-white font-semibold">{{ "{:,}".format(summary.total_records) }}</strong> hechos delictivos ({{ summary.period }}). Minería de densidad espacial con métrica esférica (DBSCAN/OPTICS), superficies de probabilidad posterior (GMM), taxonomías jerárquicas territoriales (Ward) y detección neuronal de anomalías críticas (Autoencoders).
+            </p>
+
+            <!-- 4. Botones Tácticos de Acción Rápida (CTAs) & Micro-Badges de Estado -->
+            <div class="flex flex-wrap items-center justify-between gap-4 pt-3 mt-1 border-t border-slate-800/80">
+                <!-- Botones de Salto Directo a Suites -->
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <a href="{{ url_for('webgis_bp.globo_3d', ctx=current_context) }}" 
+                       class="btn-tactile inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs font-data-code uppercase tracking-wider transition-all shadow-lg shadow-cyan-500/25">
+                        <span class="material-symbols-outlined text-base">public</span>
+                        <span>EXPLORAR GLOBO 3D WEBGIS</span>
+                    </a>
+
+                    <a href="{{ url_for('anomaly_gmm_bp.view', ctx=current_context) }}" 
+                       class="btn-tactile inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 font-semibold text-xs font-data-code uppercase tracking-wider transition-all backdrop-blur-md">
+                        <span class="material-symbols-outlined text-base text-rose-400">crisis_alert</span>
+                        <span>ANOMALÍAS &amp; GMM</span>
+                    </a>
+
+                    <a href="{{ url_for('reduction_bp.view', ctx=current_context) }}" 
+                       class="btn-tactile inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 font-semibold text-xs font-data-code uppercase tracking-wider transition-all backdrop-blur-md">
+                        <span class="material-symbols-outlined text-base text-purple-400">scatter_plot</span>
+                        <span>REDUCCIÓN 2D // UMAP</span>
+                    </a>
+                </div>
+
+                <!-- Cinta de Badges de Telemetría Táctica (Tipo FIRMS: FAI, CÁLIDO, CRÍTICO) -->
+                <div class="flex flex-wrap items-center gap-1.5 font-data-code text-[11px]">
+                    <span class="px-2.5 py-1 rounded bg-slate-900/90 border border-outline-variant text-slate-300 font-semibold flex items-center gap-1.5 backdrop-blur-md">
+                        <span class="material-symbols-outlined text-sm text-amber-400">model_training</span>
+                        <span>10 Algoritmos</span>
+                    </span>
+                    <span class="px-2.5 py-1 rounded bg-slate-900/90 border border-outline-variant text-slate-300 font-semibold flex items-center gap-1.5 backdrop-blur-md">
+                        <span class="material-symbols-outlined text-sm text-cyan-400">bolt</span>
+                        <span>Latencia &lt;15 ms</span>
+                    </span>
+                    <span class="px-2.5 py-1 rounded bg-slate-900/90 border border-outline-variant text-slate-300 font-semibold flex items-center gap-1.5 backdrop-blur-md">
+                        <span class="material-symbols-outlined text-sm text-emerald-400">verified</span>
+                        <span>Capa Gold</span>
+                    </span>
+                </div>
             </div>
         </div>
     </section>

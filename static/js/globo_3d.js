@@ -19,9 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterCategoryEl = document.getElementById('filter-category');
     const filterCityEl = document.getElementById('filter-city');
     const btnToggleProj = document.getElementById('btn-toggle-projection');
+    const btnToggleCluster = document.getElementById('btn-toggle-cluster');
     const bottomControlsEl = document.querySelector('.hud-bottom-controls');
     const btnSwitchBolivia = document.getElementById('btn-switch-bolivia');
     const btnSwitchChicago = document.getElementById('btn-switch-chicago');
+
+    let isClusteringEnabled = true;
 
     // Selectores del Modo Algorítmico (Delito / DBSCAN / OPTICS / GMM / Ward)
     const btnModeCategory = document.getElementById('btn-mode-category');
@@ -39,6 +42,269 @@ document.addEventListener('DOMContentLoaded', () => {
     const legendWard = document.getElementById('legend-ward-section');
 
     let currentClusterMode = 'category';
+
+    // Modelado Gaussiano Multivariante (GMM): Parámetros de Covarianza y Elipses 2-sigma
+    const GMM_COMPONENTS_DATA = {
+        bolivia: [
+            {
+                id: 0,
+                label: "GMM #0 (π=0.42)",
+                name: "SCZ Casco & Equipetrol",
+                center: [-63.1821, -17.7833],
+                a: 6800, // Semi-eje mayor en metros
+                b: 3900, // Semi-eje menor en metros
+                angle: 45, // Inclinación autovector en grados
+                color: "#00e5ff",
+                weight: 0.42,
+                description: "Núcleo de alta densidad transaccional y delitos patrimoniales (SCZ Casco)."
+            },
+            {
+                id: 1,
+                label: "GMM #1 (π=0.28)",
+                name: "Plan 3000 / Los Lotes",
+                center: [-63.1380, -17.8350],
+                a: 5800,
+                b: 3200,
+                angle: -35,
+                color: "#ff3366",
+                weight: 0.28,
+                description: "Cuenca urbana periférica de alta tasa de agresión física y robo agravado."
+            },
+            {
+                id: 2,
+                label: "GMM #2 (π=0.18)",
+                name: "Cochabamba Cercado",
+                center: [-66.1600, -17.3950],
+                a: 6500,
+                b: 2800,
+                angle: 20,
+                color: "#34d399",
+                weight: 0.18,
+                description: "Eje metropolitano de delitos patrimoniales y lesiones en Cercado y Cancha."
+            },
+            {
+                id: 3,
+                label: "GMM #3 (π=0.12)",
+                name: "La Paz & El Alto",
+                center: [-68.1450, -16.5020],
+                a: 5500,
+                b: 2500,
+                angle: -40,
+                color: "#818cf8",
+                weight: 0.12,
+                description: "Corredor andino de alta concentración topográfica (El Prado / Ceja)."
+            }
+        ],
+        chicago: [
+            {
+                id: 1,
+                label: "GMM #1 (π=0.35)",
+                name: "The Loop Central",
+                center: [-87.6250, 41.8820],
+                a: 3200,
+                b: 1800,
+                angle: 15,
+                color: "#00e5ff",
+                weight: 0.35,
+                description: "Alta densidad de hurtos diurnos (Theft) y delitos patrimoniales comerciales."
+            },
+            {
+                id: 2,
+                label: "GMM #2 (π=0.40)",
+                name: "West Side Garfield/Austin",
+                center: [-87.7150, 41.8800],
+                a: 4200,
+                b: 2200,
+                angle: -10,
+                color: "#ff3366",
+                weight: 0.40,
+                description: "Foco crítico de agresiones (Battery), robos y armas (Distritos 11 & 15)."
+            },
+            {
+                id: 3,
+                label: "GMM #3 (π=0.25)",
+                name: "South Side Englewood",
+                center: [-87.6450, 41.7750],
+                a: 4000,
+                b: 2400,
+                angle: 5,
+                color: "#ffaa00",
+                weight: 0.25,
+                description: "Corredor sur con concentración de delitos violentos y asaltos (Distrito 7)."
+            }
+        ]
+    };
+
+    // Función Geodésica: Construye un Polígono regular de 64 vértices rotado según matriz de covarianza
+    function createEllipsePolygon(centerLng, centerLat, a, b, angleDeg, steps = 64) {
+        const coordinates = [];
+        const angleRad = (angleDeg * Math.PI) / 180;
+        const cosA = Math.cos(angleRad);
+        const sinA = Math.sin(angleRad);
+        const latRad = (centerLat * Math.PI) / 180;
+        const metersPerDegreeLat = 111320;
+        const metersPerDegreeLng = 111320 * Math.cos(latRad);
+
+        for (let i = 0; i <= steps; i++) {
+            const theta = (i * 2 * Math.PI) / steps;
+            const ex = a * Math.cos(theta);
+            const ey = b * Math.sin(theta);
+            const xRot = ex * cosA - ey * sinA;
+            const yRot = ex * sinA + ey * cosA;
+            const lng = centerLng + (xRot / metersPerDegreeLng);
+            const lat = centerLat + (yRot / metersPerDegreeLat);
+            coordinates.push([lng, lat]);
+        }
+        if (coordinates.length > 0) {
+            coordinates[coordinates.length - 1] = coordinates[0];
+        }
+        return [coordinates];
+    }
+
+    // Genera GeoJSON de Elipses 2-sigma (86.5% de la masa probabilística de la Gaussiana)
+    function generateGmmEllipsesGeojson(ctx) {
+        const components = GMM_COMPONENTS_DATA[ctx] || GMM_COMPONENTS_DATA['bolivia'];
+        const features = components.map(comp => ({
+            type: 'Feature',
+            geometry: {
+                type: 'Polygon',
+                coordinates: createEllipsePolygon(comp.center[0], comp.center[1], comp.a, comp.b, comp.angle, 64)
+            },
+            properties: {
+                id: comp.id,
+                name: comp.name,
+                label: comp.label,
+                color: comp.color,
+                weight: comp.weight,
+                weight_percent: Math.round(comp.weight * 100),
+                a: comp.a,
+                b: comp.b,
+                angle: comp.angle,
+                center_lng: comp.center[0],
+                center_lat: comp.center[1],
+                description: comp.description
+            }
+        }));
+
+        return {
+            type: 'FeatureCollection',
+            features: features
+        };
+    }
+
+    // Genera GeoJSON de Centroides y Etiquetas de Ponderación (π)
+    function generateGmmCentroidsGeojson(ctx) {
+        const components = GMM_COMPONENTS_DATA[ctx] || GMM_COMPONENTS_DATA['bolivia'];
+        const features = components.map(comp => ({
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [comp.center[0], comp.center[1]]
+            },
+            properties: {
+                id: comp.id,
+                name: comp.name,
+                label: comp.label,
+                color: comp.color,
+                weight: comp.weight,
+                weight_percent: Math.round(comp.weight * 100),
+                a: comp.a,
+                b: comp.b,
+                angle: comp.angle,
+                center_lng: comp.center[0],
+                center_lat: comp.center[1],
+                description: comp.description
+            }
+        }));
+
+        return {
+            type: 'FeatureCollection',
+            features: features
+        };
+    }
+
+    // Actualiza el contenido de las leyendas dinámicamente según el contexto (Bolivia ↔ Chicago)
+    function updateLegends(ctx) {
+        if (ctx === 'chicago') {
+            if (legendDbscan) {
+                legendDbscan.innerHTML = `
+                    <span class="text-[10px] text-cyan-400 uppercase tracking-wider block font-bold mb-1">DBSCAN Hotspots</span>
+                    <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">#1 The Loop</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">#2 Harrison West</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#ffaa00]"></span><span class="text-on-surface text-[11px]">#3 Englewood South</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#a855f7]"></span><span class="text-on-surface text-[11px]">#4 Near West UIC</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Ruido Espacial (-1)</span></div>
+                `;
+            }
+            if (legendOptics) {
+                legendOptics.innerHTML = `
+                    <span class="text-[10px] text-amber-400 uppercase tracking-wider block font-bold mb-1">OPTICS Valles (&xi;)</span>
+                    <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">Valle #1 Loop (88m)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Valle #2 Harrison (125m)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#ffaa00]"></span><span class="text-on-surface text-[11px]">Valle #3 Englewood (145m)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#a855f7]"></span><span class="text-on-surface text-[11px]">Valle #4 Near West (172m)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Pico Ruido / Salto</span></div>
+                `;
+            }
+            if (legendGmm) {
+                legendGmm.innerHTML = `
+                    <span class="text-[10px] text-emerald-400 uppercase tracking-wider block font-bold mb-1">GMM Gaussianas (&pi;)</span>
+                    <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">Loop Comercial (&pi;=0.35)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">West Side (&pi;=0.40)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#ffaa00]"></span><span class="text-on-surface text-[11px]">South Side (&pi;=0.25)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Dispersión (>3&sigma;)</span></div>
+                `;
+            }
+            if (legendWard) {
+                legendWard.innerHTML = `
+                    <span class="text-[10px] text-purple-400 uppercase tracking-wider block font-bold mb-1">Ward Macro-Clusters</span>
+                    <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Macro A: West/South Side</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">Macro B: Loop Comercial</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">Macro C: Residencial</span></div>
+                `;
+            }
+        } else {
+            if (legendDbscan) {
+                legendDbscan.innerHTML = `
+                    <span class="text-[10px] text-cyan-400 uppercase tracking-wider block font-bold mb-1">DBSCAN Hotspots</span>
+                    <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">#0 Santa Cruz Core</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">#1 Cochabamba</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">#2 Plan 3000 / Lotes</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#818cf8]"></span><span class="text-on-surface text-[11px]">#5 La Paz Centro</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Ruido Espacial (-1)</span></div>
+                `;
+            }
+            if (legendOptics) {
+                legendOptics.innerHTML = `
+                    <span class="text-[10px] text-amber-400 uppercase tracking-wider block font-bold mb-1">OPTICS Valles (&xi;)</span>
+                    <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">Valle #0 SCZ (295m)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#38bdf8]"></span><span class="text-on-surface text-[11px]">Sub #1 Equipetrol (240m)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Valle #2 Plan 3000 (340m)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">Valle #7 Cochabamba (380m)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#818cf8]"></span><span class="text-on-surface text-[11px]">Valle #5 La Paz (430m)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Picos Ruido (>2500m)</span></div>
+                `;
+            }
+            if (legendGmm) {
+                legendGmm.innerHTML = `
+                    <span class="text-[10px] text-emerald-400 uppercase tracking-wider block font-bold mb-1">GMM Gaussianas (&pi;)</span>
+                    <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">SCZ Casco (&pi;=0.42)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Plan 3000 (&pi;=0.28)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">Cochabamba (&pi;=0.18)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#818cf8]"></span><span class="text-on-surface text-[11px]">La Paz / El Alto (&pi;=0.12)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Dispersión (>3&sigma;)</span></div>
+                `;
+            }
+            if (legendWard) {
+                legendWard.innerHTML = `
+                    <span class="text-[10px] text-purple-400 uppercase tracking-wider block font-bold mb-1">Ward Macro-Clusters</span>
+                    <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Macro A: Casco SCZ</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#fbbf24]"></span><span class="text-on-surface text-[11px]">Macro B: CBBA & Plan 3000</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">Macro C: La Paz & Perif.</span></div>
+                `;
+            }
+        }
+    }
 
     // Centros urbanos y distritos policiales predefinidos
     const VIEWPORTS = {
@@ -123,7 +389,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (map.getSource('webgis-events')) {
                     map.getSource('webgis-events').setData(data);
-                } else {
+                }
+                if (map.getSource('webgis-events-raw')) {
+                    map.getSource('webgis-events-raw').setData(data);
+                }
+                if (!map.getSource('webgis-events')) {
                     setupGeojsonLayers(data);
                 }
             })
@@ -132,12 +402,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 4. Capas Vectoriales de Clustering WebGL
     function setupGeojsonLayers(geojson) {
+        // 1. Fuente agrupada con WebGL Clustering (Halos con números)
         map.addSource('webgis-events', {
             type: 'geojson',
             data: geojson,
             cluster: true,
             clusterMaxZoom: 14,
             clusterRadius: 50
+        });
+
+        // 2. Fuente no agrupada para visualización continua de puntos individuales a cualquier zoom
+        map.addSource('webgis-events-raw', {
+            type: 'geojson',
+            data: geojson,
+            cluster: false
         });
 
         // Halo concéntrico exterior de clústeres
@@ -207,13 +485,56 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // 3. Fuentes GeoJSON de Elipses de Confianza GMM 2-sigma y Centroides
+        map.addSource('gmm-ellipses-source', {
+            type: 'geojson',
+            data: generateGmmEllipsesGeojson(activeContext)
+        });
+
+        map.addSource('gmm-centroids-source', {
+            type: 'geojson',
+            data: generateGmmCentroidsGeojson(activeContext)
+        });
+
+        // Capa de Relleno Translúcido de Elipses GMM 2-sigma
+        map.addLayer({
+            id: 'gmm-ellipses-fill',
+            type: 'fill',
+            source: 'gmm-ellipses-source',
+            paint: {
+                'fill-color': ['get', 'color'],
+                'fill-opacity': currentClusterMode === 'gmm' ? 0.18 : 0.0,
+                'fill-opacity-transition': { duration: 600, delay: 0 }
+            }
+        });
+
+        // Capa de Borde Geodésico Segmentado de Elipses GMM 2-sigma
+        map.addLayer({
+            id: 'gmm-ellipses-line',
+            type: 'line',
+            source: 'gmm-ellipses-source',
+            paint: {
+                'line-color': ['get', 'color'],
+                'line-width': 2.2,
+                'line-dasharray': [3, 2],
+                'line-opacity': currentClusterMode === 'gmm' ? 0.85 : 0.0,
+                'line-opacity-transition': { duration: 600, delay: 0 }
+            }
+        });
+
         // Marcadores individuales con paleta unificada para Bolivia y Chicago
         map.addLayer({
             id: 'unclustered-point',
             type: 'circle',
             source: 'webgis-events',
             filter: ['!', ['has', 'point_count']],
+            layout: { 'visibility': 'visible' },
             paint: {
+                'circle-color-transition': { duration: 550, delay: 0 },
+                'circle-radius-transition': { duration: 550, delay: 0 },
+                'circle-opacity-transition': { duration: 550, delay: 0 },
+                'circle-stroke-color-transition': { duration: 550, delay: 0 },
+                'circle-stroke-width-transition': { duration: 550, delay: 0 },
                 'circle-color': [
                     'match',
                     ['get', 'category'],
@@ -241,8 +562,78 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Marcadores individuales continuos (Modo Disperso / No Supervisado a cualquier zoom)
+        map.addLayer({
+            id: 'raw-points',
+            type: 'circle',
+            source: 'webgis-events-raw',
+            layout: { 'visibility': 'none' },
+            paint: {
+                'circle-color-transition': { duration: 550, delay: 0 },
+                'circle-radius-transition': { duration: 550, delay: 0 },
+                'circle-opacity-transition': { duration: 550, delay: 0 },
+                'circle-stroke-color-transition': { duration: 550, delay: 0 },
+                'circle-stroke-width-transition': { duration: 550, delay: 0 },
+                'circle-color': [
+                    'match',
+                    ['get', 'category'],
+                    // Bolivia
+                    'Robo Agravado / Asalto', '#ff3366',
+                    'Agresión Física y Lesiones', '#fbbf24',
+                    'Hurto / Descuidismo', '#00e5ff',
+                    'Homicidio / Asesinato', '#ff0033',
+                    'Narcotráfico / Drogas', '#34d399',
+                    // Chicago
+                    'THEFT', '#00e5ff',
+                    'BATTERY', '#ff3366',
+                    'CRIMINAL DAMAGE', '#fbbf24',
+                    'ASSAULT', '#ff5c8a',
+                    'DECEPTIVE PRACTICE', '#9d4edd',
+                    'ROBBERY', '#f97316',
+                    'MOTOR VEHICLE THEFT', '#38bdf8',
+                    'NARCOTICS', '#34d399',
+                    'WEAPONS VIOLATION', '#ef4444',
+                    /* Default */ '#38bdf8'
+                ],
+                'circle-radius': [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    2, 4.5,
+                    5, 6.0,
+                    10, 7.5,
+                    14, 9.0
+                ],
+                'circle-stroke-width': 1.8,
+                'circle-stroke-color': '#ffffff'
+            }
+        });
+
+        // Capa de Etiquetas de Centroides y Ponderación Mixtura GMM (π)
+        map.addLayer({
+            id: 'gmm-centroids-labels',
+            type: 'symbol',
+            source: 'gmm-centroids-source',
+            layout: {
+                'text-field': '{label}',
+                'text-font': ['Noto Sans Bold'],
+                'text-size': 11,
+                'text-offset': [0, 0],
+                'text-anchor': 'center',
+                'text-allow-overlap': true
+            },
+            paint: {
+                'text-color': '#ffffff',
+                'text-halo-color': '#070b12',
+                'text-halo-width': 2.5,
+                'text-opacity': currentClusterMode === 'gmm' ? 0.95 : 0.0,
+                'text-opacity-transition': { duration: 600, delay: 0 }
+            }
+        });
+
         // Aplicar estilo de color según el modo algorítmico activo
         applyClusterStyle(currentClusterMode);
+        setClusteringMode(isClusteringEnabled);
 
         // Expansión suave al hacer clic en clúster
         map.on('click', 'clusters-core', (e) => {
@@ -262,8 +653,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Clic en incidente individual: Popup táctico enriquecido con DBSCAN, OPTICS y GMM
-        map.on('click', 'unclustered-point', (e) => {
+        // Función unificada para desplegar el Popup táctico enriquecido (DBSCAN, OPTICS, GMM, Ward)
+        function handlePointClick(e) {
             const feature = e.features[0];
             const coords = feature.geometry.coordinates.slice();
             const props = feature.properties;
@@ -339,20 +730,112 @@ document.addEventListener('DOMContentLoaded', () => {
                 .setLngLat(coords)
                 .setHTML(popupContent)
                 .addTo(map);
+        }
+
+        map.on('click', 'unclustered-point', handlePointClick);
+        map.on('click', 'raw-points', handlePointClick);
+
+        // Interacción Popup Táctico para Elipses de Confianza GMM 2-sigma
+        map.on('click', 'gmm-ellipses-fill', (e) => {
+            if (currentClusterMode !== 'gmm') return;
+            const features = map.queryRenderedFeatures(e.point, { layers: ['gmm-ellipses-fill'] });
+            if (!features.length) return;
+            const props = features[0].properties;
+
+            const popupContent = `
+                <div class="news-popup-container font-data-code">
+                    <div class="flex items-center gap-1.5 mb-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${props.color};"></span>
+                        <span class="text-xs font-bold text-white uppercase">${props.name}</span>
+                    </div>
+                    <div class="text-[11px] text-emerald-400 font-semibold mb-2 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[13px]">tune</span>
+                        <span>Elipse de Confianza 2&sigma; (Masa: 86.5%)</span>
+                    </div>
+                    <div class="news-popup-meta text-[11px] space-y-1 text-slate-300">
+                        <div><span class="text-outline uppercase text-[10px] tracking-wider">PESO MIXTURA (&pi;):</span> <strong class="text-white">${props.weight_percent || (Number(props.weight) * 100).toFixed(0)}%</strong></div>
+                        <div><span class="text-outline uppercase text-[10px] tracking-wider">SEMI-EJE MAYOR (a):</span> <strong class="text-white">${Number(props.a).toLocaleString()} m</strong></div>
+                        <div><span class="text-outline uppercase text-[10px] tracking-wider">SEMI-EJE MENOR (b):</span> <strong class="text-white">${Number(props.b).toLocaleString()} m</strong></div>
+                        <div><span class="text-outline uppercase text-[10px] tracking-wider">ORIENTACIÓN AUTOVECTOR (&theta;):</span> <strong class="text-white">${props.angle}&deg;</strong></div>
+                        <div><span class="text-outline uppercase text-[10px] tracking-wider">CENTROIDE (&mu;):</span> <strong class="text-slate-400 font-mono text-[10px]">[${Number(props.center_lng).toFixed(4)}, ${Number(props.center_lat).toFixed(4)}]</strong></div>
+                        
+                        <div class="pt-2 mt-1 border-t border-slate-700/60 text-[10px] text-slate-400 leading-normal">
+                            ${props.description}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            new maplibregl.Popup({ offset: 10, closeButton: true })
+                .setLngLat(e.lngLat)
+                .setHTML(popupContent)
+                .addTo(map);
         });
 
         map.on('mouseenter', 'clusters-core', () => map.getCanvas().style.cursor = 'pointer');
         map.on('mouseleave', 'clusters-core', () => map.getCanvas().style.cursor = '');
         map.on('mouseenter', 'unclustered-point', () => map.getCanvas().style.cursor = 'pointer');
         map.on('mouseleave', 'unclustered-point', () => map.getCanvas().style.cursor = '');
+        map.on('mouseenter', 'raw-points', () => map.getCanvas().style.cursor = 'pointer');
+        map.on('mouseleave', 'raw-points', () => map.getCanvas().style.cursor = '');
+        map.on('mouseenter', 'gmm-ellipses-fill', () => {
+            if (currentClusterMode === 'gmm') map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', 'gmm-ellipses-fill', () => {
+            if (currentClusterMode === 'gmm') map.getCanvas().style.cursor = '';
+        });
     }
 
-    // 5. Aplicar Estilos de Shaders Dinámicos (Categoría vs DBSCAN vs OPTICS vs GMM)
+    // Helper para sincronizar propiedades visuales tanto en puntos de clúster como en puntos individuales continuos
+    function setPointsPaint(property, value) {
+        if (!map) return;
+        if (map.getLayer('unclustered-point')) {
+            map.setPaintProperty('unclustered-point', property, value);
+        }
+        if (map.getLayer('raw-points')) {
+            map.setPaintProperty('raw-points', property, value);
+        }
+    }
+
+    // Conmutador del modo de visualización: Agrupación WebGL (halos numéricos) vs Puntos Individuales
+    function setClusteringMode(enabled) {
+        isClusteringEnabled = enabled;
+
+        const clusterVis = enabled ? 'visible' : 'none';
+        const rawVis = enabled ? 'none' : 'visible';
+
+        if (map && map.getStyle()) {
+            if (map.getLayer('clusters-halo')) map.setLayoutProperty('clusters-halo', 'visibility', clusterVis);
+            if (map.getLayer('clusters-core')) map.setLayoutProperty('clusters-core', 'visibility', clusterVis);
+            if (map.getLayer('cluster-count')) map.setLayoutProperty('cluster-count', 'visibility', clusterVis);
+            if (map.getLayer('unclustered-point')) map.setLayoutProperty('unclustered-point', 'visibility', clusterVis);
+            if (map.getLayer('raw-points')) map.setLayoutProperty('raw-points', 'visibility', rawVis);
+        }
+
+        const clusterBadge = document.getElementById('cluster-toggle-badge');
+        const clusterIcon = document.getElementById('cluster-toggle-icon');
+
+        if (btnToggleCluster && clusterBadge && clusterIcon) {
+            if (enabled) {
+                btnToggleCluster.classList.add('active');
+                clusterBadge.textContent = 'AGRUPADO';
+                clusterBadge.className = 'hud-action-badge';
+                clusterIcon.textContent = 'bubble_chart';
+            } else {
+                btnToggleCluster.classList.remove('active');
+                clusterBadge.textContent = 'INDIVIDUAL';
+                clusterBadge.className = 'hud-action-badge bg-cyan-500/20 text-cyan-300 border border-cyan-500/40';
+                clusterIcon.textContent = 'scatter_plot';
+            }
+        }
+    }
+
+    // 5. Aplicar Estilos de Shaders Dinámicos (Categoría vs DBSCAN vs OPTICS vs GMM vs Ward)
     function applyClusterStyle(mode) {
-        if (!map || !map.getLayer('unclustered-point')) return;
+        if (!map || (!map.getLayer('unclustered-point') && !map.getLayer('raw-points'))) return;
 
         if (mode === 'category') {
-            map.setPaintProperty('unclustered-point', 'circle-color', [
+            setPointsPaint('circle-color', [
                 'match',
                 ['get', 'category'],
                 // Bolivia
@@ -373,13 +856,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 'WEAPONS VIOLATION', '#ef4444',
                 /* Default */ '#38bdf8'
             ]);
-            map.setPaintProperty('unclustered-point', 'circle-opacity', 1.0);
-            map.setPaintProperty('unclustered-point', 'circle-stroke-color', '#ffffff');
-            map.setPaintProperty('unclustered-point', 'circle-stroke-width', 2);
+            setPointsPaint('circle-radius', [
+                'interpolate', ['linear'], ['zoom'],
+                2, 4.5,
+                5, 6.0,
+                10, 7.5,
+                14, 9.0
+            ]);
+            setPointsPaint('circle-opacity', 0.95);
+            setPointsPaint('circle-stroke-color', '#ffffff');
+            setPointsPaint('circle-stroke-width', 1.8);
 
         } else if (mode === 'dbscan') {
             if (activeContext === 'chicago') {
-                map.setPaintProperty('unclustered-point', 'circle-color', [
+                setPointsPaint('circle-color', [
                     'match',
                     ['get', 'dbscan'],
                     1, '#00e5ff',
@@ -389,7 +879,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     /* Ruido */ '#64748b'
                 ]);
             } else {
-                map.setPaintProperty('unclustered-point', 'circle-color', [
+                setPointsPaint('circle-color', [
                     'match',
                     ['get', 'dbscan'],
                     0, '#00e5ff',
@@ -402,21 +892,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 ]);
             }
 
-            map.setPaintProperty('unclustered-point', 'circle-opacity', [
+            setPointsPaint('circle-radius', [
                 'case',
-                ['==', ['get', 'dbscan'], -1], 0.40,
+                ['==', ['get', 'dbscan'], -1],
+                ['interpolate', ['linear'], ['zoom'], 2, 3.0, 8, 4.8, 14, 6.5],
+                ['interpolate', ['linear'], ['zoom'], 2, 5.0, 8, 8.5, 14, 11.0]
+            ]);
+            setPointsPaint('circle-opacity', [
+                'case',
+                ['==', ['get', 'dbscan'], -1], 0.32,
                 0.95
             ]);
-            map.setPaintProperty('unclustered-point', 'circle-stroke-color', [
+            setPointsPaint('circle-stroke-color', [
                 'case',
                 ['==', ['get', 'dbscan'], -1], '#475569',
                 '#ffffff'
             ]);
-            map.setPaintProperty('unclustered-point', 'circle-stroke-width', 1.8);
+            setPointsPaint('circle-stroke-width', [
+                'case',
+                ['==', ['get', 'dbscan'], -1], 1.0,
+                2.2
+            ]);
 
         } else if (mode === 'optics') {
             if (activeContext === 'chicago') {
-                map.setPaintProperty('unclustered-point', 'circle-color', [
+                setPointsPaint('circle-color', [
                     'match',
                     ['get', 'optics'],
                     1, '#00e5ff',
@@ -426,7 +926,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     /* Ruido */ '#64748b'
                 ]);
             } else {
-                map.setPaintProperty('unclustered-point', 'circle-color', [
+                setPointsPaint('circle-color', [
                     'match',
                     ['get', 'optics'],
                     0, '#00e5ff',
@@ -441,22 +941,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 ]);
             }
 
-            map.setPaintProperty('unclustered-point', 'circle-opacity', [
+            setPointsPaint('circle-radius', [
                 'case',
-                ['==', ['get', 'optics'], -1], 0.35,
+                ['==', ['get', 'optics'], -1],
+                ['interpolate', ['linear'], ['zoom'], 2, 3.0, 8, 4.8, 14, 6.5],
+                ['interpolate', ['linear'], ['zoom'], 2, 5.0, 8, 8.5, 14, 11.0]
+            ]);
+            setPointsPaint('circle-opacity', [
+                'case',
+                ['==', ['get', 'optics'], -1], 0.32,
                 0.95
             ]);
-            map.setPaintProperty('unclustered-point', 'circle-stroke-color', [
+            setPointsPaint('circle-stroke-color', [
                 'case',
                 ['==', ['get', 'optics'], -1], '#334155',
                 '#ffffff'
             ]);
-            map.setPaintProperty('unclustered-point', 'circle-stroke-width', 2);
+            setPointsPaint('circle-stroke-width', [
+                'case',
+                ['==', ['get', 'optics'], -1], 1.0,
+                2.2
+            ]);
 
         } else if (mode === 'gmm') {
             // Modo 4: Componentes Gaussianas y Elipses Multivariantes GMM
             if (activeContext === 'chicago') {
-                map.setPaintProperty('unclustered-point', 'circle-color', [
+                setPointsPaint('circle-color', [
                     'match',
                     ['get', 'gmm'],
                     1, '#00e5ff',
@@ -465,7 +975,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     /* Dispersión */ '#64748b'
                 ]);
             } else {
-                map.setPaintProperty('unclustered-point', 'circle-color', [
+                setPointsPaint('circle-color', [
                     'match',
                     ['get', 'gmm'],
                     0, '#00e5ff',
@@ -476,22 +986,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 ]);
             }
 
-            map.setPaintProperty('unclustered-point', 'circle-opacity', [
+            setPointsPaint('circle-radius', [
+                'case',
+                ['==', ['get', 'gmm'], -1],
+                ['interpolate', ['linear'], ['zoom'], 2, 3.2, 8, 5.0, 14, 6.8],
+                ['interpolate', ['linear'], ['zoom'], 2, 5.2, 8, 8.5, 14, 11.0]
+            ]);
+            setPointsPaint('circle-opacity', [
                 'case',
                 ['==', ['get', 'gmm'], -1], 0.35,
-                0.92
+                0.95
             ]);
-            map.setPaintProperty('unclustered-point', 'circle-stroke-color', [
+            setPointsPaint('circle-stroke-color', [
                 'case',
                 ['==', ['get', 'gmm'], -1], '#334155',
                 '#ffffff'
             ]);
-            map.setPaintProperty('unclustered-point', 'circle-stroke-width', 2);
+            setPointsPaint('circle-stroke-width', [
+                'case',
+                ['==', ['get', 'gmm'], -1], 1.0,
+                2.2
+            ]);
 
         } else if (mode === 'ward') {
             // Modo 5: Macro-Clusters Jerárquicos Aglomerativos (Ward Linkage k=3)
             if (activeContext === 'chicago') {
-                map.setPaintProperty('unclustered-point', 'circle-color', [
+                setPointsPaint('circle-color', [
                     'match',
                     ['get', 'ward_macro'],
                     'A', '#ff3366',
@@ -500,7 +1020,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     /* Fallback */ '#94a3b8'
                 ]);
             } else {
-                map.setPaintProperty('unclustered-point', 'circle-color', [
+                setPointsPaint('circle-color', [
                     'match',
                     ['get', 'ward_macro'],
                     'A', '#ff3366',
@@ -510,9 +1030,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 ]);
             }
 
-            map.setPaintProperty('unclustered-point', 'circle-opacity', 0.95);
-            map.setPaintProperty('unclustered-point', 'circle-stroke-color', '#ffffff');
-            map.setPaintProperty('unclustered-point', 'circle-stroke-width', 2);
+            setPointsPaint('circle-radius', [
+                'interpolate', ['linear'], ['zoom'],
+                2, 4.8,
+                5, 6.5,
+                10, 8.2,
+                14, 10.0
+            ]);
+            setPointsPaint('circle-opacity', 0.95);
+            setPointsPaint('circle-stroke-color', '#ffffff');
+            setPointsPaint('circle-stroke-width', 2.0);
         }
     }
 
@@ -545,7 +1072,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (legendGmm) legendGmm.classList.toggle('hidden', newMode !== 'gmm');
         if (legendWard) legendWard.classList.toggle('hidden', newMode !== 'ward');
 
+        // Transición animada de elipses de covarianza y etiquetas GMM
+        if (map && map.getStyle()) {
+            const isGmm = newMode === 'gmm';
+            if (map.getLayer('gmm-ellipses-fill')) {
+                map.setPaintProperty('gmm-ellipses-fill', 'fill-opacity', isGmm ? 0.18 : 0.0);
+            }
+            if (map.getLayer('gmm-ellipses-line')) {
+                map.setPaintProperty('gmm-ellipses-line', 'line-opacity', isGmm ? 0.85 : 0.0);
+            }
+            if (map.getLayer('gmm-centroids-labels')) {
+                map.setPaintProperty('gmm-centroids-labels', 'text-opacity', isGmm ? 0.95 : 0.0);
+            }
+        }
+
         applyClusterStyle(newMode);
+
+        // Auto-switch inteligente: Si se selecciona un modelo no supervisado (DBSCAN, OPTICS, GMM, Ward),
+        // deshabilitar la agrupación WebGL para revelar todos los puntos individuales en el globo
+        if (newMode === 'category') {
+            setClusteringMode(true);
+        } else {
+            setClusteringMode(false);
+        }
     }
 
     if (btnModeCategory) btnModeCategory.addEventListener('click', () => setClusterMode('category'));
@@ -586,6 +1135,18 @@ document.addEventListener('DOMContentLoaded', () => {
             duration: 2000,
             essential: true
         });
+
+        // Actualizar fuentes GeoJSON de elipses y centroides GMM
+        if (map.getSource('gmm-ellipses-source')) {
+            map.getSource('gmm-ellipses-source').setData(generateGmmEllipsesGeojson(newCtx));
+        }
+        if (map.getSource('gmm-centroids-source')) {
+            map.getSource('gmm-centroids-source').setData(generateGmmCentroidsGeojson(newCtx));
+        }
+
+        // Actualizar leyendas tácticas y estilos según contexto
+        updateLegends(newCtx);
+        applyClusterStyle(currentClusterMode);
 
         // Actualizar metadatos, filtros y capas
         updateMetadataAndFilters(newCtx);
@@ -749,7 +1310,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 7. Filtros de categoría y centro urbano / distrito
+    // 7. Alternar Agrupación WebGL (Clústeres con Números vs Puntos Individuales Continuos)
+    if (btnToggleCluster) {
+        btnToggleCluster.addEventListener('click', () => {
+            setClusteringMode(!isClusteringEnabled);
+        });
+    }
+
+    // 8. Filtros de categoría y centro urbano / distrito
     if (filterCategoryEl) {
         filterCategoryEl.addEventListener('change', loadGeojsonData);
     }
