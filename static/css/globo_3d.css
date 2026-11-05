@@ -57,7 +57,8 @@ html.dark {
 .hud-top-left {
     top: 16px;
     left: 16px;
-    max-width: 360px;
+    width: 360px;
+    max-width: calc(100vw - 32px);
 }
 
 .hud-card {
