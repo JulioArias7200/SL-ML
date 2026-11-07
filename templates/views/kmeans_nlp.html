@@ -1,0 +1,208 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}CPD Analytics Core // K-Means &amp; NLP Semantic Mining{% endblock %}
+
+{% block content %}
+<div class="p-4 sm:p-6 lg:p-8 flex flex-col gap-6 sm:gap-8 max-w-[1700px] w-full mx-auto">
+    <!-- 1. ENCABEZADO DEL MÓDULO & METADATOS TÁCTICOS -->
+    <section class="flex flex-col gap-4 border-b border-outline-variant/30 pb-6">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="flex flex-col gap-1 max-w-4xl">
+                <div class="flex items-center gap-2">
+                    <span class="text-label-sm font-data-code px-2 py-0.5 rounded bg-primary-container/10 text-primary-container border border-primary-container/30 uppercase tracking-widest">
+                        SUB-PIPELINE NLP-04
+                    </span>
+                    <span class="text-outline text-label-sm font-data-code">•</span>
+                    <span class="text-label-sm font-data-code text-outline">CHICAGO DATA: 800,000+ INCIDENT RECORDS</span>
+                </div>
+                <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-on-surface uppercase">
+                    MÓDULO PARTIZIONAL &amp; MINERÍA SEMÁNTICA // K-MEANS + NLP
+                </h1>
+                <p class="text-on-surface-variant text-xs sm:text-sm leading-relaxed">
+                    Pipeline de segmentación no supervisada multivariable sobre variables temporales cíclicas (<code class="text-primary-container font-data-code font-bold">hour_sin</code>/<code class="text-primary-container font-data-code font-bold">hour_cos</code>) y vectorización TF-IDF n-grams (1,2) sobre 800,000+ descripciones criminales del CPD Record Management System (RMS).
+                </p>
+            </div>
+        </div>
+
+        <!-- Badges de Estado del Pipeline -->
+        <div class="flex flex-wrap gap-2 pt-1 font-data-code text-xs">
+            <div class="flex items-center gap-1.5 rounded px-2.5 py-1 bg-surface-container border border-outline-variant/40 text-on-surface">
+                <span class="material-symbols-outlined text-primary-container text-sm">check_circle</span>
+                <span>Modelo K-Means: <strong class="text-primary-container">k=5 optimizado</strong></span>
+            </div>
+            <div class="flex items-center gap-1.5 rounded px-2.5 py-1 bg-surface-container border border-outline-variant/40 text-on-surface">
+                <span class="material-symbols-outlined text-purple-400 text-sm">tag</span>
+                <span>TF-IDF Vocab: <strong class="text-on-surface">1,000 features</strong></span>
+            </div>
+            <div class="flex items-center gap-1.5 rounded px-2.5 py-1 bg-surface-container border border-outline-variant/40 text-on-surface">
+                <span class="material-symbols-outlined text-emerald-400 text-sm">tune</span>
+                <span>StandardScaler: <strong class="text-emerald-400">Normalizado</strong></span>
+            </div>
+            <div class="flex items-center gap-1.5 rounded px-2.5 py-1 bg-surface-container border border-outline-variant/40 text-on-surface">
+                <span class="material-symbols-outlined text-amber-400 text-sm">bolt</span>
+                <span>Inferencia: <strong class="text-amber-300">&lt;18ms (Joblib)</strong></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. EVALUACIÓN MULTIVARIABLE DE k -->
+    <section class="flex flex-col gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="flex items-center gap-3">
+                <div class="size-2.5 rounded-full bg-primary-container"></div>
+                <h2 class="text-sm sm:text-headline-sm uppercase text-on-surface font-bold tracking-tight font-headline-sm">
+                    Evaluación Multivariable de k // Diagnóstico &amp; Validación de Hiperparámetros
+                </h2>
+            </div>
+            <span class="text-xs font-data-code text-emerald-400">OPTIMIZACIÓN GLOBAL ALCANZADA</span>
+        </div>
+
+        <!-- Selector Interactivo de k (Scroll horizontal suave en móviles) -->
+        <div class="flex items-center gap-2 p-2 bg-surface-container-low rounded-lg border border-outline-variant/40 overflow-x-auto custom-scrollbar">
+            <span class="text-xs font-data-code text-outline px-2 whitespace-nowrap">VALOR DE k:</span>
+            <div class="flex gap-1.5">
+                {% for k, data in k_metrics.items() %}
+                <button type="button" 
+                        class="px-3 py-1 rounded text-xs font-data-code transition-all whitespace-nowrap {{ 'bg-primary-container text-surface-container-lowest font-bold border border-primary-container shadow-sm' if data.is_optimal else 'bg-surface-container text-on-surface-variant hover:text-on-surface border border-transparent hover:border-outline-variant' }}">
+                    k={{ k }}{{ ' (ÓPTIMO)' if data.is_optimal else '' }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Cuadrícula de 4 Métricas Clave (KPI Cards) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="flex flex-col justify-between p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant/40 hover:border-primary-container/40 transition-colors shadow-sm">
+                <div class="flex items-center justify-between text-outline text-xs font-data-code">
+                    <span>INERCIA INTRA-CLUSTER (WSS)</span>
+                    <span class="material-symbols-outlined text-primary-container text-lg">stacked_line_chart</span>
+                </div>
+                <div class="my-2">
+                    <div class="text-2xl sm:text-3xl font-data-display font-bold text-on-surface">142.8 <span class="text-sm text-outline font-normal">WSS</span></div>
+                    <div class="text-xs font-data-code text-emerald-400 mt-1 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">trending_down</span>
+                        <span>-42.3% vs k=4 (Codo)</span>
+                    </div>
+                </div>
+                <div class="text-[11px] text-outline font-data-code border-t border-outline-variant/30 pt-2">
+                    Convergencia: 14 iteraciones
+                </div>
+            </div>
+
+            <div class="flex flex-col justify-between p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant/40 hover:border-primary-container/40 transition-colors shadow-sm">
+                <div class="flex items-center justify-between text-outline text-xs font-data-code">
+                    <span>SILHOUETTE SCORE PROMEDIO</span>
+                    <span class="material-symbols-outlined text-emerald-400 text-lg">donut_large</span>
+                </div>
+                <div class="my-2">
+                    <div class="text-2xl sm:text-3xl font-data-display font-bold text-on-surface">0.584 <span class="text-sm text-outline font-normal">Cohesión</span></div>
+                    <div class="text-xs font-data-code text-emerald-400 mt-1 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">trending_up</span>
+                        <span>+18.2% (Pico Máximo)</span>
+                    </div>
+                </div>
+                <div class="text-[11px] text-outline font-data-code border-t border-outline-variant/30 pt-2">
+                    Separabilidad: Alta densidad
+                </div>
+            </div>
+
+            <div class="flex flex-col justify-between p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant/40 hover:border-primary-container/40 transition-colors shadow-sm">
+                <div class="flex items-center justify-between text-outline text-xs font-data-code">
+                    <span>ÍNDICE DAVIES-BOULDIN</span>
+                    <span class="material-symbols-outlined text-amber-400 text-lg">scatter_plot</span>
+                </div>
+                <div class="my-2">
+                    <div class="text-2xl sm:text-3xl font-data-display font-bold text-on-surface">0.720 <span class="text-sm text-outline font-normal">Solapamiento</span></div>
+                    <div class="text-xs font-data-code text-emerald-400 mt-1 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">arrow_downward</span>
+                        <span>-24.5% (Mínimo Solapamiento)</span>
+                    </div>
+                </div>
+                <div class="text-[11px] text-outline font-data-code border-t border-outline-variant/30 pt-2">
+                    Distancia centroides: Óptima
+                </div>
+            </div>
+
+            <div class="flex flex-col justify-between p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant/40 hover:border-primary-container/40 transition-colors shadow-sm">
+                <div class="flex items-center justify-between text-outline text-xs font-data-code">
+                    <span>VARIANZA EXPLICADA ACUM.</span>
+                    <span class="material-symbols-outlined text-purple-400 text-lg">pie_chart</span>
+                </div>
+                <div class="my-2">
+                    <div class="text-2xl sm:text-3xl font-data-display font-bold text-on-surface">84.6% <span class="text-sm text-outline font-normal">Varianza</span></div>
+                    <div class="text-xs font-data-code text-emerald-400 mt-1 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">trending_up</span>
+                        <span>+6.8% incremento marginal</span>
+                    </div>
+                </div>
+                <div class="text-[11px] text-outline font-data-code border-t border-outline-variant/30 pt-2">
+                    Top 15 componentes LSA
+                </div>
+            </div>
+        </div>
+
+        <!-- Componente de Gráficas SVG Responsivas -->
+        {% include 'components/svg_charts_responsive.html' %}
+    </section>
+
+    <!-- 3. NÚCLEO INTERACTIVO NLP (INFERENCE PLAYGROUND) -->
+    {% include 'components/nlp_playground.html' %}
+
+    <!-- 4. PROYECCIÓN LSA BIDIMENSIONAL (TRUNCATED SVD) -->
+    <section class="p-4 sm:p-6 rounded-xl bg-surface-container border border-outline-variant/40 flex flex-col gap-4 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-outline-variant/30 pb-3">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container text-lg">radar</span>
+                <h3 class="text-sm font-bold text-on-surface font-headline-sm uppercase">Proyección Bidimensional LSA // TruncatedSVD (Componente 1 vs 2)</h3>
+            </div>
+            <span class="text-xs font-data-code text-outline">Espacio Semántico Reducido</span>
+        </div>
+
+        <div class="relative w-full h-64 sm:h-80 bg-surface-container-lowest rounded-lg border border-outline-variant/30 grid-matrix-bg overflow-hidden flex items-center justify-center">
+            <!-- Ejes cartesianos -->
+            <div class="absolute inset-x-0 top-1/2 h-px bg-outline-variant/40"></div>
+            <div class="absolute inset-y-0 left-1/2 w-px bg-outline-variant/40"></div>
+            
+            <!-- Nubes de puntos representativas de los 5 clusters -->
+            <div class="absolute top-[35%] left-[25%] size-3 rounded-full bg-[#00e5ff] shadow-[0_0_8px_#00e5ff]" title="Cluster 1: Retail Theft"></div>
+            <div class="absolute top-[38%] left-[28%] size-2.5 rounded-full bg-[#00e5ff] opacity-75"></div>
+            <div class="absolute top-[30%] left-[22%] size-2.5 rounded-full bg-[#00e5ff] opacity-75"></div>
+            
+            <div class="absolute top-[65%] left-[72%] size-3 rounded-full bg-[#ff3366] shadow-[0_0_8px_#ff3366]" title="Cluster 2: Armed Robbery"></div>
+            <div class="absolute top-[60%] left-[75%] size-2.5 rounded-full bg-[#ff3366] opacity-75"></div>
+            <div class="absolute top-[68%] left-[70%] size-2.5 rounded-full bg-[#ff3366] opacity-75"></div>
+
+            <div class="absolute top-[20%] left-[55%] size-3 rounded-full bg-[#fbbf24] shadow-[0_0_8px_#fbbf24]" title="Cluster 3: Domestic Battery"></div>
+            <div class="absolute top-[25%] left-[58%] size-2.5 rounded-full bg-[#fbbf24] opacity-75"></div>
+
+            <div class="absolute top-[75%] left-[30%] size-3 rounded-full bg-[#9d4edd] shadow-[0_0_8px_#9d4edd]" title="Cluster 4: Vehicle Damage"></div>
+            <div class="absolute top-[78%] left-[33%] size-2.5 rounded-full bg-[#9d4edd] opacity-75"></div>
+
+            <div class="absolute top-[32%] left-[65%] size-3 rounded-full bg-[#34d399] shadow-[0_0_8px_#34d399]" title="Cluster 5: Narcotics"></div>
+
+            <!-- Punto dinámico de la inferencia en tiempo real -->
+            <div id="lsa-pointer-dot" 
+                 class="absolute size-5 rounded-full border-2 border-white bg-primary-container shadow-[0_0_16px_#00e5ff] animate-ping transition-all duration-700 pointer-events-none"
+                 style="top: 65%; left: 72%;"></div>
+
+            <!-- Etiquetas de cuadrantes -->
+            <span class="absolute bottom-2 right-3 text-[10px] font-data-code text-outline">+ Dimensión 1 (Violencia / Armas)</span>
+            <span class="absolute top-2 left-3 text-[10px] font-data-code text-outline">+ Dimensión 2 (Ámbito Residencial / Menor)</span>
+        </div>
+
+        <!-- Leyenda de Clusters -->
+        <div class="flex flex-wrap items-center justify-center gap-4 text-xs font-data-code pt-1">
+            <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-[#00e5ff]"></span>#1 Hurto Retail</span>
+            <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-[#ff3366]"></span>#2 Asalto Armado</span>
+            <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-[#fbbf24]"></span>#3 Violencia Doméstica</span>
+            <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-[#9d4edd]"></span>#4 Daño Vehículo</span>
+            <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-[#34d399]"></span>#5 Narcóticos</span>
+        </div>
+    </section>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/nlp_playground.js') }}"></script>
+{% endblock %}

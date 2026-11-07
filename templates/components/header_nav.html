@@ -1,0 +1,51 @@
+<!-- HEADER GLOBAL DEL SISTEMA (RESPONSIVO MÓVIL, TABLETA Y DESKTOP) -->
+<header class="flex items-center justify-between border-b border-outline-variant px-4 sm:px-6 lg:px-8 py-2.5 bg-surface sticky top-0 z-30 backdrop-blur-md">
+    <div class="flex items-center gap-3 sm:gap-6">
+        <!-- Botón Hamburguesa para Móvil y Tableta (<1024px) -->
+        <button type="button" 
+                id="btn-mobile-drawer-open"
+                class="btn-tactile size-8.5 rounded-lg bg-surface-container border border-outline-variant text-on-surface hover:text-primary-container flex lg:hidden items-center justify-center shadow-sm cursor-pointer"
+                title="Abrir Menú">
+            <span class="material-symbols-outlined text-xl">menu</span>
+        </button>
+
+        <!-- Brand Táctico en Header -->
+        <a href="{{ url_for('dashboard_bp.index') }}" class="flex items-center gap-2 group">
+            <span class="size-2 rounded-full bg-primary-container animate-pulse"></span>
+            <span class="font-headline-sm font-bold text-xs sm:text-sm text-on-surface tracking-tight uppercase group-hover:text-primary-container transition-colors">
+                CPD Urban Intelligence
+            </span>
+            <span class="hidden md:inline text-outline text-[11px] font-data-code">
+                // v4.2
+            </span>
+        </a>
+
+        <!-- Selector de Contexto estilo Segmented Control (Apple / Emil Design) -->
+        <div class="segmented-control font-data-code text-xs shadow-inner">
+            <a href="{{ url_for(request.endpoint or 'dashboard_bp.index', ctx='bolivia') }}" 
+               class="segmented-btn btn-tactile flex items-center gap-1.5 {{ 'active' if current_context != 'chicago' else '' }}"
+               title="Eje Principal: Inteligencia de Noticias de Bolivia">
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-surface-container-high font-bold">BO</span>
+                <span class="hidden sm:inline">Bolivia</span>
+            </a>
+            <a href="{{ url_for(request.endpoint or 'dashboard_bp.index', ctx='chicago') }}" 
+               class="segmented-btn btn-tactile flex items-center gap-1.5 {{ 'active' if current_context == 'chicago' else '' }}"
+               title="Benchmark Secundario: Chicago">
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-surface-container-high font-bold">US</span>
+                <span class="hidden sm:inline">Chicago</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Acciones Derechas: Telemetría & Modo Noche / Día -->
+    <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Status Pill de Telemetría -->
+        <div class="hidden xl:flex items-center gap-2 px-2.5 py-1 rounded-md bg-surface-container border border-outline-variant font-data-code text-xs text-outline">
+            <span class="size-2 rounded-full bg-emerald-400"></span>
+            <span class="text-on-surface">GPU T4: ONLINE</span>
+        </div>
+
+        <!-- Toggle Modo Día / Modo Noche -->
+        {% include 'components/theme_toggle.html' %}
+    </div>
+</header>

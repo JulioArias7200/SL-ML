@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CPD Urban Intelligence // ML-OPS Platform{% endblock %}</title>
+
+    <!-- Script Anti-FOUC (Previene parpadeo blanco evaluando el tema antes del render) -->
+    <script>
+        (function() {
+            try {
+                const savedTheme = localStorage.getItem('cpd_theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light');
+                } else {
+                    document.documentElement.classList.add('light');
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch (e) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Symbols Outlined -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-container": "var(--primary-neon)",
+                        "primary": "var(--primary-neon)",
+                        "on-primary": "var(--primary-contrast)",
+                        "surface": "var(--surface-main)",
+                        "surface-container-lowest": "var(--surface-container-lowest)",
+                        "surface-container-low": "var(--surface-container-low)",
+                        "surface-container": "var(--surface-container)",
+                        "surface-container-high": "var(--surface-container-high)",
+                        "surface-container-highest": "var(--surface-container-highest)",
+                        "on-surface": "var(--text-primary)",
+                        "on-surface-variant": "var(--text-muted)",
+                        "outline": "var(--text-muted)",
+                        "outline-variant": "var(--border-color)",
+                        "background": "var(--bg-page)",
+                        "secondary": "#cabeff",
+                        "secondary-container": "#4a36a0",
+                        "tertiary": "#ffe7e6",
+                        "error": "#ffb4ab"
+                    },
+                    fontFamily: {
+                        "body-md": ["Inter", "sans-serif"],
+                        "headline-lg": ["Inter", "sans-serif"],
+                        "headline-md": ["Inter", "sans-serif"],
+                        "headline-sm": ["Inter", "sans-serif"],
+                        "data-code": ["JetBrains Mono", "monospace"],
+                        "data-display": ["JetBrains Mono", "monospace"],
+                        "label-md": ["Inter", "sans-serif"],
+                        "label-sm": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Estilos Tácticos & Modo Noche -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=4.3.0">
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-surface-container-lowest custom-scrollbar">
+
+    <!-- Drawer Off-canvas para Móvil y Tabletas (< 1024px) -->
+    {% include 'components/sidebar_mobile_drawer.html' %}
+
+    <div class="flex min-h-screen w-full bg-surface-container-lowest">
+        <!-- Sidebar Fijo para Desktop (>= 1024px) -->
+        {% include 'components/sidebar_desktop.html' %}
+
+        <!-- Columna de Contenido Principal -->
+        <div class="flex flex-col flex-1 min-w-0 overflow-y-auto custom-scrollbar">
+            <!-- Header Táctico Superior -->
+            {% include 'components/header_nav.html' %}
+
+            <!-- Área de Vistas Dinámicas -->
+            <main class="flex-1 w-full">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts de Control Globales -->
+    <script src="{{ url_for('static', filename='js/theme_controller.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/responsive_drawer.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!-- TABLA DE TAXONOMÍA URBANA: PERFILES CRIMINOLÓGICOS & ASIGNACIÓN OPTICS (RESPONSIVA) -->
+<section class="rounded-xl border border-outline-variant bg-surface-container p-4 sm:p-6 shadow-sm font-data-code">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-3 border-b border-outline-variant/50 gap-2">
+        <div>
+            <h3 class="text-sm sm:text-base font-bold font-headline-md text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container text-lg">table_chart</span>
+                TAXONOMÍA URBANA: PERFILES CRIMINOLÓGICOS Y VALLES OPTICS // {{ 'NOTICIAS PRENSA BOLIVIA' if current_context != 'chicago' else 'CHICAGO POLICE DEPT.' }}
+            </h3>
+            <span class="text-xs text-outline font-data-code">
+                {{ 'Zonas clave curadas de prensa // Matriz multivariada' if current_context != 'chicago' else 'Matriz agregada 22 distritos &times; 30 dimensiones IUCR' }} // Silhouette Espacial = {{ hud_params.silhouette_spatial }}
+            </span>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="text-[10px] px-2 py-0.5 rounded font-bold font-data-code {{ 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' if current_context != 'chicago' else 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' }}">
+                {{ '🇧🇴 BOLIVIA DATASET' if current_context != 'chicago' else '🇺🇸 CHICAGO DATASET' }}
+            </span>
+            <span class="text-[11px] font-data-code text-outline bg-surface-container-high px-2 py-0.5 rounded border border-outline-variant/40">
+                {{ hud_params.sample_size }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Contenedor con Scroll Horizontal Táctil -->
+    <div class="w-full overflow-x-auto custom-scrollbar">
+        <table class="w-full text-left font-data-code text-xs border-collapse min-w-[850px]">
+            <thead>
+                <tr class="border-b border-outline-variant/60 text-outline text-[11px] uppercase tracking-wider bg-surface-container-high/40">
+                    <th class="py-2.5 px-3">Código</th>
+                    <th class="py-2.5 px-3">{{ 'Zona / Municipio' if current_context != 'chicago' else 'Distrito Policial' }}</th>
+                    <th class="py-2.5 px-3">Macro-Cluster (Ward)</th>
+                    <th class="py-2.5 px-3">Delito Predominante</th>
+                    <th class="py-2.5 px-3 text-right">{{ 'Hechos Prensa' if current_context != 'chicago' else 'Volumen 5A' }}</th>
+                    <th class="py-2.5 px-3 text-right">{{ 'Gravedad' if current_context != 'chicago' else 'Densidad (Crím/km²)' }}</th>
+                    <th class="py-2.5 px-3 text-center">% Nocturno</th>
+                    <th class="py-2.5 px-3">Cluster DBSCAN</th>
+                    <th class="py-2.5 px-3">Valle OPTICS (&mu;)</th>
+                    <th class="py-2.5 px-3">Estado Operativo</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/30">
+                {% for d in districts %}
+                <tr class="hover:bg-surface-container-high/50 transition-colors zone-row cursor-pointer" data-zone-id="{{ d.id }}" data-cluster="{{ d.cluster }}">
+                    <td class="py-2.5 px-3 font-bold text-on-surface">{{ d.id }}</td>
+                    <td class="py-2.5 px-3 text-on-surface-variant font-medium">{{ d.name }}</td>
+                    <td class="py-2.5 px-3">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold border 
+                            {% if d.macro == 'A' %}bg-rose-500/15 text-rose-300 border-rose-500/30
+                            {% elif d.macro == 'B' %}bg-cyan-500/15 text-cyan-300 border-cyan-500/30
+                            {% else %}bg-emerald-500/15 text-emerald-300 border-emerald-500/30{% endif %}">
+                            Cluster {{ d.macro }}
+                        </span>
+                    </td>
+                    <td class="py-2.5 px-3 text-on-surface text-[11px]">
+                        {{ d.delito_top or 'Variado / Mixto' }}
+                    </td>
+                    <td class="py-2.5 px-3 text-on-surface font-mono text-right">
+                        {{ "{:,}".format(d.total_5y) }}
+                    </td>
+                    <td class="py-2.5 px-3 font-semibold text-right
+                        {% if d.macro == 'A' %}text-rose-400{% elif d.macro == 'B' %}text-cyan-400{% else %}text-emerald-400{% endif %}">
+                        {{ d.density_km2 }}
+                    </td>
+                    <td class="py-2.5 px-3 text-center text-outline text-[11px]">
+                        {{ d.pct_nocturno_str or 'N/D' }}
+                    </td>
+                    <td class="py-2.5 px-3 text-outline">{{ d.cluster }}</td>
+                    <td class="py-2.5 px-3">
+                        <span class="text-[11px] font-bold text-amber-300">
+                            {{ d.optics_valley }}
+                        </span>
+                        <span class="text-[10px] text-outline block">
+                            {{ d.reach_depth_m }}m alcance
+                        </span>
+                    </td>
+                    <td class="py-2.5 px-3">
+                        <span class="text-[11px] font-bold 
+                            {% if 'ROJA' in d.status %}text-rose-400 animate-pulse
+                            {% elif 'VIGILANCIA' in d.status %}text-cyan-300
+                            {% elif 'DINÁMICO' in d.status %}text-amber-300
+                            {% else %}text-emerald-400{% endif %}">
+                            {{ d.status }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>

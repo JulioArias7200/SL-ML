@@ -1,0 +1,59 @@
+{
+  "total_noticias": 137,
+  "departamentos": {
+    "Santa Cruz": 13,
+    "La Paz": 13
+  },
+  "ciudades": [
+    {
+      "ciudad": "Santa Cruz",
+      "departamento": "Santa Cruz",
+      "lat": -17.7833,
+      "lon": -63.1821,
+      "hechos": 64
+    },
+    {
+      "ciudad": "La Paz",
+      "departamento": "La Paz",
+      "lat": -16.5,
+      "lon": -68.15,
+      "hechos": 48
+    },
+    {
+      "ciudad": "Cochabamba",
+      "departamento": "Cochabamba",
+      "lat": -17.3935,
+      "lon": -66.157,
+      "hechos": 16
+    },
+    {
+      "ciudad": "El Alto",
+      "departamento": "La Paz",
+      "lat": -16.5036,
+      "lon": -68.1933,
+      "hechos": 3
+    },
+    {
+      "ciudad": "Sucre",
+      "departamento": "Chuquisaca",
+      "lat": -19.0431,
+      "lon": -65.2592,
+      "hechos": 2
+    },
+    {
+      "ciudad": "Tarija",
+      "departamento": "Tarija",
+      "lat": -21.5355,
+      "lon": -64.7296,
+      "hechos": 2
+    },
+    {
+      "ciudad": "Oruro",
+      "departamento": "Oruro",
+      "lat": -17.9833,
+      "lon": -67.15,
+      "hechos": 1
+    }
+  ],
+  "generado_en": "2026-11-06T23:40:28.446408"
+}

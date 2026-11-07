@@ -1,0 +1,747 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}CPD Analytics // Detección de Anomalías (Autoencoders) & GMM ({{ 'Chicago' if current_context == 'chicago' else 'Bolivia' }}){% endblock %}
+
+{% block content %}
+<div class="p-4 sm:p-6 lg:p-8 space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-outline-variant/30">
+        <div>
+            <div class="flex items-center gap-2">
+                <span class="inline-flex size-2 rounded-full bg-rose-500 animate-pulse"></span>
+                <span class="text-xs font-bold uppercase tracking-wider text-rose-400 font-data-code">
+                    Modelado Avanzado // Redes Neuronales No Supervisadas & GMM
+                </span>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight text-on-surface mt-1">
+                Detección de Anomalías por Autoencoders & Superficie de Riesgo GMM
+            </h1>
+            <p class="text-xs sm:text-sm text-outline max-w-3xl mt-1">
+                Identificación de reportes atípicos mediante el error cuadrático medio de reconstrucción ($MSE$) de un Autoencoder con cuello de botella ($D \to 16 \to 4 \to 16 \to D$) y modelado estocástico multivariante con mezclas gaussianas.
+            </p>
+        </div>
+
+        <div class="px-3 py-1.5 rounded-lg bg-surface-container border border-outline-variant/40 font-data-code text-xs text-outline">
+            Umbral de Corte: <span class="text-rose-400 font-bold">&gt; {{ anomalies_data.umbral_corte }} MSE</span>
+        </div>
+    </div>
+
+    <!-- Fila 1: KPIs de Detección de Anomalías -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="p-4 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm">
+            <span class="text-[11px] text-outline font-data-code uppercase block mb-1">Notas Analizadas</span>
+            <span class="text-xl font-bold text-on-surface font-data-code">{{ anomalies_data.total_analizados }}</span>
+        </div>
+        <div class="p-4 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm">
+            <span class="text-[11px] text-outline font-data-code uppercase block mb-1">Anomalías Detectadas</span>
+            <span class="text-xl font-bold text-rose-400 font-data-code">{{ anomalies_data.total_anomalias }} (10.1%)</span>
+        </div>
+        <div class="p-4 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm">
+            <span class="text-[11px] text-outline font-data-code uppercase block mb-1">Error Medio Reconstruction</span>
+            <span class="text-xl font-bold text-primary-container font-data-code">{{ anomalies_data.error_medio }}</span>
+        </div>
+        <div class="p-4 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm">
+            <span class="text-[11px] text-outline font-data-code uppercase block mb-1">Error Máximo Registrado</span>
+            <span class="text-xl font-bold text-amber-400 font-data-code">{{ anomalies_data.error_max }}</span>
+        </div>
+    </div>
+
+    <!-- Fila 2: Dos Secciones: Autoencoders (Bolivia) vs GMM (Chicago) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Panel 1: Detección de Anomalías en Noticias (Autoencoder) -->
+        <div class="p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between pb-3 mb-3 border-b border-outline-variant/20">
+                    <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider font-data-code flex items-center gap-2">
+                        <span class="material-symbols-outlined text-rose-400">warning</span>
+                        Noticias Anómalas Detectadas (Bolivia)
+                    </h3>
+                    <span class="text-xs text-outline font-data-code">MSE &gt; Umbral</span>
+                </div>
+                <p class="text-xs text-outline mb-4">
+                    Artículos periodísticos cuya representación vectorial presenta un patrón léxico inusual o delito atípico que la red neuronal no logra comprimir eficientemente.
+                </p>
+
+                <div class="space-y-2.5 max-h-[380px] overflow-y-auto custom-scrollbar pr-1">
+                    {% for anom in anomalies_data.anomalias %}
+                    <div class="p-3 rounded bg-surface-container-high border border-outline-variant/30 hover:border-rose-400/50 transition-colors">
+                        <div class="flex items-center justify-between text-xs mb-1">
+                            <span class="text-rose-400 font-bold font-data-code">ERROR: {{ anom.error }}</span>
+                            <span class="text-outline text-[11px]">{{ anom.ciudad }} // {{ anom.delito }}</span>
+                        </div>
+                        <h4 class="text-xs font-semibold text-on-surface mb-2 leading-snug">
+                            {{ anom.titulo }}
+                        </h4>
+                        <div class="flex items-center justify-between text-[11px] font-data-code">
+                            <span class="text-outline">{{ anom.motivo }}</span>
+                            <a href="{{ anom.url }}" target="_blank" rel="noopener noreferrer" 
+                               class="text-primary-container hover:underline font-bold">
+                                Nota ↗
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-outline-variant/20 font-data-code text-[11px] text-outline flex justify-between">
+                <span>Topología: D(250) → 16 → 4 → 16 → D(250)</span>
+                <span>Optimizador: Adam / MSE</span>
+            </div>
+        </div>
+
+        <!-- Panel 2: Centro Táctico de Modelado GMM (Superficie de Densidad & Elipses de Covarianza) -->
+        <div class="p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between pb-3 mb-3 border-b border-outline-variant/20">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-emerald-400">blur_on</span>
+                        <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider font-data-code">
+                            Superficie de Densidad & Elipses GMM
+                        </h3>
+                    </div>
+                    <div class="flex items-center gap-1.5 font-data-code text-xs">
+                        <span class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant/50 text-emerald-400 font-bold uppercase text-[10px]">
+                            {{ 'US CHICAGO' if current_context == 'chicago' else 'BO BOLIVIA' }}
+                        </span>
+                        <span class="text-xs text-outline">Covarianzas 2&sigma;</span>
+                    </div>
+                </div>
+                <p class="text-xs text-outline mb-3">
+                    Inferencia de pertenencia probabilística suave (*soft clustering*) modelada mediante una combinación convexa de normales multivariantes rotadas: $p(\mathbf{x}) = \sum \pi_k \mathcal{N}(\mathbf{x} \mid \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)$.
+                </p>
+
+                <!-- Viewport Cartográfico Vectorial Interactivo para GMM (Pan & Zoom: Mover, Acercar, Achicar) -->
+                <div id="gmm-map-container" class="relative w-full h-[310px] bg-[#070b12] bg-grid-tactical rounded-lg border border-outline-variant/40 overflow-hidden mb-3 select-none cursor-grab">
+                    
+                    <!-- Controles de Zoom Flotantes Tácticos (Acercar / Achicar / Reset) -->
+                    <div class="absolute top-2.5 left-2.5 z-20 flex items-center bg-surface-container-highest/90 backdrop-blur-md rounded border border-outline-variant/40 font-data-code text-xs overflow-hidden shadow-md">
+                        <button type="button" id="btn-gmm-zoom-in" class="size-7 flex items-center justify-center hover:bg-surface-container-high text-on-surface hover:text-primary-container font-bold text-sm" title="Acercar mapa (Zoom In)">+</button>
+                        <div class="w-px h-3.5 bg-outline-variant/40"></div>
+                        <span id="gmm-zoom-badge" class="px-1.5 text-[9px] text-outline font-bold select-none">100%</span>
+                        <div class="w-px h-3.5 bg-outline-variant/40"></div>
+                        <button type="button" id="btn-gmm-zoom-out" class="size-7 flex items-center justify-center hover:bg-surface-container-high text-on-surface hover:text-primary-container font-bold text-sm" title="Achicar mapa (Zoom Out)">&minus;</button>
+                        <div class="w-px h-3.5 bg-outline-variant/40"></div>
+                        <button type="button" id="btn-gmm-zoom-reset" class="size-7 flex items-center justify-center hover:bg-surface-container-high text-outline hover:text-on-surface text-xs" title="Restablecer posición y zoom (Centrar)">
+                            <span class="material-symbols-outlined text-[14px]">restart_alt</span>
+                        </button>
+                    </div>
+
+                    <!-- Mapa SVG Vectorial -->
+                    <svg id="gmm-tactical-map" class="w-full h-full" viewBox="0 0 600 340" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Defs para gradientes de componentes -->
+                        <defs>
+                            <radialGradient id="gradLoop" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.85" />
+                                <stop offset="60%" stop-color="#00e5ff" stop-opacity="0.30" />
+                                <stop offset="100%" stop-color="#00e5ff" stop-opacity="0" />
+                            </radialGradient>
+                            <radialGradient id="gradWest" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#ff3366" stop-opacity="0.85" />
+                                <stop offset="60%" stop-color="#ff3366" stop-opacity="0.30" />
+                                <stop offset="100%" stop-color="#ff3366" stop-opacity="0" />
+                            </radialGradient>
+                            <radialGradient id="gradSouth" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#ffaa00" stop-opacity="0.85" />
+                                <stop offset="60%" stop-color="#ffaa00" stop-opacity="0.30" />
+                                <stop offset="100%" stop-color="#ffaa00" stop-opacity="0" />
+                            </radialGradient>
+                            <radialGradient id="gradCbba" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#34d399" stop-opacity="0.85" />
+                                <stop offset="60%" stop-color="#34d399" stop-opacity="0.30" />
+                                <stop offset="100%" stop-color="#34d399" stop-opacity="0" />
+                            </radialGradient>
+                        </defs>
+
+                        <!-- Capa Pan & Zoom del Mapa GMM -->
+                        <g id="gmm-panzoom-layer" style="transform-origin: 300px 170px;">
+                            <!-- Ejes de Coordenadas de Referencia -->
+                            <g opacity="0.15" stroke="#94a3b8" stroke-width="0.8">
+                                <line x1="50" y1="0" x2="50" y2="340" />
+                                <line x1="150" y1="0" x2="150" y2="340" />
+                                <line x1="250" y1="0" x2="250" y2="340" />
+                                <line x1="350" y1="0" x2="350" y2="340" />
+                                <line x1="450" y1="0" x2="450" y2="340" />
+                                <line x1="550" y1="0" x2="550" y2="340" />
+                                <line x1="0" y1="70" x2="600" y2="70" />
+                                <line x1="0" y1="140" x2="600" y2="140" />
+                                <line x1="0" y1="210" x2="600" y2="210" />
+                                <line x1="0" y1="280" x2="600" y2="280" />
+                            </g>
+
+                            {% if current_context != 'chicago' %}
+                            <!-- Corredor Estratégico Eje Troncal de Bolivia (La Paz / El Alto -> Cochabamba -> Santa Cruz) -->
+                            <g id="gmm-bolivia-corridor" opacity="0.4">
+                                <path d="M 69 71 L 253 197 L 528 253" fill="none" stroke="#64748b" stroke-width="1.2" stroke-dasharray="4,4" />
+                                <text x="135" y="122" fill="#94a3b8" font-family="monospace" font-size="7.5" transform="rotate(34, 135, 122)">Ruta 1 / 4 (Altiplano-Valles)</text>
+                                <text x="365" y="214" fill="#94a3b8" font-family="monospace" font-size="7.5" transform="rotate(11, 365, 214)">Ruta 4 (Valles-Llanos)</text>
+                                <text x="25" y="38" fill="#818cf8" font-family="monospace" font-size="8.5" font-weight="bold" opacity="0.7">OCCIDENTE (LPZ/ALT)</text>
+                                <text x="210" y="240" fill="#34d399" font-family="monospace" font-size="8.5" font-weight="bold" opacity="0.7">VALLES (CBBA)</text>
+                                <text x="440" y="325" fill="#00e5ff" font-family="monospace" font-size="8.5" font-weight="bold" opacity="0.7">ORIENTE (SCZ)</text>
+                            </g>
+                            {% endif %}
+
+                            <!-- Grupo de Elipses de Covarianza (1σ y 2σ) -->
+                            <g id="gmm-ellipses-layer"></g>
+
+                            <!-- Grupo de Centroides Gaussianos -->
+                            <g id="gmm-centroids-layer"></g>
+
+                            <!-- Líneas Tensoras de Mahalanobis -->
+                            <g id="gmm-tether-lines"></g>
+
+                            <!-- Sonda Táctica (Crosshair / Pin Drop) -->
+                            <g id="gmm-crosshair" transform="translate(300, 170)" style="transition: transform 0.25s ease-out;">
+                                <line x1="-16" y1="0" x2="16" y2="0" stroke="#00e5ff" stroke-width="1.8" />
+                                <line x1="0" y1="-16" x2="0" y2="16" stroke="#00e5ff" stroke-width="1.8" />
+                                <circle r="8" fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-dasharray="3,2" />
+                                <circle r="2.5" fill="#00e5ff" />
+                                <rect x="12" y="-22" width="110" height="18" rx="3" fill="#0f172a" fill-opacity="0.85" stroke="#00e5ff" stroke-width="0.8" />
+                                <text x="16" y="-9" fill="#00e5ff" font-family="monospace" font-size="9" font-weight="bold" id="crosshair-coords-label">Muestreo Táctico</text>
+                            </g>
+                        </g>
+                    </svg>
+
+                    <!-- Control de Filtro de Elipses en HUD Superior Derecho -->
+                    <div class="absolute top-2.5 right-2.5 flex items-center gap-1 bg-surface-container-highest/90 backdrop-blur-md px-2 py-1 rounded border border-outline-variant/40 font-data-code text-[10px]">
+                        <span class="text-outline uppercase">Nivel:</span>
+                        <button type="button" class="btn-sigma px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-primary-container font-bold" data-sigma="all">1&sigma; & 2&sigma;</button>
+                        <button type="button" class="btn-sigma px-1.5 py-0.5 rounded hover:text-on-surface text-outline" data-sigma="1">1&sigma; (68%)</button>
+                        <button type="button" class="btn-sigma px-1.5 py-0.5 rounded hover:text-on-surface text-outline" data-sigma="2">2&sigma; (95%)</button>
+                    </div>
+
+                    <!-- Telemetría HUD Inferior Izquierdo -->
+                    <div class="absolute bottom-2.5 left-2.5 flex items-center gap-2 bg-surface-container-highest/90 backdrop-blur-md px-2.5 py-1 rounded border border-outline-variant/40 font-data-code text-[10px]">
+                        <span class="inline-block size-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+                        <span class="text-outline uppercase">SONDA GMM:</span>
+                        <span id="hud-sonda-status" class="text-on-surface font-semibold">Clic en el mapa para muestreo estocástico</span>
+                    </div>
+                </div>
+
+                <!-- Formulario de coordenadas manuales y presets -->
+                <div class="grid grid-cols-2 gap-3 mb-2.5 font-data-code">
+                    <div>
+                        <label class="text-[11px] text-outline block mb-1">Latitud (WGS84):</label>
+                        <input id="gmm-lat" type="number" step="0.0001" 
+                               value="{{ '41.8781' if current_context == 'chicago' else '-17.7833' }}" 
+                               class="w-full h-8 px-2.5 bg-surface-container-lowest text-xs text-on-surface rounded border border-outline-variant/40 focus:border-primary-container focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[11px] text-outline block mb-1">Longitud (WGS84):</label>
+                        <input id="gmm-lon" type="number" step="0.0001" 
+                               value="{{ '-87.6298' if current_context == 'chicago' else '-63.1821' }}" 
+                               class="w-full h-8 px-2.5 bg-surface-container-lowest text-xs text-on-surface rounded border border-outline-variant/40 focus:border-primary-container focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Botones de coordenadas rápidas (Context-Aware) -->
+                <div class="flex flex-wrap gap-1.5 mb-3 font-data-code text-xs">
+                    {% if current_context == 'chicago' %}
+                    <button type="button" class="btn-preset px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-outline hover:text-on-surface transition-colors active" data-lat="41.8818" data-lon="-87.6231">The Loop</button>
+                    <button type="button" class="btn-preset px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-outline hover:text-on-surface transition-colors" data-lat="41.8750" data-lon="-87.7200">Garfield/Austin</button>
+                    <button type="button" class="btn-preset px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-outline hover:text-on-surface transition-colors" data-lat="41.7750" data-lon="-87.6400">Englewood</button>
+                    <button type="button" class="btn-preset px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-outline hover:text-on-surface transition-colors" data-lat="41.9700" data-lon="-87.7700">Jefferson Park</button>
+                    {% else %}
+                    <button type="button" class="btn-preset px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-outline hover:text-on-surface transition-colors active" data-lat="-17.7833" data-lon="-63.1821">Santa Cruz Casco</button>
+                    <button type="button" class="btn-preset px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-outline hover:text-on-surface transition-colors" data-lat="-17.8300" data-lon="-63.1400">Plan 3000</button>
+                    <button type="button" class="btn-preset px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-outline hover:text-on-surface transition-colors" data-lat="-17.3935" data-lon="-66.1570">Cochabamba Cercado</button>
+                    <button type="button" class="btn-preset px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-outline hover:text-on-surface transition-colors" data-lat="-16.5020" data-lon="-68.1500">La Paz / El Alto</button>
+                    {% endif %}
+                </div>
+
+                <button type="button" id="btn-eval-gmm" 
+                        class="w-full py-2.5 rounded bg-primary-container text-surface-container-lowest font-bold font-data-code text-xs uppercase tracking-wider hover:brightness-110 transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-sm">radar</span>
+                    <span>Evaluar Superficie Estocástica</span>
+                </button>
+
+                <!-- Panel de Resultados GMM Enriquecido con Mahalanobis y Desglose Proporcional -->
+                <div id="gmm-results" class="mt-3 p-3.5 rounded bg-surface-container-high border border-outline-variant/40 font-data-code text-xs space-y-2.5">
+                    <div class="flex justify-between items-center">
+                        <span class="text-outline">Índice de Riesgo Estimado:</span>
+                        <span id="gmm-risk-score" class="text-base font-bold text-amber-400">78.4% (ALTO)</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-[11px] pt-2 border-t border-outline-variant/30">
+                        <div>
+                            <span class="text-outline block text-[10px]">DISTANCIA MAHALANOBIS:</span>
+                            <span id="gmm-mahalanobis" class="font-bold text-cyan-400">DM = 0.84</span>
+                        </div>
+                        <div>
+                            <span class="text-outline block text-[10px]">NIVEL DE CONFIANZA:</span>
+                            <span id="gmm-confidence-badge" class="font-bold text-emerald-400">1&sigma; (68.3% Núcleo)</span>
+                        </div>
+                    </div>
+
+                    <!-- Barras de Distribución de Responsabilidades Posteriores (Soft Clustering) -->
+                    <div class="pt-2 border-t border-outline-variant/30 space-y-2" id="gmm-component-bars">
+                        <span class="text-[10px] text-outline uppercase font-bold tracking-wider block">
+                            Pertenencia Suave a Componentes (&gamma;<sub>ik</sub>):
+                        </span>
+                        
+                        {% for comp in gmm_components %}
+                        <div class="space-y-0.5">
+                            <div class="flex justify-between text-[11px]">
+                                <span class="text-outline flex items-center gap-1.5">
+                                    <span class="size-2 rounded-full" style="background-color: {{ comp.color }};"></span>
+                                    <span>{{ comp.name }}</span>
+                                </span>
+                                <span id="prob-val-{{ comp.key }}" class="font-bold text-on-surface">--%</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-surface-container-lowest rounded-full overflow-hidden">
+                                <div id="prob-bar-{{ comp.key }}" class="h-full rounded-full transition-all duration-500" style="width: 0%; background-color: {{ comp.color }};"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3 pt-2.5 border-t border-outline-variant/20 font-data-code text-[11px] text-outline flex justify-between">
+                <span>Covarianza: Completa (Full Covariance)</span>
+                <span>Optimización: Algoritmo EM / Criterio BIC</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const currentContext = '{{ current_context }}';
+    const gmmComponents = {{ gmm_components | tojson }};
+
+    // Bounding Box geográfico para proyección cartográfica SVG
+    const BOUNDS = currentContext === 'chicago' ? {
+        minLat: 41.720, maxLat: 41.950,
+        minLon: -87.780, maxLon: -87.580
+    } : {
+        minLat: -18.400, maxLat: -16.000,
+        minLon: -68.900, maxLon: -62.400
+    };
+
+    const svgWidth = 600;
+    const svgHeight = 340;
+
+    function projectToSvg(lat, lon) {
+        const x = ((lon - BOUNDS.minLon) / (BOUNDS.maxLon - BOUNDS.minLon)) * svgWidth;
+        const y = (1 - ((lat - BOUNDS.minLat) / (BOUNDS.maxLat - BOUNDS.minLat))) * svgHeight;
+        return { x: Math.max(10, Math.min(svgWidth - 10, x)), y: Math.max(10, Math.min(svgHeight - 10, y)) };
+    }
+
+    function unprojectFromSvg(x, y) {
+        const lon = BOUNDS.minLon + (x / svgWidth) * (BOUNDS.maxLon - BOUNDS.minLon);
+        const lat = BOUNDS.minLat + (1 - (y / svgHeight)) * (BOUNDS.maxLat - BOUNDS.minLat);
+        return { lat: Number(lat.toFixed(4)), lon: Number(lon.toFixed(4)) };
+    }
+
+    // Renderizar Elipses de Covarianza y Centroides en SVG
+    const ellipsesLayer = document.getElementById('gmm-ellipses-layer');
+    const centroidsLayer = document.getElementById('gmm-centroids-layer');
+
+    function renderGmmMapElements() {
+        if (!ellipsesLayer || !centroidsLayer) return;
+        ellipsesLayer.innerHTML = '';
+        centroidsLayer.innerHTML = '';
+
+        gmmComponents.forEach((comp, idx) => {
+            const center = projectToSvg(comp.lat, comp.lon);
+            const rx = (comp.sigma_x / (BOUNDS.maxLon - BOUNDS.minLon)) * svgWidth;
+            const ry = (comp.sigma_y / (BOUNDS.maxLat - BOUNDS.minLat)) * svgHeight;
+            const angle = comp.angle || 0;
+
+            // Elipse 2σ (95.4%)
+            const ellipse2 = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+            ellipse2.setAttribute('cx', center.x);
+            ellipse2.setAttribute('cy', center.y);
+            ellipse2.setAttribute('rx', rx * 2.0);
+            ellipse2.setAttribute('ry', ry * 2.0);
+            ellipse2.setAttribute('fill', comp.color);
+            ellipse2.setAttribute('fill-opacity', '0.10');
+            ellipse2.setAttribute('stroke', comp.color);
+            ellipse2.setAttribute('stroke-width', '1.2');
+            ellipse2.setAttribute('stroke-dasharray', '4,3');
+            ellipse2.setAttribute('transform', `rotate(${-angle}, ${center.x}, ${center.y})`);
+            ellipse2.classList.add('gmm-ellipse', 'gmm-ellipse-2sigma');
+            ellipsesLayer.appendChild(ellipse2);
+
+            // Elipse 1σ (68.3%)
+            const ellipse1 = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+            ellipse1.setAttribute('cx', center.x);
+            ellipse1.setAttribute('cy', center.y);
+            ellipse1.setAttribute('rx', rx);
+            ellipse1.setAttribute('ry', ry);
+            ellipse1.setAttribute('fill', comp.color);
+            ellipse1.setAttribute('fill-opacity', '0.22');
+            ellipse1.setAttribute('stroke', comp.color);
+            ellipse1.setAttribute('stroke-width', '1.8');
+            ellipse1.setAttribute('transform', `rotate(${-angle}, ${center.x}, ${center.y})`);
+            ellipse1.classList.add('gmm-ellipse', 'gmm-ellipse-1sigma');
+            ellipsesLayer.appendChild(ellipse1);
+
+            // Centroide µ_k
+            const cGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            cGroup.setAttribute('transform', `translate(${center.x}, ${center.y})`);
+
+            const pulseRing = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            pulseRing.setAttribute('r', '8');
+            pulseRing.setAttribute('fill', 'none');
+            pulseRing.setAttribute('stroke', comp.color);
+            pulseRing.setAttribute('stroke-width', '1');
+            pulseRing.setAttribute('opacity', '0.6');
+            cGroup.appendChild(pulseRing);
+
+            const coreDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            coreDot.setAttribute('r', '3.5');
+            coreDot.setAttribute('fill', comp.color);
+            cGroup.appendChild(coreDot);
+
+            const labelStr = `${comp.name.split('(')[0].trim()} (π=${comp.weight})`;
+            const textWidth = Math.round(labelStr.length * 6.0 + 10);
+            const dx = comp.label_dx !== undefined ? comp.label_dx : 10;
+            const dy = comp.label_dy !== undefined ? comp.label_dy : -11;
+
+            const labelBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            labelBg.setAttribute('x', dx);
+            labelBg.setAttribute('y', dy);
+            labelBg.setAttribute('width', textWidth);
+            labelBg.setAttribute('height', '15');
+            labelBg.setAttribute('rx', '2.5');
+            labelBg.setAttribute('fill', '#090d16');
+            labelBg.setAttribute('fill-opacity', '0.85');
+            labelBg.setAttribute('stroke', comp.color);
+            labelBg.setAttribute('stroke-width', '0.7');
+            cGroup.appendChild(labelBg);
+
+            const labelText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            labelText.setAttribute('x', dx + 5);
+            labelText.setAttribute('y', dy + 11);
+            labelText.setAttribute('fill', '#f1f5f9');
+            labelText.setAttribute('font-family', 'monospace');
+            labelText.setAttribute('font-size', '8.5');
+            labelText.setAttribute('font-weight', 'bold');
+            labelText.textContent = labelStr;
+            cGroup.appendChild(labelText);
+
+            centroidsLayer.appendChild(cGroup);
+        });
+    }
+
+    renderGmmMapElements();
+
+    // Filtros de Elipses (1σ vs 2σ vs Todas)
+    document.querySelectorAll('.btn-sigma').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.btn-sigma').forEach(b => {
+                b.className = 'btn-sigma px-1.5 py-0.5 rounded hover:text-on-surface text-outline';
+            });
+            btn.className = 'btn-sigma px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-primary-container font-bold';
+
+            const sigma = btn.dataset.sigma;
+            document.querySelectorAll('.gmm-ellipse-1sigma').forEach(el => {
+                el.style.display = (sigma === 'all' || sigma === '1') ? 'block' : 'none';
+            });
+            document.querySelectorAll('.gmm-ellipse-2sigma').forEach(el => {
+                el.style.display = (sigma === 'all' || sigma === '2') ? 'block' : 'none';
+            });
+        });
+    });
+
+    // Controles Pan & Zoom para GMM
+    const gmmMapContainer = document.getElementById('gmm-map-container');
+    const gmmPanLayer = document.getElementById('gmm-panzoom-layer');
+    const btnGmmZoomIn = document.getElementById('btn-gmm-zoom-in');
+    const btnGmmZoomOut = document.getElementById('btn-gmm-zoom-out');
+    const btnGmmZoomReset = document.getElementById('btn-gmm-zoom-reset');
+    const gmmZoomBadge = document.getElementById('gmm-zoom-badge');
+
+    let gmmZoom = 1.0;
+    let gmmPanX = 0;
+    let gmmPanY = 0;
+    let isGmmPanning = false;
+    let wasGmmDragged = false;
+    let panStartX = 0;
+    let panStartY = 0;
+    let clickStartX = 0;
+    let clickStartY = 0;
+
+    function applyGmmPanZoom() {
+        if (!gmmPanLayer) return;
+        gmmPanLayer.setAttribute(
+            'transform',
+            `translate(${gmmPanX}, ${gmmPanY}) translate(300, 170) scale(${gmmZoom}) translate(-300, -170)`
+        );
+        if (gmmZoomBadge) {
+            gmmZoomBadge.textContent = `${Math.round(gmmZoom * 100)}%`;
+        }
+    }
+
+    if (gmmMapContainer && gmmPanLayer) {
+        // Mover (Arrastrar / Pan con el ratón)
+        gmmMapContainer.addEventListener('mousedown', (e) => {
+            // Ignorar clic sobre controles flotantes
+            if (e.target.closest('#btn-gmm-zoom-in') || 
+                e.target.closest('#btn-gmm-zoom-out') || 
+                e.target.closest('#btn-gmm-zoom-reset') || 
+                e.target.closest('.btn-sigma') ||
+                e.target.closest('button')) {
+                return;
+            }
+
+            e.preventDefault(); // Evitar selección de texto nativa del navegador para arrastre fluido
+            isGmmPanning = true;
+            wasGmmDragged = false;
+            clickStartX = e.clientX;
+            clickStartY = e.clientY;
+
+            const rect = gmmMapContainer.getBoundingClientRect();
+            const svgScaleX = svgWidth / (rect.width || svgWidth);
+            const svgScaleY = svgHeight / (rect.height || svgHeight);
+
+            panStartX = (e.clientX * svgScaleX) - gmmPanX;
+            panStartY = (e.clientY * svgScaleY) - gmmPanY;
+            gmmMapContainer.classList.remove('cursor-grab');
+            gmmMapContainer.classList.add('cursor-grabbing');
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isGmmPanning) return;
+            const dist = Math.hypot(e.clientX - clickStartX, e.clientY - clickStartY);
+            if (dist > 4) {
+                wasGmmDragged = true;
+            }
+
+            const rect = gmmMapContainer.getBoundingClientRect();
+            const svgScaleX = svgWidth / (rect.width || svgWidth);
+            const svgScaleY = svgHeight / (rect.height || svgHeight);
+
+            gmmPanX = (e.clientX * svgScaleX) - panStartX;
+            gmmPanY = (e.clientY * svgScaleY) - panStartY;
+            applyGmmPanZoom();
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (isGmmPanning) {
+                isGmmPanning = false;
+                if (gmmMapContainer) {
+                    gmmMapContainer.classList.remove('cursor-grabbing');
+                    gmmMapContainer.classList.add('cursor-grab');
+                }
+            }
+        });
+
+        // Acercar / Achicar con la rueda del ratón (Mouse Wheel)
+        gmmMapContainer.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY < 0 ? 0.15 : -0.15;
+            const newZoom = Math.max(0.6, Math.min(4.0, Number((gmmZoom + delta).toFixed(2))));
+
+            const rect = gmmMapContainer.getBoundingClientRect();
+            const mouseSvgX = ((e.clientX - rect.left) / (rect.width || 1)) * svgWidth;
+            const mouseSvgY = ((e.clientY - rect.top) / (rect.height || 1)) * svgHeight;
+
+            // Centrado relativo al cursor
+            gmmPanX -= (mouseSvgX - 300) * (newZoom / gmmZoom - 1);
+            gmmPanY -= (mouseSvgY - 170) * (newZoom / gmmZoom - 1);
+            gmmZoom = newZoom;
+
+            applyGmmPanZoom();
+        }, { passive: false });
+
+        // Soporte Táctil Móvil (Touch Pan & Pinch Zoom)
+        let lastTouchDist = 0;
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        gmmMapContainer.addEventListener('touchstart', (e) => {
+            if (e.target.closest('#btn-gmm-zoom-in') || e.target.closest('#btn-gmm-zoom-out') || e.target.closest('#btn-gmm-zoom-reset') || e.target.closest('.btn-sigma')) return;
+
+            if (e.touches.length === 1) {
+                isGmmPanning = true;
+                wasGmmDragged = false;
+                const rect = gmmMapContainer.getBoundingClientRect();
+                const svgScaleX = svgWidth / (rect.width || svgWidth);
+                const svgScaleY = svgHeight / (rect.height || svgHeight);
+                touchStartX = (e.touches[0].clientX * svgScaleX) - gmmPanX;
+                touchStartY = (e.touches[0].clientY * svgScaleY) - gmmPanY;
+            } else if (e.touches.length === 2) {
+                isGmmPanning = false;
+                lastTouchDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+            }
+        }, { passive: true });
+
+        gmmMapContainer.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 1 && isGmmPanning) {
+                wasGmmDragged = true;
+                const rect = gmmMapContainer.getBoundingClientRect();
+                const svgScaleX = svgWidth / (rect.width || svgWidth);
+                const svgScaleY = svgHeight / (rect.height || svgHeight);
+                gmmPanX = (e.touches[0].clientX * svgScaleX) - touchStartX;
+                gmmPanY = (e.touches[0].clientY * svgScaleY) - touchStartY;
+                applyGmmPanZoom();
+            } else if (e.touches.length === 2) {
+                const dist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                if (lastTouchDist > 0) {
+                    const factor = dist / lastTouchDist;
+                    gmmZoom = Math.max(0.6, Math.min(4.0, Number((gmmZoom * factor).toFixed(2))));
+                    applyGmmPanZoom();
+                }
+                lastTouchDist = dist;
+            }
+        }, { passive: true });
+
+        gmmMapContainer.addEventListener('touchend', () => {
+            isGmmPanning = false;
+            lastTouchDist = 0;
+        }, { passive: true });
+
+        // Botones de Acercar (+), Achicar (-) y Reset (⟲)
+        if (btnGmmZoomIn) {
+            btnGmmZoomIn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                gmmZoom = Math.min(4.0, Number((gmmZoom + 0.25).toFixed(2)));
+                applyGmmPanZoom();
+            });
+        }
+
+        if (btnGmmZoomOut) {
+            btnGmmZoomOut.addEventListener('click', (e) => {
+                e.stopPropagation();
+                gmmZoom = Math.max(0.6, Number((gmmZoom - 0.25).toFixed(2)));
+                applyGmmPanZoom();
+            });
+        }
+
+        if (btnGmmZoomReset) {
+            btnGmmZoomReset.addEventListener('click', (e) => {
+                e.stopPropagation();
+                gmmZoom = 1.0;
+                gmmPanX = 0;
+                gmmPanY = 0;
+                applyGmmPanZoom();
+            });
+        }
+    }
+
+    // Mover Sonda Táctica
+    const crosshairEl = document.getElementById('gmm-crosshair');
+    const crosshairCoordsLabel = document.getElementById('crosshair-coords-label');
+    const hudSondaStatus = document.getElementById('hud-sonda-status');
+    const svgMap = document.getElementById('gmm-tactical-map');
+
+    function updateCrosshairPosition(lat, lon) {
+        const pt = projectToSvg(lat, lon);
+        if (crosshairEl) {
+            crosshairEl.setAttribute('transform', `translate(${pt.x}, ${pt.y})`);
+        }
+        if (crosshairCoordsLabel) {
+            crosshairCoordsLabel.textContent = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+        }
+        if (hudSondaStatus) {
+            hudSondaStatus.textContent = `Lat: ${lat.toFixed(4)} | Lon: ${lon.toFixed(4)}`;
+        }
+    }
+
+    // Interacción por clic en el mapa SVG (con proyección inversa corregida por zoom y pan)
+    if (svgMap) {
+        svgMap.addEventListener('click', (e) => {
+            if (wasGmmDragged) return; // Si fue arrastre/pan, no mover la sonda
+
+            const rect = svgMap.getBoundingClientRect();
+            const screenX = ((e.clientX - rect.left) / rect.width) * svgWidth;
+            const screenY = ((e.clientY - rect.top) / rect.height) * svgHeight;
+
+            // Inversión geométrica según pan y zoom alrededor de (300, 170)
+            const origX = 300;
+            const origY = 170;
+            const localX = (screenX - origX - gmmPanX) / gmmZoom + origX;
+            const localY = (screenY - origY - gmmPanY) / gmmZoom + origY;
+
+            const coords = unprojectFromSvg(localX, localY);
+            document.getElementById('gmm-lat').value = coords.lat;
+            document.getElementById('gmm-lon').value = coords.lon;
+            updateCrosshairPosition(coords.lat, coords.lon);
+            evalGmmRisk(coords.lat, coords.lon);
+        });
+    }
+
+    // Presets rápidos
+    document.querySelectorAll('.btn-preset').forEach(b => {
+        b.addEventListener('click', () => {
+            document.querySelectorAll('.btn-preset').forEach(btn => btn.classList.remove('active'));
+            b.classList.add('active');
+
+            const lat = parseFloat(b.dataset.lat);
+            const lon = parseFloat(b.dataset.lon);
+            document.getElementById('gmm-lat').value = lat;
+            document.getElementById('gmm-lon').value = lon;
+            updateCrosshairPosition(lat, lon);
+            evalGmmRisk(lat, lon);
+        });
+    });
+
+    // Botón Evaluar
+    const btnEvalGmm = document.getElementById('btn-eval-gmm');
+    if (btnEvalGmm) {
+        btnEvalGmm.addEventListener('click', () => {
+            const lat = parseFloat(document.getElementById('gmm-lat').value);
+            const lon = parseFloat(document.getElementById('gmm-lon').value);
+            updateCrosshairPosition(lat, lon);
+            evalGmmRisk(lat, lon);
+        });
+    }
+
+    // Ejecución de Inferencia Estocástica contra el Backend
+    function evalGmmRisk(lat, lon) {
+        fetch('/api/gmm_simulate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lat: lat, lon: lon, ctx: currentContext })
+        })
+        .then(res => res.json())
+        .then(data => {
+            const riskScoreEl = document.getElementById('gmm-risk-score');
+            if (riskScoreEl) {
+                const colorClass = data.risk_level === 'ALTO' ? 'text-rose-400' : (data.risk_level === 'MEDIO' ? 'text-amber-400' : 'text-emerald-400');
+                riskScoreEl.className = `text-base font-bold ${colorClass}`;
+                riskScoreEl.textContent = `${data.risk_score_pct}% (${data.risk_level})`;
+            }
+
+            const mahalanobisEl = document.getElementById('gmm-mahalanobis');
+            if (mahalanobisEl) {
+                mahalanobisEl.textContent = `DM = ${data.min_mahalanobis !== undefined ? data.min_mahalanobis : '--'}`;
+            }
+
+            const confBadgeEl = document.getElementById('gmm-confidence-badge');
+            if (confBadgeEl) {
+                confBadgeEl.textContent = data.sigma_level || 'Elipse de Confianza';
+            }
+
+            // Actualizar barras de responsabilidad
+            if (data.component_probs) {
+                Object.keys(data.component_probs).forEach(k => {
+                    const val = data.component_probs[k];
+                    const valEl = document.getElementById(`prob-val-${k}`);
+                    const barEl = document.getElementById(`prob-bar-${k}`);
+                    if (valEl) valEl.textContent = `${val}%`;
+                    if (barEl) barEl.style.width = `${val}%`;
+                });
+            }
+        })
+        .catch(err => console.error("Error evaluando GMM:", err));
+    }
+
+    // Evaluación inicial al cargar la vista
+    const initLat = parseFloat(document.getElementById('gmm-lat').value);
+    const initLon = parseFloat(document.getElementById('gmm-lon').value);
+    updateCrosshairPosition(initLat, initLon);
+    evalGmmRisk(initLat, initLon);
+})();
+</script>
+{% endblock %}
+

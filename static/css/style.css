@@ -1,0 +1,137 @@
+/* ==========================================================================
+   CPD ANALYTICS CORE // ESTILOS GENERALES, VARIABLES & TEMA DUAL (DÍA/NOCHE)
+   FILOSOFÍA DESIGN ENGINEERING (EMIL KOWALSKI & APPLE DESIGN)
+   ========================================================================== */
+
+/* Variables CSS para modo claro (Light Theme) */
+:root {
+    --bg-page: #f8fafc;
+    --surface-main: #ffffff;
+    --surface-container-lowest: #f1f5f9;
+    --surface-container-low: #f8fafc;
+    --surface-container: #ffffff;
+    --surface-container-high: #e2e8f0;
+    --surface-container-highest: #cbd5e1;
+    --text-primary: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --border-accent: rgba(2, 132, 199, 0.35);
+    --primary-neon: #0284c7;
+    --primary-contrast: #ffffff;
+    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+    --grid-line-color: rgba(148, 163, 184, 0.15);
+}
+
+/* Variables CSS para modo oscuro (Dark Theme) */
+html.dark {
+    --bg-page: #0f131c;
+    --surface-main: #0f131c;
+    --surface-container-lowest: #0a0e17;
+    --surface-container-low: #181b25;
+    --surface-container: #1c1f29;
+    --surface-container-high: #262a34;
+    --surface-container-highest: #31353f;
+    --text-primary: #dfe2ef;
+    --text-muted: #849396;
+    --border-color: #3b494c;
+    --border-accent: rgba(0, 229, 255, 0.35);
+    --primary-neon: #00e5ff;
+    --primary-contrast: #0a0e17;
+    --card-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+    --grid-line-color: rgba(59, 73, 76, 0.15);
+}
+
+/* Transiciones específicas de color y fondo (sin transition: all) */
+body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+                color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Micro-interacción táctil física (Emil Kowalski / Apple Design) */
+button:active, 
+.btn-tactile:active,
+a.btn-tactile:active {
+    transform: scale(0.97);
+    transition: transform 80ms ease-out;
+}
+
+/* Estilo para Segmented Control (iOS/macOS) */
+.segmented-control {
+    background: var(--surface-container-lowest);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 3px;
+    display: inline-flex;
+    gap: 3px;
+}
+
+.segmented-btn {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-muted);
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.08s ease;
+}
+
+.segmented-btn:hover {
+    color: var(--text-primary);
+}
+
+.segmented-btn.active {
+    background: var(--primary-neon);
+    color: var(--primary-contrast);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    font-weight: 700;
+}
+
+/* Scrollbar táctico personalizado */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-neon);
+}
+
+/* Iconos de Material Symbols estandarizados */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+/* Paneles del Drawer Móvil */
+.drawer-backdrop {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.drawer-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.drawer-panel {
+    transform: translateX(-100%);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.drawer-backdrop.active .drawer-panel {
+    transform: translateX(0);
+}

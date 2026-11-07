@@ -1,0 +1,41 @@
+import os
+from flask import Flask
+from config import config_by_name
+
+def create_app(config_name='dev'):
+    app = Flask(
+        __name__,
+        template_folder=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates'),
+        static_folder=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static')
+    )
+    
+    app.config.from_object(config_by_name.get(config_name, config_by_name['default']))
+
+    # Registro de Blueprints
+    from modules.routes.dashboard_routes import dashboard_bp
+    from modules.routes.webgis_routes import webgis_bp
+    from modules.routes.reduction_routes import reduction_bp
+    from modules.routes.nlp_topics_routes import nlp_topics_bp
+    from modules.routes.anomaly_gmm_routes import anomaly_gmm_bp
+    from modules.routes.kmeans_nlp_routes import kmeans_nlp_bp
+    from modules.routes.spatial_density_routes import spatial_density_bp
+    from modules.routes.api_routes import api_bp
+
+    app.register_blueprint(dashboard_bp)
+    app.register_blueprint(webgis_bp)
+    app.register_blueprint(reduction_bp)
+    app.register_blueprint(nlp_topics_bp)
+    app.register_blueprint(anomaly_gmm_bp)
+    app.register_blueprint(kmeans_nlp_bp)
+    app.register_blueprint(spatial_density_bp)
+    app.register_blueprint(api_bp)
+
+    @app.context_processor
+    def inject_global_context():
+        from flask import request
+        ctx = request.args.get('ctx', 'bolivia').lower()
+        if ctx not in ['bolivia', 'chicago']:
+            ctx = 'bolivia'
+        return dict(current_context=ctx)
+
+    return app
