@@ -3,79 +3,110 @@
 {% block title %}CPD Urban Intelligence // Centro de Mando No Supervisado{% endblock %}
 
 {% block content %}
-<div class="p-4 sm:p-6 lg:p-8 flex flex-col gap-6 max-w-[1700px] w-full mx-auto select-none">
+<div class="p-4 sm:p-6 lg:p-8 flex flex-col gap-6 max-w-[1700px] w-full mx-auto select-none tactical-grid-bg">
     
-    <!-- HERO SECTION TÁCTICO POLICIAL // CINEMATIC POLICE OPERATIONS & ML CORE -->
-    <section class="relative rounded-2xl overflow-hidden border border-outline-variant/80 shadow-2xl p-6 sm:p-8 lg:p-10 transition-all"
-             style="background-image: linear-gradient(135deg, rgba(3, 7, 18, 0.94) 0%, rgba(10, 15, 29, 0.80) 50%, rgba(3, 7, 18, 0.96) 100%), radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.12) 0%, transparent 60%), url('{{ url_for('static', filename='img/hero_police_security.jpg') }}'); background-size: cover; background-position: center;">
+    <!-- HERO SECTION TÁCTICO POLICIAL // CINEMATIC POLICE OPERATIONS & ML CORE (ESTILO EL CEIBO + FIRMS NASA) -->
+    <section class="relative rounded-2xl overflow-hidden border border-outline-variant/80 shadow-2xl p-6 sm:p-8 lg:p-12 transition-all flex flex-col items-center justify-center text-center"
+             style="background-image: linear-gradient(180deg, rgba(3, 7, 18, 0.85) 0%, rgba(10, 15, 29, 0.75) 45%, rgba(3, 7, 18, 0.96) 100%), radial-gradient(circle at 50% 15%, rgba(0, 229, 255, 0.12) 0%, transparent 65%), url('{{ url_for('static', filename='img/hero_police_security.jpg') }}'); background-size: cover; background-position: center;">
         
         <!-- Línea sutil de acento policial superior -->
-        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-75"></div>
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-80"></div>
 
-        <div class="relative z-10 flex flex-col gap-4 max-w-5xl">
+        <div class="relative z-10 flex flex-col items-center gap-4 max-w-5xl w-full mx-auto">
             <!-- 1. Tracker Técnico Monospace (Estilo FIRMS NASA) -->
-            <div class="flex flex-wrap items-center gap-2">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-data-code text-[11px] font-bold uppercase tracking-widest backdrop-blur-md shadow-sm">
+            <div class="flex flex-wrap items-center justify-center gap-2">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-data-code text-[11px] font-bold uppercase tracking-widest backdrop-blur-md shadow-sm">
                     <span class="size-2 rounded-full bg-cyan-400 animate-pulse"></span>
-                    <span>POLICE INTELLIGENCE CORE // {{ 'EJE PRINCIPAL BOLIVIA' if current_context != 'chicago' else 'BENCHMARK CPD CHICAGO' }}</span>
+                    <span>INTELIGENCIA GEOESPACIAL // {{ 'BOLIVIA' if current_context != 'chicago' else 'CHICAGO' }} &bull; ML NO SUPERVISADO</span>
                 </span>
-                <span class="text-slate-500 text-xs font-data-code">•</span>
-                <span class="px-2 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-[10px] font-data-code text-slate-300 uppercase tracking-wider backdrop-blur-sm">
+                <span class="px-2.5 py-0.5 rounded-full bg-slate-900/80 border border-slate-700/80 text-[10px] font-data-code text-slate-300 uppercase tracking-wider backdrop-blur-sm">
                     {{ summary.contexto }}
                 </span>
-                <span class="ml-auto hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 font-data-code text-[10px] font-semibold backdrop-blur-sm">
+                <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 font-data-code text-[10px] font-semibold backdrop-blur-sm">
                     <span class="size-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>MOTOR ANALÍTICO ACTIVO</span>
+                    <span>SISTEMA EN TIEMPO REAL</span>
                 </span>
             </div>
 
-            <!-- 2. Título de Gran Impacto (Estilo Sabor Auténtico / FIRMS) -->
-            <h1 class="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black tracking-tight text-white uppercase leading-tight font-headline-lg drop-shadow-md">
-                SISTEMA DE INTELIGENCIA POLICIAL &amp; PATRONES DELICTIVOS
-            </h1>
+            <!-- 2. Título de Gran Impacto Tipográfico (Estilo Sabor AUTÉNTICO / FIRMS) -->
+            <div class="space-y-1">
+                <p class="font-serif italic text-cyan-400 text-xl sm:text-2xl lg:text-3xl font-light tracking-wide text-glow-cyan">
+                    Minería Espacial &amp; Patrones Ocultos
+                </p>
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight text-white uppercase font-headline-lg drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)] leading-tight">
+                    DETECCIÓN DE PATRONES DELICTIVOS
+                </h1>
+            </div>
 
             <!-- 3. Subtítulo Descriptivo Ejecutivo -->
             <p class="text-sm sm:text-base text-slate-300 max-w-3xl font-body-md leading-relaxed font-normal">
-                Dashboard analítico de Machine Learning No Supervisado sobre <strong class="text-white font-semibold">{{ "{:,}".format(summary.total_records) }}</strong> hechos delictivos ({{ summary.period }}). Minería de densidad espacial con métrica esférica (DBSCAN/OPTICS), superficies de probabilidad posterior (GMM), taxonomías jerárquicas territoriales (Ward) y detección neuronal de anomalías críticas (Autoencoders).
+                Dashboard interactivo de Machine Learning No Supervisado sobre <strong class="text-white font-semibold">{{ "{:,}".format(summary.total_records) }}</strong> incidentes georreferenciados ({{ summary.period }}). Minería de densidad espacial con métrica esférica (DBSCAN/OPTICS), superficies de probabilidad posterior (GMM), taxonomías jerárquicas territoriales (Ward) y detección neuronal de anomalías críticas (Autoencoders).
             </p>
 
-            <!-- 4. Botones Tácticos de Acción Rápida (CTAs) & Micro-Badges de Estado -->
-            <div class="flex flex-wrap items-center justify-between gap-4 pt-3 mt-1 border-t border-slate-800/80">
-                <!-- Botones de Salto Directo a Suites -->
-                <div class="flex flex-wrap items-center gap-2.5">
-                    <a href="{{ url_for('webgis_bp.globo_3d', ctx=current_context) }}" 
-                       class="btn-tactile inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs font-data-code uppercase tracking-wider transition-all shadow-lg shadow-cyan-500/25">
-                        <span class="material-symbols-outlined text-base">public</span>
-                        <span>EXPLORAR GLOBO 3D WEBGIS</span>
-                    </a>
+            <!-- 4. Botones Tácticos de Acción Rápida (Ghost Buttons Estilo El Ceibo) -->
+            <div class="flex flex-wrap items-center justify-center gap-3 pt-1">
+                <a href="{{ url_for('webgis_bp.globo_3d', ctx=current_context) }}" 
+                   class="btn-tactile inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs font-data-code uppercase tracking-wider transition-all shadow-lg shadow-cyan-500/25">
+                    <span class="material-symbols-outlined text-base">public</span>
+                    <span>EXPLORAR GLOBO 3D WEBGIS</span>
+                </a>
 
-                    <a href="{{ url_for('anomaly_gmm_bp.view', ctx=current_context) }}" 
-                       class="btn-tactile inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 font-semibold text-xs font-data-code uppercase tracking-wider transition-all backdrop-blur-md">
-                        <span class="material-symbols-outlined text-base text-rose-400">crisis_alert</span>
-                        <span>ANOMALÍAS &amp; GMM</span>
-                    </a>
+                <a href="{{ url_for('anomaly_gmm_bp.view', ctx=current_context) }}" 
+                   class="btn-tactile inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-700/80 hover:border-rose-500/50 font-semibold text-xs font-data-code uppercase tracking-wider transition-all backdrop-blur-md">
+                    <span class="material-symbols-outlined text-base text-rose-400">crisis_alert</span>
+                    <span>ANOMALÍAS &amp; GMM</span>
+                </a>
 
-                    <a href="{{ url_for('reduction_bp.view', ctx=current_context) }}" 
-                       class="btn-tactile inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 font-semibold text-xs font-data-code uppercase tracking-wider transition-all backdrop-blur-md">
-                        <span class="material-symbols-outlined text-base text-purple-400">scatter_plot</span>
-                        <span>REDUCCIÓN 2D // UMAP</span>
-                    </a>
+                <a href="{{ url_for('reduction_bp.view', ctx=current_context) }}" 
+                   class="btn-tactile inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-700/80 hover:border-purple-500/50 font-semibold text-xs font-data-code uppercase tracking-wider transition-all backdrop-blur-md">
+                    <span class="material-symbols-outlined text-base text-purple-400">scatter_plot</span>
+                    <span>REDUCCIÓN 2D // UMAP</span>
+                </a>
+            </div>
+
+            <!-- 5. Simulador Táctico de Focos y Radar (Directamente Inspirado en Imagen 1 FIRMS NASA) -->
+            <div class="w-full max-w-4xl mx-auto mt-3 rounded-xl border border-cyan-500/30 bg-slate-950/85 backdrop-blur-xl shadow-2xl overflow-hidden relative group">
+                <!-- Barra superior de botones de estado del simulador -->
+                <div class="px-4 py-2 bg-slate-900/90 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs font-data-code">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/50 text-blue-300 text-[10px] font-bold uppercase tracking-wider">
+                            FRÍO // RUIDO
+                        </span>
+                        <span class="px-2.5 py-0.5 rounded bg-amber-950/80 border border-amber-500/50 text-amber-300 text-[10px] font-bold uppercase tracking-wider">
+                            CÁLIDO // DBSCAN
+                        </span>
+                        <span class="px-2.5 py-0.5 rounded bg-rose-950/80 border border-rose-500/50 text-rose-300 text-[10px] font-bold uppercase tracking-wider">
+                            CRÍTICO // ANOMALÍA
+                        </span>
+                    </div>
+
+                    <div class="text-[10px] text-slate-400 flex items-center gap-2">
+                        <span class="size-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>SIMULACIÓN TÁCTICA ESPACIAL &bull; INTERACTIVA</span>
+                    </div>
                 </div>
 
-                <!-- Cinta de Badges de Telemetría Táctica (Tipo FIRMS: FAI, CÁLIDO, CRÍTICO) -->
-                <div class="flex flex-wrap items-center gap-1.5 font-data-code text-[11px]">
-                    <span class="px-2.5 py-1 rounded bg-slate-900/90 border border-outline-variant text-slate-300 font-semibold flex items-center gap-1.5 backdrop-blur-md">
-                        <span class="material-symbols-outlined text-sm text-amber-400">model_training</span>
-                        <span>10 Algoritmos</span>
-                    </span>
-                    <span class="px-2.5 py-1 rounded bg-slate-900/90 border border-outline-variant text-slate-300 font-semibold flex items-center gap-1.5 backdrop-blur-md">
-                        <span class="material-symbols-outlined text-sm text-cyan-400">bolt</span>
-                        <span>Latencia &lt;15 ms</span>
-                    </span>
-                    <span class="px-2.5 py-1 rounded bg-slate-900/90 border border-outline-variant text-slate-300 font-semibold flex items-center gap-1.5 backdrop-blur-md">
-                        <span class="material-symbols-outlined text-sm text-emerald-400">verified</span>
-                        <span>Capa Gold</span>
-                    </span>
+                <!-- Canvas de Radar con Focos Luminosos -->
+                <div class="relative w-full h-44 sm:h-52 bg-slate-950 flex items-center justify-center overflow-hidden">
+                    <canvas id="heroRadarCanvas" class="absolute inset-0 w-full h-full cursor-crosshair"></canvas>
+                    
+                    <!-- Retícula militar en esquinas -->
+                    <div class="absolute top-2 left-3 font-data-code text-[9px] text-cyan-400/70 select-none pointer-events-none">
+                        [ RADAR RANGE: 2500m // AZIMUTH: 360&deg; ]
+                    </div>
+                    <div class="absolute bottom-2 right-3 font-data-code text-[9px] text-slate-500 select-none pointer-events-none">
+                        LAT: -16.5000 | LON: -68.1500 &bull; DENSIDAD OPTICS
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Indicador de Desplazamiento Inferior (Scroll Indicator Estilo El Ceibo) -->
+            <div class="flex flex-col items-center justify-center pt-2 text-slate-500 hover:text-cyan-400 transition-colors">
+                <span class="text-[9px] font-data-code uppercase tracking-widest mb-1.5 opacity-70">
+                    MÉTRICAS &bull; TELEMETRÍA INFERIOR
+                </span>
+                <div class="w-5 h-8 rounded-full border border-slate-600/70 flex items-start justify-center p-1">
+                    <div class="size-1.5 rounded-full bg-cyan-400 animate-scroll-bounce"></div>
                 </div>
             </div>
         </div>
@@ -84,89 +115,93 @@
     <!-- 1. Cuadrícula de 4 KPIs con Micro-Indicadores Visuales -->
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- KPI 1: Registros -->
-        <div class="p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container/50 transition-colors shadow-sm flex flex-col justify-between">
+        <div class="card-tactical relative overflow-hidden p-4 sm:p-5 rounded-xl shadow-sm flex flex-col justify-between group">
+            <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500 to-transparent"></div>
             <div class="flex items-center justify-between text-outline text-xs font-data-code">
-                <span>TOTAL REGISTROS</span>
-                <span class="material-symbols-outlined text-primary-container text-lg">dataset</span>
+                <span class="tracking-wider uppercase">TOTAL REGISTROS</span>
+                <span class="material-symbols-outlined text-cyan-400 text-lg group-hover:scale-110 transition-transform">dataset</span>
             </div>
             <div class="my-2.5">
-                <div class="text-3xl font-data-display font-bold text-on-surface">
+                <div class="text-3xl sm:text-4xl font-data-display font-black text-white tracking-tight">
                     {{ "{:,}".format(summary.total_records) }}
                 </div>
-                <div class="text-xs font-data-code text-emerald-400 mt-1 flex items-center gap-1">
-                    <span class="material-symbols-outlined text-sm">verified</span>
+                <div class="text-xs font-data-code text-emerald-400 mt-1 flex items-center gap-1.5">
+                    <span class="size-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                     <span>100% Depurado &bull; Capa Gold</span>
                 </div>
             </div>
-            <div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden mt-1">
-                <div class="h-full bg-primary-container rounded" style="width: 100%;"></div>
+            <div class="w-full bg-slate-900/80 h-1.5 rounded overflow-hidden mt-1 border border-slate-800">
+                <div class="h-full bg-cyan-400 rounded glow-cyan" style="width: 100%;"></div>
             </div>
         </div>
 
         <!-- KPI 2: Focos Densos -->
-        <div class="p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container/50 transition-colors shadow-sm flex flex-col justify-between">
+        <div class="card-tactical relative overflow-hidden p-4 sm:p-5 rounded-xl shadow-sm flex flex-col justify-between group">
+            <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-rose-500 to-transparent"></div>
             <div class="flex items-center justify-between text-outline text-xs font-data-code">
-                <span>HOTSPOTS (DBSCAN)</span>
-                <span class="material-symbols-outlined text-rose-400 text-lg">radar</span>
+                <span class="tracking-wider uppercase">HOTSPOTS (DBSCAN)</span>
+                <span class="material-symbols-outlined text-rose-400 text-lg group-hover:scale-110 transition-transform">radar</span>
             </div>
             <div class="my-2.5">
-                <div class="text-3xl font-data-display font-bold text-on-surface">
-                    {{ summary.active_hotspots }} <span class="text-sm text-outline font-normal">Focos</span>
+                <div class="text-3xl sm:text-4xl font-data-display font-black text-white tracking-tight">
+                    {{ summary.active_hotspots }} <span class="text-sm text-slate-400 font-normal">Focos</span>
                 </div>
-                <div class="text-xs font-data-code text-rose-400 mt-1 flex items-center gap-1">
-                    <span class="material-symbols-outlined text-sm">crisis_alert</span>
+                <div class="text-xs font-data-code text-rose-400 mt-1 flex items-center gap-1.5">
+                    <span class="size-1.5 rounded-full bg-rose-400 animate-pulse"></span>
                     <span>Métrica Haversine esférica</span>
                 </div>
             </div>
-            <div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden mt-1">
-                <div class="h-full bg-rose-400 rounded" style="width: {{ 100 - summary.noise_pct }}%;"></div>
+            <div class="w-full bg-slate-900/80 h-1.5 rounded overflow-hidden mt-1 border border-slate-800">
+                <div class="h-full bg-rose-500 rounded glow-rose" style="width: {{ 100 - summary.noise_pct }}%;"></div>
             </div>
         </div>
 
         <!-- KPI 3: Anomalías o Arrestos -->
-        <div class="p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container/50 transition-colors shadow-sm flex flex-col justify-between">
+        <div class="card-tactical relative overflow-hidden p-4 sm:p-5 rounded-xl shadow-sm flex flex-col justify-between group">
+            <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-500 to-transparent"></div>
             <div class="flex items-center justify-between text-outline text-xs font-data-code">
-                <span>{{ 'ANOMALÍAS (AUTOENCODER)' if current_context != 'chicago' else 'TASA DE ARRESTO' }}</span>
-                <span class="material-symbols-outlined text-amber-400 text-lg">{{ 'warning' if current_context != 'chicago' else 'gavel' }}</span>
+                <span class="tracking-wider uppercase">{{ 'ANOMALÍAS (AUTOENCODER)' if current_context != 'chicago' else 'TASA DE ARRESTO' }}</span>
+                <span class="material-symbols-outlined text-amber-400 text-lg group-hover:scale-110 transition-transform">{{ 'warning' if current_context != 'chicago' else 'gavel' }}</span>
             </div>
             <div class="my-2.5">
-                <div class="text-3xl font-data-display font-bold text-on-surface">
+                <div class="text-3xl sm:text-4xl font-data-display font-black text-white tracking-tight">
                     {% if current_context != 'chicago' %}
-                    {{ summary.anomalias_count }} <span class="text-sm text-outline font-normal">({{ summary.anomalias_pct }}%)</span>
+                    {{ summary.anomalias_count }} <span class="text-sm text-slate-400 font-normal">({{ summary.anomalias_pct }}%)</span>
                     {% else %}
                     {{ summary.arrest_rate }}%
                     {% endif %}
                 </div>
-                <div class="text-xs font-data-code text-amber-400 mt-1 flex items-center gap-1">
-                    <span class="material-symbols-outlined text-sm">trending_up</span>
-                    <span>{{ 'Error MSE > Umbral Corte' if current_context != 'chicago' else 'Mayor en Narcóticos (78%)' }}</span>
+                <div class="text-xs font-data-code text-amber-400 mt-1 flex items-center gap-1.5">
+                    <span class="size-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span>{{ 'Error MSE > Umbral Corte P90' if current_context != 'chicago' else 'Mayor en Narcóticos (78%)' }}</span>
                 </div>
             </div>
-            <div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden mt-1">
-                <div class="h-full bg-amber-400 rounded" style="width: {{ summary.anomalias_pct if current_context != 'chicago' else summary.arrest_rate }}%;"></div>
+            <div class="w-full bg-slate-900/80 h-1.5 rounded overflow-hidden mt-1 border border-slate-800">
+                <div class="h-full bg-amber-400 rounded glow-amber" style="width: {{ summary.anomalias_pct if current_context != 'chicago' else summary.arrest_rate }}%;"></div>
             </div>
         </div>
 
         <!-- KPI 4: Partición Territorial & Fidelidad Taxonómica Jerárquica -->
-        <div class="p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant hover:border-purple-500/50 transition-colors shadow-sm flex flex-col justify-between">
+        <div class="card-tactical relative overflow-hidden p-4 sm:p-5 rounded-xl shadow-sm flex flex-col justify-between group">
+            <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-transparent"></div>
             <div class="flex items-center justify-between text-outline text-xs font-data-code">
-                <span>{{ 'SECTORES URBANOS' if current_context != 'chicago' else 'DISTRITOS TAXONÓMICOS' }}</span>
-                <span class="material-symbols-outlined text-purple-400 text-lg">account_tree</span>
+                <span class="tracking-wider uppercase">{{ 'SECTORES URBANOS' if current_context != 'chicago' else 'DISTRITOS TAXONÓMICOS' }}</span>
+                <span class="material-symbols-outlined text-purple-400 text-lg group-hover:scale-110 transition-transform">account_tree</span>
             </div>
             <div class="my-2">
                 <div class="flex items-baseline justify-between">
-                    <div class="text-3xl font-data-display font-bold text-on-surface">
-                        {{ summary.zonas_count if current_context != 'chicago' else summary.districts_count }} <span class="text-sm text-outline font-normal">Sectores</span>
+                    <div class="text-3xl sm:text-4xl font-data-display font-black text-white tracking-tight">
+                        {{ summary.zonas_count if current_context != 'chicago' else summary.districts_count }} <span class="text-sm text-slate-400 font-normal">Sectores</span>
                     </div>
-                    <span class="text-[11px] font-data-code text-purple-400 font-bold px-1.5 py-0.5 rounded bg-purple-500/10 border border-purple-500/30">
+                    <span class="text-[11px] font-data-code text-purple-300 font-bold px-2 py-0.5 rounded bg-purple-950/80 border border-purple-500/40">
                         k=3 Macro
                     </span>
                 </div>
                 <!-- Sparkline / Comparativa de Enlaces Cofenéticos (Ward vs Average vs Complete) -->
-                <div class="mt-2 pt-2 border-t border-outline-variant/30 space-y-1.5 font-data-code text-[10px]">
-                    <div class="flex justify-between items-center text-outline">
+                <div class="mt-2.5 pt-2.5 border-t border-slate-800 space-y-1.5 font-data-code text-[10px]">
+                    <div class="flex justify-between items-center text-slate-400">
                         <span>Fidelidad Cofenética (r):</span>
-                        <span class="text-primary-container font-semibold">Ward r=0.81</span>
+                        <span class="text-cyan-400 font-bold">Ward r=0.81</span>
                     </div>
                     <!-- Mini-Barras Comparativas Sparkline -->
                     <div class="grid grid-cols-3 gap-1.5 pt-0.5">
@@ -175,8 +210,8 @@
                                 <span class="text-purple-300 font-bold">Ward</span>
                                 <span class="text-purple-300">0.81</span>
                             </div>
-                            <div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden">
-                                <div class="h-full bg-purple-400 rounded" style="width: 81%;"></div>
+                            <div class="w-full bg-slate-900/80 h-1.5 rounded overflow-hidden border border-slate-800">
+                                <div class="h-full bg-purple-400 rounded glow-purple" style="width: 81%;"></div>
                             </div>
                         </div>
                         <div class="flex flex-col gap-0.5" title="Average (r=0.83) - Máxima Fidelidad Ultramétrica">
@@ -184,8 +219,8 @@
                                 <span class="text-emerald-300 font-bold">Avg</span>
                                 <span class="text-emerald-300">0.83</span>
                             </div>
-                            <div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden">
-                                <div class="h-full bg-emerald-400 rounded" style="width: 83%;"></div>
+                            <div class="w-full bg-slate-900/80 h-1.5 rounded overflow-hidden border border-slate-800">
+                                <div class="h-full bg-emerald-400 rounded glow-emerald" style="width: 83%;"></div>
                             </div>
                         </div>
                         <div class="flex flex-col gap-0.5" title="Complete (r=0.76) - Diámetro Máximo Compacto">
@@ -193,8 +228,8 @@
                                 <span class="text-amber-300 font-bold">Comp</span>
                                 <span class="text-amber-300">0.76</span>
                             </div>
-                            <div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden">
-                                <div class="h-full bg-amber-400 rounded" style="width: 76%;"></div>
+                            <div class="w-full bg-slate-900/80 h-1.5 rounded overflow-hidden border border-slate-800">
+                                <div class="h-full bg-amber-400 rounded glow-amber" style="width: 76%;"></div>
                             </div>
                         </div>
                     </div>
@@ -202,7 +237,7 @@
             </div>
             <!-- Acceso Directo con Umbral Óptimo Precalibrado -->
             <a href="/jerarquico-densidad?ctx={{ current_context }}" 
-               class="mt-1 flex items-center justify-between w-full px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant/30 text-[10px] font-data-code text-on-surface-variant hover:text-primary-container transition-colors"
+               class="mt-1 flex items-center justify-between w-full px-2.5 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 text-[10px] font-data-code text-slate-300 hover:text-cyan-400 transition-colors"
                title="Ver Dendrograma Interactivo con umbral óptimo precalibrado">
                 <span>Dendrograma Interactivo</span>
                 <span class="text-purple-400 font-bold flex items-center gap-0.5">
@@ -226,94 +261,94 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Suite 1: Globo 3D -->
             <a href="{{ url_for('webgis_bp.globo_3d', ctx=current_context) }}" 
-               class="btn-tactile p-4 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container flex flex-col justify-between gap-3 group transition-colors shadow-sm">
+               class="btn-tactile card-tactical p-4.5 rounded-xl flex flex-col justify-between gap-3 group shadow-sm">
                 <div class="flex items-center justify-between">
-                    <div class="size-8 rounded-lg bg-primary-container/10 border border-primary-container/30 flex items-center justify-center text-primary-container group-hover:scale-110 transition-transform">
+                    <div class="size-8.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform shadow-sm">
                         <span class="material-symbols-outlined text-xl">public</span>
                     </div>
-                    <span class="text-[10px] font-data-code text-primary-container font-semibold uppercase">WebGIS 3D</span>
+                    <span class="badge-tactical bg-cyan-950/80 border border-cyan-500/30 text-cyan-400">WebGIS 3D</span>
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-on-surface group-hover:text-primary-container transition-colors">Globo Terráqueo 3D</h3>
+                    <h3 class="text-sm font-bold text-white group-hover:text-cyan-400 transition-colors">Globo Terráqueo 3D</h3>
                     <!-- Chips de Algoritmo en vez de párrafo -->
                     <div class="flex flex-wrap gap-1 mt-2 font-data-code text-[10px]">
-                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">MapLibre v4</span>
-                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">WebGL</span>
-                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">Haversine</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">MapLibre v4</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">WebGL</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">Haversine</span>
                     </div>
                 </div>
-                <span class="text-xs text-primary-container font-bold font-data-code flex items-center gap-1 pt-1 border-t border-outline-variant">
+                <span class="text-xs text-cyan-400 font-bold font-data-code flex items-center gap-1 pt-1.5 border-t border-slate-800">
                     Explorar Globo ↗
                 </span>
             </a>
 
             <!-- Suite 2: Reducción 2D -->
             <a href="{{ url_for('reduction_bp.view', ctx=current_context) }}" 
-               class="btn-tactile p-4 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container flex flex-col justify-between gap-3 group transition-colors shadow-sm">
+               class="btn-tactile card-tactical p-4.5 rounded-xl flex flex-col justify-between gap-3 group shadow-sm">
                 <div class="flex items-center justify-between">
-                    <div class="size-8 rounded-lg bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
+                    <div class="size-8.5 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform shadow-sm">
                         <span class="material-symbols-outlined text-xl">scatter_plot</span>
                     </div>
-                    <span class="text-[10px] font-data-code text-amber-400 font-semibold uppercase">26/29 Oct</span>
+                    <span class="badge-tactical bg-amber-950/80 border border-amber-500/30 text-amber-400">26/29 Oct</span>
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-on-surface group-hover:text-primary-container transition-colors">Reducción 2D</h3>
+                    <h3 class="text-sm font-bold text-white group-hover:text-amber-400 transition-colors">Reducción 2D</h3>
                     <!-- Chips de Algoritmo en vez de párrafo -->
                     <div class="flex flex-wrap gap-1 mt-2 font-data-code text-[10px]">
-                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">PCA</span>
-                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">SVD</span>
-                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">PPCA</span>
-                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">t-SNE</span>
-                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">UMAP</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">PCA</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">SVD</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">PPCA</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">t-SNE</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">UMAP</span>
                     </div>
                 </div>
-                <span class="text-xs text-amber-400 font-bold font-data-code flex items-center gap-1 pt-1 border-t border-outline-variant">
+                <span class="text-xs text-amber-400 font-bold font-data-code flex items-center gap-1 pt-1.5 border-t border-slate-800">
                     Analizar Espacios ↗
                 </span>
             </a>
 
             <!-- Suite 3: NLP Tópicos LDA -->
             <a href="{{ url_for('nlp_topics_bp.view', ctx=current_context) }}" 
-               class="btn-tactile p-4 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container flex flex-col justify-between gap-3 group transition-colors shadow-sm">
+               class="btn-tactile card-tactical p-4.5 rounded-xl flex flex-col justify-between gap-3 group shadow-sm">
                 <div class="flex items-center justify-between">
-                    <div class="size-8 rounded-lg bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+                    <div class="size-8.5 rounded-lg bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform shadow-sm">
                         <span class="material-symbols-outlined text-xl">article</span>
                     </div>
-                    <span class="text-[10px] font-data-code text-cyan-400 font-semibold uppercase">Dirichlet</span>
+                    <span class="badge-tactical bg-cyan-950/80 border border-cyan-400/30 text-cyan-300">Dirichlet</span>
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-on-surface group-hover:text-primary-container transition-colors">NLP &amp; Tópicos LDA</h3>
+                    <h3 class="text-sm font-bold text-white group-hover:text-cyan-400 transition-colors">NLP &amp; Tópicos LDA</h3>
                     <!-- Chips de Algoritmo en vez de párrafo -->
                     <div class="flex flex-wrap gap-1 mt-2 font-data-code text-[10px]">
-                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">TF-IDF</span>
-                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">5 Tópicos</span>
-                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">Clasificador</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">TF-IDF</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">5 Tópicos</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">Clasificador</span>
                     </div>
                 </div>
-                <span class="text-xs text-cyan-400 font-bold font-data-code flex items-center gap-1 pt-1 border-t border-outline-variant">
+                <span class="text-xs text-cyan-400 font-bold font-data-code flex items-center gap-1 pt-1.5 border-t border-slate-800">
                     Ver Tópicos ↗
                 </span>
             </a>
 
             <!-- Suite 4: Anomalías & GMM -->
             <a href="{{ url_for('anomaly_gmm_bp.view', ctx=current_context) }}" 
-               class="btn-tactile p-4 rounded-xl bg-surface-container border border-outline-variant hover:border-primary-container flex flex-col justify-between gap-3 group transition-colors shadow-sm">
+               class="btn-tactile card-tactical p-4.5 rounded-xl flex flex-col justify-between gap-3 group shadow-sm">
                 <div class="flex items-center justify-between">
-                    <div class="size-8 rounded-lg bg-rose-400/10 border border-rose-400/30 flex items-center justify-center text-rose-400 group-hover:scale-110 transition-transform">
+                    <div class="size-8.5 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 group-hover:scale-110 transition-transform shadow-sm">
                         <span class="material-symbols-outlined text-xl">crisis_alert</span>
                     </div>
-                    <span class="text-[10px] font-data-code text-rose-400 font-semibold uppercase">Autoencoders</span>
+                    <span class="badge-tactical bg-rose-950/80 border border-rose-500/30 text-rose-400">Autoencoders</span>
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-on-surface group-hover:text-primary-container transition-colors">Anomalías &amp; GMM</h3>
+                    <h3 class="text-sm font-bold text-white group-hover:text-rose-400 transition-colors">Anomalías &amp; GMM</h3>
                     <!-- Chips de Algoritmo en vez de párrafo -->
                     <div class="flex flex-wrap gap-1 mt-2 font-data-code text-[10px]">
-                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">MLP Reconst.</span>
-                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">MSE Error</span>
-                        <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">Elipses 2σ</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">MLP Reconst.</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">MSE Error</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">Elipses 2σ</span>
                     </div>
                 </div>
-                <span class="text-xs text-rose-400 font-bold font-data-code flex items-center gap-1 pt-1 border-t border-outline-variant">
+                <span class="text-xs text-rose-400 font-bold font-data-code flex items-center gap-1 pt-1.5 border-t border-slate-800">
                     Revisar Radar ↗
                 </span>
             </a>
@@ -323,23 +358,23 @@
     <!-- 3. Distribución Delictiva & Matriz de Cobertura Algorítmica -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Gráfica de Barras Proporcionales de Tipología Delictiva -->
-        <div class="lg:col-span-2 p-5 rounded-xl bg-surface-container border border-outline-variant flex flex-col gap-4 shadow-sm">
-            <div class="flex items-center justify-between border-b border-outline-variant pb-3">
+        <div class="lg:col-span-2 card-tactical p-5 rounded-xl flex flex-col gap-4 shadow-sm">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div class="flex items-center gap-2">
-                    <span class="size-2 rounded-full bg-primary-container"></span>
-                    <h3 class="text-sm font-bold text-on-surface font-headline-sm uppercase">Distribución por Tipología Principal</h3>
+                    <span class="size-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <h3 class="text-sm font-bold text-white font-headline-sm uppercase">Distribución por Tipología Principal</h3>
                 </div>
-                <span class="text-xs font-data-code text-outline uppercase">{{ summary.contexto }}</span>
+                <span class="text-xs font-data-code text-slate-400 uppercase">{{ summary.contexto }}</span>
             </div>
 
             <div class="space-y-3 font-data-code text-xs">
                 {% for crime in summary.top_crimes %}
                 <div>
                     <div class="flex justify-between items-center mb-1">
-                        <span class="text-on-surface font-medium">{{ crime.name }}</span>
-                        <span class="text-outline">{{ "{:,}".format(crime.count) }} ({{ crime.pct }}%)</span>
+                        <span class="text-slate-200 font-medium">{{ crime.name }}</span>
+                        <span class="text-slate-400">{{ "{:,}".format(crime.count) }} ({{ crime.pct }}%)</span>
                     </div>
-                    <div class="w-full bg-surface-container-lowest h-2 rounded overflow-hidden">
+                    <div class="w-full bg-slate-900/80 h-2 rounded overflow-hidden border border-slate-800/80">
                         <div class="h-full rounded transition-all duration-500" style="width: {{ crime.pct }}%; background-color: {{ crime.color }};"></div>
                     </div>
                 </div>
@@ -347,15 +382,18 @@
             </div>
         </div>
 
-        <!-- Matriz de Estado de Algoritmos del Curso (En lugar de texto de servidor) -->
-        <div class="p-5 rounded-xl bg-surface-container border border-outline-variant flex flex-col justify-between gap-4 shadow-sm">
+        <!-- Matriz de Estado de Algoritmos del Curso -->
+        <div class="card-tactical p-5 rounded-xl flex flex-col justify-between gap-4 shadow-sm">
             <div>
-                <div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-800">
                     <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-primary-container text-lg">auto_awesome</span>
-                        <h3 class="text-sm font-bold text-on-surface font-headline-sm uppercase">Modelos del Curso</h3>
+                        <span class="material-symbols-outlined text-cyan-400 text-lg">auto_awesome</span>
+                        <h3 class="text-sm font-bold text-white font-headline-sm uppercase">Modelos del Curso</h3>
                     </div>
-                    <span class="text-[10px] font-data-code text-emerald-400 font-bold uppercase">100% Ajustados</span>
+                    <span class="text-[10px] font-data-code text-emerald-400 font-bold uppercase flex items-center gap-1">
+                        <span class="size-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        100% Ajustados
+                    </span>
                 </div>
 
                 <div class="space-y-2 mt-3 text-xs font-data-code">
@@ -393,4 +431,175 @@
         </div>
     </section>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    const canvas = document.getElementById('heroRadarCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    function resize() {
+        if (!canvas.parentElement) return;
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Puntos simulados de cluster delictivo (estilo Image 1 FIRMS NASA: Focos espaciales)
+    const points = [];
+    const colors = {
+        frio: { base: 'rgba(56, 189, 248, 0.85)', glow: 'rgba(56, 189, 248, 0.35)', label: 'RUIDO / DISPERSO' },
+        calido: { base: 'rgba(251, 191, 36, 0.95)', glow: 'rgba(251, 191, 36, 0.45)', label: 'CLUSTER DBSCAN' },
+        critico: { base: 'rgba(244, 63, 94, 0.95)', glow: 'rgba(244, 63, 94, 0.55)', label: 'ANOMALIA CRITICA' }
+    };
+
+    // Focos agrupados por densidad
+    const clusters = [
+        { x: 0.35, y: 0.50, count: 9, type: 'calido' },
+        { x: 0.65, y: 0.45, count: 11, type: 'calido' },
+        { x: 0.50, y: 0.30, count: 3, type: 'critico' },
+        { x: 0.20, y: 0.70, count: 4, type: 'frio' },
+        { x: 0.82, y: 0.35, count: 4, type: 'frio' }
+    ];
+
+    clusters.forEach(c => {
+        for (let i = 0; i < c.count; i++) {
+            const spread = c.type === 'calido' ? 0.08 : 0.12;
+            points.push({
+                x: c.x + (Math.random() - 0.5) * spread,
+                y: c.y + (Math.random() - 0.5) * spread,
+                vx: (Math.random() - 0.5) * 0.0002,
+                vy: (Math.random() - 0.5) * 0.0002,
+                radius: c.type === 'critico' ? 4.5 : (c.type === 'calido' ? 3.5 : 2.5),
+                type: c.type,
+                pulse: Math.random() * Math.PI * 2
+            });
+        }
+    });
+
+    let angle = 0;
+    let mouse = { x: -100, y: -100, active: false };
+
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+        mouse.active = true;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        mouse.active = false;
+    });
+
+    function draw() {
+        const w = canvas.width;
+        const h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        const cx = w / 2;
+        const cy = h / 2;
+        const maxR = Math.min(w, h) * 0.65;
+
+        // 1. Círculos concéntricos de rango militar
+        ctx.save();
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.12)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 5]);
+        [0.25, 0.5, 0.75, 1.0].forEach(factor => {
+            ctx.beginPath();
+            ctx.arc(cx, cy, maxR * factor, 0, Math.PI * 2);
+            ctx.stroke();
+        });
+
+        // Ejes ortogonales
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.08)';
+        ctx.setLineDash([]);
+        ctx.beginPath();
+        ctx.moveTo(cx, 0); ctx.lineTo(cx, h);
+        ctx.moveTo(0, cy); ctx.lineTo(w, cy);
+        ctx.stroke();
+        ctx.restore();
+
+        // 2. Haz rotatorio de radar táctico
+        angle += 0.02;
+        ctx.save();
+        const sweepGrad = ctx.createConicGradient(angle, cx, cy);
+        sweepGrad.addColorStop(0, 'rgba(0, 229, 255, 0.18)');
+        sweepGrad.addColorStop(0.08, 'rgba(0, 229, 255, 0.02)');
+        sweepGrad.addColorStop(0.12, 'transparent');
+        sweepGrad.addColorStop(1, 'transparent');
+
+        ctx.fillStyle = sweepGrad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, maxR, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // 3. Dibujar focos y clusters luminosos
+        points.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            if (p.x < 0.05 || p.x > 0.95) p.vx *= -1;
+            if (p.y < 0.05 || p.y > 0.95) p.vy *= -1;
+            p.pulse += 0.04;
+
+            const px = p.x * w;
+            const py = p.y * h;
+            const cfg = colors[p.type];
+            const pulseFactor = 1 + Math.sin(p.pulse) * 0.25;
+
+            // Halo exterior difuso
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(px, py, p.radius * 3.5 * pulseFactor, 0, Math.PI * 2);
+            ctx.fillStyle = cfg.glow;
+            ctx.fill();
+
+            // Núcleo brillante
+            ctx.beginPath();
+            ctx.arc(px, py, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = cfg.base;
+            ctx.shadowColor = cfg.base;
+            ctx.shadowBlur = 10;
+            ctx.fill();
+            ctx.restore();
+        });
+
+        // 4. Retícula y coordenadas al interactuar con el mouse
+        if (mouse.active) {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(0, 229, 255, 0.6)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([2, 3]);
+            
+            ctx.beginPath();
+            ctx.moveTo(mouse.x - 14, mouse.y); ctx.lineTo(mouse.x + 14, mouse.y);
+            ctx.moveTo(mouse.x, mouse.y - 14); ctx.lineTo(mouse.x, mouse.y + 14);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(mouse.x, mouse.y, 7, 0, Math.PI * 2);
+            ctx.stroke();
+
+            const lat = (-16.5000 + (mouse.y / h - 0.5) * 0.1).toFixed(4);
+            const lon = (-68.1500 + (mouse.x / w - 0.5) * 0.1).toFixed(4);
+            ctx.setLineDash([]);
+            ctx.font = '10px "JetBrains Mono", monospace';
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+            ctx.fillRect(mouse.x + 10, mouse.y - 22, 170, 22);
+            ctx.strokeStyle = 'rgba(0, 229, 255, 0.5)';
+            ctx.strokeRect(mouse.x + 10, mouse.y - 22, 170, 22);
+            ctx.fillStyle = '#00e5ff';
+            ctx.fillText(`GEO: [${lat}, ${lon}]`, mouse.x + 16, mouse.y - 7);
+            ctx.restore();
+        }
+
+        requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+})();
+</script>
 {% endblock %}

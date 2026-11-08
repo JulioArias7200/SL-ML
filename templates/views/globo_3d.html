@@ -5,41 +5,66 @@
 {% block extra_head %}
 <!-- MapLibre GL JS v4.7.1 CSS (Soporte Nativo 3D Globe) -->
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
-<link rel="stylesheet" href="{{ url_for('static', filename='css/globo_3d.css') }}?v=4.4.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/globo_3d.css') }}?v=5.1.0">
+<style>
+    /* Bloqueo estricto de scroll exterior para visualizador WebGIS 3D inmersivo */
+    html, body {
+        overflow: hidden !important;
+        height: 100% !important;
+    }
+    .custom-scrollbar, main {
+        overflow: hidden !important;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div id="globo-viewport" data-context="{{ current_context }}">
+<div id="globo-viewport" data-context="{{ current_context }}" data-algo-theme="category">
     <!-- Contenedor del Mapa WebGL (Intacto bajo estrictas directrices) -->
     <div id="map-container"></div>
 
-    <!-- HUD Superior Izquierdo: Telemetría Táctica & Micro-Chips (High Data-Ink Ratio) -->
+    <!-- Retícula Central Táctica (Crosshair de Reconocimiento Orbital) -->
+    <div id="tactical-crosshair" class="pointer-events-none absolute inset-0 flex items-center justify-center z-10 opacity-25 select-none">
+        <div class="relative size-7 flex items-center justify-center">
+            <div class="absolute w-7 h-[1px] bg-cyan-400/80"></div>
+            <div class="absolute h-7 w-[1px] bg-cyan-400/80"></div>
+            <div class="size-2 rounded-full border border-cyan-400/80"></div>
+        </div>
+    </div>
+
+    <!-- Botón Flotante para Restaurar HUD (Activo en Modo Cine) -->
+    <button id="btn-restore-hud" type="button" class="fixed top-4 right-4 z-50 px-3.5 py-2 rounded-xl bg-slate-900/90 border border-cyan-500/50 text-cyan-300 font-data-code text-xs font-bold shadow-xl backdrop-blur-md hidden items-center gap-2 transition-all hover:bg-slate-800 hover:scale-105 active:scale-95 cursor-pointer" title="Restaurar paneles HUD (Atajo: Tecla H)">
+        <span class="material-symbols-outlined text-sm">visibility</span>
+        <span>MOSTRAR HUD [H]</span>
+    </button>
+
+    <!-- HUD Superior Izquierdo: Telemetría Táctica Compacta -->
     <div class="tactical-hud hud-top-left">
-        <div class="hud-card space-y-2.5">
+        <div class="hud-card space-y-2 !p-3">
             <div class="flex items-center justify-between">
                 <div class="hud-badge">
                     <span class="radar-dot"></span>
                     <span>INTEL // WEBGIS 3D</span>
                 </div>
-                <span class="text-[11px] text-outline font-data-code uppercase">
+                <span class="text-[10px] text-outline font-data-code uppercase font-semibold">
                     {{ 'US CHICAGO' if current_context == 'chicago' else 'BO BOLIVIA' }}
                 </span>
             </div>
 
             <div class="flex items-baseline justify-between pt-1 border-t border-outline-variant">
-                <span class="text-xs text-on-surface-variant font-medium">Incidentes Mapeados:</span>
-                <span id="stat-total-events" class="text-base font-bold font-data-code text-primary-container">
+                <span class="text-[11px] text-on-surface-variant font-medium">Incidentes Mapeados:</span>
+                <span id="stat-total-events" class="text-sm font-bold font-data-code text-cyan-400 tabular-nums text-glow-cyan">
                     {{ metadata.total_eventos }}
                 </span>
             </div>
 
             <!-- Selector de Modo Algorítmico (Delito / DBSCAN / OPTICS / GMM / Ward) -->
-            <div class="space-y-1.5 pt-1.5 border-t border-outline-variant font-data-code">
-                <div class="flex items-center justify-between text-[10px] text-outline uppercase font-bold tracking-wider">
+            <div class="space-y-1 pt-1 border-t border-outline-variant font-data-code">
+                <div class="flex items-center justify-between text-[9px] text-outline uppercase font-bold tracking-wider">
                     <span>Modo Algorítmico</span>
                     <span id="active-mode-label" class="text-primary-container font-semibold">DELITOS</span>
                 </div>
-                <div class="segmented-control font-data-code text-[11px] shadow-inner w-full grid grid-cols-5 gap-0.5">
+                <div class="segmented-control font-data-code text-[9.5px] shadow-inner w-full grid grid-cols-6 gap-0.5">
                     <button type="button" 
                             id="btn-mode-category"
                             class="segmented-btn btn-tactile py-1 text-center active" 
@@ -53,6 +78,13 @@
                             data-cluster-mode="dbscan"
                             title="Activar clusters espaciales DBSCAN y aislar ruido (-1)">
                         <span>DBSCAN</span>
+                    </button>
+                    <button type="button" 
+                            id="btn-mode-hdbscan"
+                            class="segmented-btn btn-tactile py-1 text-center" 
+                            data-cluster-mode="hdbscan"
+                            title="Activar clusters jerárquicos de densidad variable HDBSCAN y persistencia">
+                        <span>HDBSCAN</span>
                     </button>
                     <button type="button" 
                             id="btn-mode-optics"
@@ -77,234 +109,332 @@
                     </button>
                 </div>
             </div>
-
-            <!-- Micro-Chips Métricos Desaturados (Show, don't tell) -->
-            <div class="flex flex-wrap gap-1.5 pt-1.5 border-t border-outline-variant font-data-code text-[10px]">
-                <span class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant text-primary-container font-semibold">
-                    Clustering WebGL
-                </span>
-                <span class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">
-                    Haversine Esférico
-                </span>
-                <span class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">
-                    {% if current_context == 'chicago' %}22 Distritos CPD{% else %}Georreferencia Real{% endif %}
-                </span>
-            </div>
         </div>
     </div>
 
-    <!-- HUD Superior Derecho: Toolbar Táctico -->
-    <div class="tactical-hud hud-top-right">
+    <!-- HUD Superior Derecho: Toolbar Táctico Plegable -->
+    <div class="tactical-hud hud-top-right" id="hud-top-right">
         <div class="hud-toolbar-card">
-            <!-- Header de Toolbar -->
-            <div class="hud-toolbar-header">
-                <span class="hud-toolbar-title">Dataset & Proyección</span>
-                <span class="material-symbols-outlined text-xs text-outline">tune</span>
-            </div>
-
-            <!-- Selector de Contexto Directo en HUD (Bolivia ↔ Chicago) -->
-            <div class="segmented-control font-data-code text-xs shadow-inner w-full flex">
-                <a href="{{ url_for('webgis_bp.globo_3d', ctx='bolivia') }}" 
-                   id="btn-switch-bolivia"
-                   class="segmented-btn btn-tactile flex-1 flex items-center justify-center gap-1.5 py-1.5 {{ 'active' if current_context != 'chicago' else '' }}"
-                   title="Ver mapa de Bolivia">
-                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-surface-container-high font-bold">BO</span>
-                    <span>Bolivia</span>
-                </a>
-                <a href="{{ url_for('webgis_bp.globo_3d', ctx='chicago') }}" 
-                   id="btn-switch-chicago"
-                   class="segmented-btn btn-tactile flex-1 flex items-center justify-center gap-1.5 py-1.5 {{ 'active' if current_context == 'chicago' else '' }}"
-                   title="Ver mapa de Chicago">
-                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-surface-container-high font-bold">US</span>
-                    <span>Chicago</span>
-                </a>
-            </div>
-
-            <!-- Filtro 1: Delito Principal -->
-            <div class="hud-input-group" title="Filtrar por tipología delictiva">
-                <span class="material-symbols-outlined hud-input-icon">category</span>
-                <select id="filter-category" class="hud-dropdown-select">
-                    <option value="todos">Todos los Delitos</option>
-                    {% for cat in metadata.categorias %}
-                    <option value="{{ cat.nombre }}">{{ cat.nombre }} ({{ cat.count }})</option>
-                    {% endfor %}
-                </select>
-                <span class="material-symbols-outlined hud-dropdown-chevron">expand_more</span>
-            </div>
-
-            <!-- Filtro 2: Ciudad / Distrito -->
-            <div class="hud-input-group" title="Filtrar por centro urbano o distrito policial">
-                <span class="material-symbols-outlined hud-input-icon">location_city</span>
-                <select id="filter-city" class="hud-dropdown-select">
-                    <option value="todas">{% if current_context == 'chicago' %}Todos los Distritos{% else %}Todas las Ciudades{% endif %}</option>
-                    {% for c in metadata.ciudades %}
-                    <option value="{{ c.nombre }}">{{ c.nombre }} ({{ c.count }})</option>
-                    {% endfor %}
-                </select>
-                <span class="material-symbols-outlined hud-dropdown-chevron">expand_more</span>
-            </div>
-
-            <!-- Botón de Acción Táctil: Conmutador 3D Globe / 2D Plano -->
-            <button id="btn-toggle-projection" type="button" class="btn-tactile hud-action-btn active" title="Alternar entre globo esférico 3D y plano 2D">
-                <div class="flex items-center gap-2">
-                    <span id="proj-icon" class="material-symbols-outlined text-base">public</span>
-                    <span id="proj-label">Proyección</span>
+            <!-- Header de Toolbar Plegable -->
+            <div class="hud-toolbar-header cursor-pointer select-none" id="toolbar-header-toggle" title="Plegar / Desplegar Controles">
+                <div class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm text-cyan-400">tune</span>
+                    <span class="hud-toolbar-title">Filtros & Visor</span>
                 </div>
-                <span id="proj-badge" class="hud-action-badge">3D GLOBO</span>
-            </button>
+                <button type="button" class="text-slate-400 hover:text-white transition-transform duration-200" id="toolbar-chevron-btn" title="Alternar panel">
+                    <span id="toolbar-chevron" class="material-symbols-outlined text-base">expand_less</span>
+                </button>
+            </div>
 
-            <!-- Botón de Acción Táctil: Conmutador Agrupación WebGL (Clústeres vs Puntos Individuales) -->
-            <button id="btn-toggle-cluster" type="button" class="btn-tactile hud-action-btn active" title="Alternar entre círculos agrupados con números y puntos individuales dispersos">
-                <div class="flex items-center gap-2">
-                    <span id="cluster-toggle-icon" class="material-symbols-outlined text-base">bubble_chart</span>
-                    <span id="cluster-toggle-label">Agrupación WebGL</span>
+            <!-- Contenido Plegable de la Toolbar -->
+            <div id="toolbar-content-body" class="flex flex-col gap-2 pt-1">
+                <!-- Selector de Contexto Directo en HUD (Bolivia ↔ Chicago) -->
+                <div class="segmented-control font-data-code text-xs shadow-inner w-full flex">
+                    <a href="{{ url_for('webgis_bp.globo_3d', ctx='bolivia') }}" 
+                       id="btn-switch-bolivia"
+                       class="segmented-btn btn-tactile flex-1 flex items-center justify-center gap-1.5 py-1.5 {{ 'active' if current_context != 'chicago' else '' }}"
+                       title="Ver mapa de Bolivia">
+                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-surface-container-high font-bold">BO</span>
+                        <span>Bolivia</span>
+                    </a>
+                    <a href="{{ url_for('webgis_bp.globo_3d', ctx='chicago') }}" 
+                       id="btn-switch-chicago"
+                       class="segmented-btn btn-tactile flex-1 flex items-center justify-center gap-1.5 py-1.5 {{ 'active' if current_context == 'chicago' else '' }}"
+                       title="Ver mapa de Chicago">
+                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-surface-container-high font-bold">US</span>
+                        <span>Chicago</span>
+                    </a>
                 </div>
-                <span id="cluster-toggle-badge" class="hud-action-badge">AGRUPADO</span>
-            </button>
+
+                <!-- Separador 1: Filtros de Cobertura -->
+                <div class="text-[9px] font-data-code uppercase font-bold text-slate-400 tracking-wider px-1 pt-0.5">
+                    Filtros de Cobertura
+                </div>
+
+                <!-- Filtro 1: Delito Principal -->
+                <div class="hud-input-group" title="Filtrar por tipología delictiva">
+                    <span class="material-symbols-outlined hud-input-icon">category</span>
+                    <select id="filter-category" class="hud-dropdown-select">
+                        <option value="todos">Todos los Delitos</option>
+                        {% for cat in metadata.categorias %}
+                        <option value="{{ cat.nombre }}">{{ cat.nombre }} ({{ cat.count }})</option>
+                        {% endfor %}
+                    </select>
+                    <span class="material-symbols-outlined hud-dropdown-chevron">expand_more</span>
+                </div>
+
+                <!-- Filtro 2: Ciudad / Distrito -->
+                <div class="hud-input-group" title="Filtrar por centro urbano o distrito policial">
+                    <span class="material-symbols-outlined hud-input-icon">location_city</span>
+                    <select id="filter-city" class="hud-dropdown-select">
+                        <option value="todas">{% if current_context == 'chicago' %}Todos los Distritos{% else %}Todas las Ciudades{% endif %}</option>
+                        {% for c in metadata.ciudades %}
+                        <option value="{{ c.nombre }}">{{ c.nombre }} ({{ c.count }})</option>
+                        {% endfor %}
+                    </select>
+                    <span class="material-symbols-outlined hud-dropdown-chevron">expand_more</span>
+                </div>
+
+                <!-- Separador 2: Controles de Visor -->
+                <div class="border-t border-outline-variant/60 pt-1.5 text-[9px] font-data-code uppercase font-bold text-slate-400 tracking-wider px-1">
+                    Controles de Visor
+                </div>
+
+                <!-- Botón de Acción Táctil: Conmutador 3D Globe / 2D Plano -->
+                <button id="btn-toggle-projection" type="button" class="btn-tactile hud-action-btn active" title="Alternar entre globo esférico 3D y plano 2D">
+                    <div class="flex items-center gap-2">
+                        <span id="proj-icon" class="material-symbols-outlined text-base">public</span>
+                        <span id="proj-label">Proyección</span>
+                    </div>
+                    <span id="proj-badge" class="hud-action-badge inline-flex items-center gap-1">
+                        <span class="size-1.5 rounded-full bg-cyan-400"></span>
+                        <span>3D GLOBO</span>
+                    </span>
+                </button>
+
+                <!-- Botón de Acción Táctil: Conmutador Agrupación WebGL (Clústeres vs Puntos Individuales) -->
+                <button id="btn-toggle-cluster" type="button" class="btn-tactile hud-action-btn active" title="Alternar entre círculos agrupados con números y puntos individuales dispersos">
+                    <div class="flex items-center gap-2">
+                        <span id="cluster-toggle-icon" class="material-symbols-outlined text-base">bubble_chart</span>
+                        <span id="cluster-toggle-label">Agrupación WebGL</span>
+                    </div>
+                    <span id="cluster-toggle-badge" class="hud-action-badge inline-flex items-center gap-1">
+                        <span class="size-1.5 rounded-full bg-emerald-400"></span>
+                        <span>AGRUPADO</span>
+                    </span>
+                </button>
+
+                <!-- Botón de Acción Táctil: Modo Presentación / Cine (Prioridad Media) -->
+                <button id="btn-toggle-cinema" type="button" class="btn-tactile hud-action-btn" title="Modo Presentación: Ocultar/Mostrar paneles HUD (Atajo: Tecla H)">
+                    <div class="flex items-center gap-2">
+                        <span id="cinema-icon" class="material-symbols-outlined text-base">fullscreen</span>
+                        <span id="cinema-label">Modo Cine</span>
+                    </div>
+                    <span id="cinema-badge" class="hud-action-badge">[H]</span>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- HUD Inferior Central: Dock de Navegación Contextual (Apple Capsule) -->
+    <!-- HUD Inferior Central: Dock de Navegación Contextual Compacto (Apple Capsule) -->
     <div class="tactical-hud hud-bottom-controls">
         <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="global" title="Vista Planeta Completo">
             <span class="material-symbols-outlined text-sm">public</span>
             <span>Global</span>
         </button>
+        <!-- Divisor Táctico entre Planeta y Territorio -->
+        <div class="w-[1px] h-4 bg-outline-variant/80 my-auto mx-0.5 shrink-0"></div>
 
         {% if current_context == 'chicago' %}
         <button type="button" class="btn-tactile hud-dock-btn hud-city-btn active" data-city="chicago" title="Metro Chicago">
             <span class="material-symbols-outlined text-sm">location_city</span>
             <span>Chicago</span>
         </button>
-        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="the loop" title="Distrito 1 - The Loop">
-            <span class="material-symbols-outlined text-sm">domain</span>
-            <span>The Loop</span>
-        </button>
-        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="west side" title="Distrito 11 - West Side (Garfield / Austin)">
-            <span class="material-symbols-outlined text-sm">warning</span>
-            <span>West Side</span>
-        </button>
-        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="south side" title="Distrito 7 - South Side (Englewood)">
-            <span class="material-symbols-outlined text-sm">near_me</span>
-            <span>South Side</span>
-        </button>
-        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="north side" title="Distrito 19 - North Side (Lincoln / Lakeview)">
-            <span class="material-symbols-outlined text-sm">shield</span>
-            <span>North Side</span>
-        </button>
+        <!-- Selector Desplegable de Distritos CPD -->
+        <div class="relative" id="dock-dropdown-wrapper">
+            <button type="button" id="btn-dock-dropdown-toggle" class="btn-tactile hud-dock-btn flex items-center gap-1" title="Explorar Distritos CPD">
+                <span class="material-symbols-outlined text-sm">domain</span>
+                <span id="dock-dropdown-label">Distritos</span>
+                <span class="material-symbols-outlined text-xs transition-transform duration-200" id="dock-dropdown-chevron">expand_less</span>
+            </button>
+            <div id="dock-dropdown-menu" class="hidden absolute bottom-full mb-2 left-1/2 -translate-x-1/2 min-w-[160px] p-1.5 rounded-xl bg-slate-900/95 border border-cyan-500/40 backdrop-blur-xl shadow-2xl flex flex-col gap-1 z-30 font-data-code text-xs">
+                <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="the loop" title="Distrito 1 - The Loop">
+                    <span class="material-symbols-outlined text-xs text-cyan-400">domain</span>
+                    <span>The Loop</span>
+                </button>
+                <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="west side" title="Distrito 11 - West Side (Garfield / Austin)">
+                    <span class="material-symbols-outlined text-xs text-amber-400">warning</span>
+                    <span>West Side</span>
+                </button>
+                <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="south side" title="Distrito 7 - South Side (Englewood)">
+                    <span class="material-symbols-outlined text-xs text-rose-400">near_me</span>
+                    <span>South Side</span>
+                </button>
+                <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="north side" title="Distrito 19 - North Side (Lincoln / Lakeview)">
+                    <span class="material-symbols-outlined text-xs text-sky-400">shield</span>
+                    <span>North Side</span>
+                </button>
+            </div>
+        </div>
         {% else %}
         <button type="button" class="btn-tactile hud-dock-btn hud-city-btn active" data-city="bolivia" title="Enfoque Nacional Bolivia">
             <span class="material-symbols-outlined text-sm">flag</span>
             <span>Bolivia</span>
         </button>
-        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="santa cruz" title="Área Metropolitana Santa Cruz">
-            <span class="material-symbols-outlined text-sm">apartment</span>
-            <span>Santa Cruz</span>
-        </button>
-        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="la paz" title="Sede de Gobierno La Paz">
-            <span class="material-symbols-outlined text-sm">terrain</span>
-            <span>La Paz</span>
-        </button>
-        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="el alto" title="Área Metropolitana El Alto">
-            <span class="material-symbols-outlined text-sm">altitude</span>
-            <span>El Alto</span>
-        </button>
-        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="cochabamba" title="Valle Central de Cochabamba">
-            <span class="material-symbols-outlined text-sm">location_on</span>
-            <span>Cochabamba</span>
-        </button>
-        <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="viacha" title="Municipio de Viacha (Lugar del Hecho)">
-            <span class="material-symbols-outlined text-sm">explore</span>
-            <span>Viacha</span>
-        </button>
+        <!-- Selector Desplegable de Ciudades Principales -->
+        <div class="relative" id="dock-dropdown-wrapper">
+            <button type="button" id="btn-dock-dropdown-toggle" class="btn-tactile hud-dock-btn flex items-center gap-1" title="Explorar Ciudades Principales">
+                <span class="material-symbols-outlined text-sm">apartment</span>
+                <span id="dock-dropdown-label">Ciudades</span>
+                <span class="material-symbols-outlined text-xs transition-transform duration-200" id="dock-dropdown-chevron">expand_less</span>
+            </button>
+            <div id="dock-dropdown-menu" class="hidden absolute bottom-full mb-2 left-1/2 -translate-x-1/2 min-w-[160px] p-1.5 rounded-xl bg-slate-900/95 border border-cyan-500/40 backdrop-blur-xl shadow-2xl flex flex-col gap-1 z-30 font-data-code text-xs">
+                <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="santa cruz" title="Área Metropolitana Santa Cruz">
+                    <span class="material-symbols-outlined text-xs text-cyan-400">apartment</span>
+                    <span>Santa Cruz</span>
+                </button>
+                <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="la paz" title="Sede de Gobierno La Paz">
+                    <span class="material-symbols-outlined text-xs text-amber-400">terrain</span>
+                    <span>La Paz</span>
+                </button>
+                <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="el alto" title="Área Metropolitana El Alto">
+                    <span class="material-symbols-outlined text-xs text-sky-400">altitude</span>
+                    <span>El Alto</span>
+                </button>
+                <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="cochabamba" title="Valle Central de Cochabamba">
+                    <span class="material-symbols-outlined text-xs text-emerald-400">location_on</span>
+                    <span>Cochabamba</span>
+                </button>
+                <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="viacha" title="Municipio de Viacha (Lugar del Hecho)">
+                    <span class="material-symbols-outlined text-xs text-purple-400">explore</span>
+                    <span>Viacha</span>
+                </button>
+            </div>
+        </div>
         {% endif %}
     </div>
 
-    <!-- HUD Inferior Izquierdo: Leyenda Táctica Dinámica -->
-    <div class="tactical-hud hud-legend hud-card font-data-code">
-        <!-- 1. Leyenda Modo Categoría / Densidad -->
-        <div id="legend-category-section" class="space-y-1">
-            <span class="text-[10px] text-outline uppercase tracking-wider block font-bold mb-1">Densidad de Hechos</span>
-            <div class="legend-item">
-                <span class="legend-dot bg-[#00e5ff]"></span>
-                <span class="text-on-surface text-[11px]">&lt; 5 incidentes</span>
+    <!-- HUD Inferior Izquierdo: Leyenda Táctica Dinámica Plegable -->
+    <div class="tactical-hud hud-legend hud-card font-data-code !p-2.5" id="hud-legend-card">
+        <div class="flex items-center justify-between cursor-pointer select-none pb-1 border-b border-outline-variant/60" id="legend-header-toggle" title="Plegar / Desplegar Leyenda">
+            <div class="flex items-center gap-1.5 text-[10px] text-cyan-400 font-bold uppercase tracking-wider">
+                <span class="size-1.5 rounded-full bg-cyan-400"></span>
+                <span>LEYENDA // <span id="legend-active-mode-title" class="text-white">DELITOS</span></span>
             </div>
-            <div class="legend-item">
-                <span class="legend-dot bg-[#fbbf24]"></span>
-                <span class="text-on-surface text-[11px]">5 - 15 incidentes</span>
+            <button type="button" class="text-slate-400 hover:text-white transition-transform duration-200" id="legend-chevron-btn" title="Alternar leyenda">
+                <span id="legend-chevron" class="material-symbols-outlined text-sm">expand_less</span>
+            </button>
+        </div>
+        <div id="legend-content-body" class="pt-1.5">
+            <!-- 1. Leyenda Modo Categoría / Densidad -->
+            <div id="legend-category-section" class="space-y-1">
+                <span class="text-[10px] text-outline uppercase tracking-wider block font-bold mb-1">Densidad de Hechos</span>
+                <div class="legend-item">
+                    <span class="legend-dot bg-[#00e5ff]"></span>
+                    <span class="text-on-surface text-[11px]">&lt; 5 incidentes</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot bg-[#fbbf24]"></span>
+                    <span class="text-on-surface text-[11px]">5 - 15 incidentes</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot bg-[#ff3366]"></span>
+                    <span class="text-on-surface text-[11px]">&gt; 15 incidentes (Hotspot)</span>
+                </div>
             </div>
-            <div class="legend-item">
-                <span class="legend-dot bg-[#ff3366]"></span>
-                <span class="text-on-surface text-[11px]">&gt; 15 incidentes (Hotspot)</span>
+
+            <!-- 2. Leyenda Modo DBSCAN -->
+            <div id="legend-dbscan-section" class="hidden space-y-1">
+                <span class="text-[10px] text-cyan-400 uppercase tracking-wider block font-bold mb-1">DBSCAN Hotspots</span>
+                {% if current_context == 'chicago' %}
+                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">#1 The Loop</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">#2 Harrison West</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#ffaa00]"></span><span class="text-on-surface text-[11px]">#3 Englewood South</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#a855f7]"></span><span class="text-on-surface text-[11px]">#4 Near West UIC</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Ruido Espacial (-1)</span></div>
+                {% else %}
+                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">#0 Santa Cruz Core</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">#1 Cochabamba</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">#2 Plan 3000 / Lotes</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#818cf8]"></span><span class="text-on-surface text-[11px]">#5 La Paz Centro</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Ruido Espacial (-1)</span></div>
+                {% endif %}
+            </div>
+
+            <!-- 2.5. Leyenda Modo HDBSCAN (Jerárquico y Persistencia) -->
+            <div id="legend-hdbscan-section" class="hidden space-y-1">
+                <span class="text-[10px] text-teal-400 uppercase tracking-wider block font-bold mb-1">HDBSCAN Persistencia</span>
+                {% if current_context == 'chicago' %}
+                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">#1 Loop Core (&lambda;=0.92)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">#2 West Side (&lambda;=0.88)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#ffaa00]"></span><span class="text-on-surface text-[11px]">#3 Englewood (&lambda;=0.81)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#a855f7]"></span><span class="text-on-surface text-[11px]">#4 Near West (&lambda;=0.71)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Ruido Multiescala (-1)</span></div>
+                {% else %}
+                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">#5 SCZ Metrop. (&lambda;=0.89)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#818cf8]"></span><span class="text-on-surface text-[11px]">#10 La Paz Centro (&lambda;=0.84)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">#0 CBBA Valle (&lambda;=0.78)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">#1 Plan 3000 (&lambda;=0.75)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#fbbf24]"></span><span class="text-on-surface text-[11px]">#4 SCZ Periferia (&lambda;=0.62)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Ruido Multiescala (-1)</span></div>
+                {% endif %}
+            </div>
+
+            <!-- 3. Leyenda Modo OPTICS -->
+            <div id="legend-optics-section" class="hidden space-y-1">
+                <span class="text-[10px] text-amber-400 uppercase tracking-wider block font-bold mb-1">OPTICS Valles (&xi;)</span>
+                {% if current_context == 'chicago' %}
+                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">Valle #1 Loop (88m)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Valle #2 Harrison (125m)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#ffaa00]"></span><span class="text-on-surface text-[11px]">Valle #3 Englewood (145m)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#a855f7]"></span><span class="text-on-surface text-[11px]">Valle #4 Near West (172m)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Pico Ruido / Salto</span></div>
+                {% else %}
+                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">Valle #0 SCZ (295m)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#38bdf8]"></span><span class="text-on-surface text-[11px]">Sub #1 Equipetrol (240m)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Valle #2 Plan 3000 (340m)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">Valle #7 Cochabamba (380m)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#818cf8]"></span><span class="text-on-surface text-[11px]">Valle #5 La Paz (430m)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Picos Ruido (>2500m)</span></div>
+                {% endif %}
+            </div>
+
+            <!-- 4. Leyenda Modo GMM -->
+            <div id="legend-gmm-section" class="hidden space-y-1">
+                <span class="text-[10px] text-emerald-400 uppercase tracking-wider block font-bold mb-1">GMM Gaussianas (&pi;)</span>
+                {% if current_context == 'chicago' %}
+                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">Loop Comercial (&pi;=0.35)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">West Side (&pi;=0.40)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#ffaa00]"></span><span class="text-on-surface text-[11px]">South Side (&pi;=0.25)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Dispersión (>3&sigma;)</span></div>
+                {% else %}
+                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">SCZ Casco (&pi;=0.42)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Plan 3000 (&pi;=0.28)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">Cochabamba (&pi;=0.18)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#818cf8]"></span><span class="text-on-surface text-[11px]">La Paz / El Alto (&pi;=0.12)</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Dispersión (>3&sigma;)</span></div>
+                {% endif %}
+            </div>
+
+            <!-- 5. Leyenda Modo Ward (Macro-Clusters Jerárquicos) -->
+            <div id="legend-ward-section" class="hidden space-y-1">
+                <span class="text-[10px] text-purple-400 uppercase tracking-wider block font-bold mb-1">Ward Macro-Clusters</span>
+                {% if current_context == 'chicago' %}
+                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Macro A: West/South Side</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">Macro B: Loop Comercial</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">Macro C: Residencial</span></div>
+                {% else %}
+                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Macro A: Casco SCZ</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#fbbf24]"></span><span class="text-on-surface text-[11px]">Macro B: CBBA & Plan 3000</span></div>
+                <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">Macro C: La Paz & Perif.</span></div>
+                {% endif %}
             </div>
         </div>
+    </div>
 
-        <!-- 2. Leyenda Modo DBSCAN -->
-        <div id="legend-dbscan-section" class="hidden space-y-1">
-            <span class="text-[10px] text-cyan-400 uppercase tracking-wider block font-bold mb-1">DBSCAN Hotspots</span>
-            {% if current_context == 'chicago' %}
-            <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">#1 The Loop</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">#2 Harrison West</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#ffaa00]"></span><span class="text-on-surface text-[11px]">#3 Englewood South</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#a855f7]"></span><span class="text-on-surface text-[11px]">#4 Near West UIC</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Ruido Espacial (-1)</span></div>
-            {% else %}
-            <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">#0 Santa Cruz Core</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">#1 Cochabamba</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">#2 Plan 3000 / Lotes</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#818cf8]"></span><span class="text-on-surface text-[11px]">#5 La Paz Centro</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Ruido Espacial (-1)</span></div>
-            {% endif %}
-        </div>
+    <!-- HUD Inferior Derecho: Telemetría de Orientación y Cámara en Vivo -->
+    <div id="hud-telemetry" class="tactical-hud hud-bottom-right">
+        <div class="hud-card !py-2 !px-3 font-data-code text-[10px] space-y-1 backdrop-blur-md border border-outline-variant/60 shadow-lg relative">
+            <!-- Micro-corchetes militares en esquinas -->
+            <div class="absolute top-1 left-1.5 text-[8px] text-cyan-400/50 font-data-code select-none leading-none">+</div>
+            <div class="absolute top-1 right-1.5 text-[8px] text-cyan-400/50 font-data-code select-none leading-none">+</div>
+            <div class="absolute bottom-1 left-1.5 text-[8px] text-cyan-400/50 font-data-code select-none leading-none">+</div>
+            <div class="absolute bottom-1 right-1.5 text-[8px] text-cyan-400/50 font-data-code select-none leading-none">+</div>
 
-        <!-- 3. Leyenda Modo OPTICS -->
-        <div id="legend-optics-section" class="hidden space-y-1">
-            <span class="text-[10px] text-amber-400 uppercase tracking-wider block font-bold mb-1">OPTICS Valles (&xi;)</span>
-            {% if current_context == 'chicago' %}
-            <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">Valle #1 Loop (88m)</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Valle #2 Harrison (125m)</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#ffaa00]"></span><span class="text-on-surface text-[11px]">Valle #3 Englewood (145m)</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#a855f7]"></span><span class="text-on-surface text-[11px]">Valle #4 Near West (172m)</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Pico Ruido / Salto</span></div>
-            {% else %}
-            <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">Valle #0 SCZ (295m)</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#38bdf8]"></span><span class="text-on-surface text-[11px]">Sub #1 Equipetrol (240m)</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Valle #2 Plan 3000 (340m)</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">Valle #7 Cochabamba (380m)</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#818cf8]"></span><span class="text-on-surface text-[11px]">Valle #5 La Paz (430m)</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Picos Ruido (>2500m)</span></div>
-            {% endif %}
-        </div>
-
-        <!-- 4. Leyenda Modo GMM -->
-        <div id="legend-gmm-section" class="hidden space-y-1">
-            <span class="text-[10px] text-emerald-400 uppercase tracking-wider block font-bold mb-1">GMM Gaussianas (&pi;)</span>
-            {% if current_context == 'chicago' %}
-            <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">Loop Comercial (&pi;=0.35)</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">West Side (&pi;=0.40)</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#ffaa00]"></span><span class="text-on-surface text-[11px]">South Side (&pi;=0.25)</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Dispersión (>3&sigma;)</span></div>
-            {% else %}
-            <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">SCZ Casco (&pi;=0.42)</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Plan 3000 (&pi;=0.28)</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">Cochabamba (&pi;=0.18)</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#818cf8]"></span><span class="text-on-surface text-[11px]">La Paz / El Alto (&pi;=0.12)</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Dispersión (>3&sigma;)</span></div>
-            {% endif %}
-        </div>
-
-        <!-- 5. Leyenda Modo Ward (Macro-Clusters Jerárquicos) -->
-        <div id="legend-ward-section" class="hidden space-y-1">
-            <span class="text-[10px] text-purple-400 uppercase tracking-wider block font-bold mb-1">Ward Macro-Clusters</span>
-            {% if current_context == 'chicago' %}
-            <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Macro A: West/South Side</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">Macro B: Loop Comercial</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">Macro C: Residencial</span></div>
-            {% else %}
-            <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Macro A: Casco SCZ</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#fbbf24]"></span><span class="text-on-surface text-[11px]">Macro B: CBBA & Plan 3000</span></div>
-            <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">Macro C: La Paz & Perif.</span></div>
-            {% endif %}
+            <div class="flex items-center justify-between text-outline gap-3">
+                <span class="flex items-center gap-1.5 text-cyan-400 font-bold uppercase tracking-wider">
+                    <span class="size-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span>CÁMARA ORBITAL</span>
+                </span>
+                <span id="cam-alt" class="text-white font-semibold tabular-nums text-glow-cyan">ALT: 1,420 km</span>
+            </div>
+            <div class="flex items-center gap-2 text-slate-400 pt-0.5 border-t border-outline-variant/60 text-[9px]">
+                <span>PITCH: <strong id="cam-pitch" class="text-slate-100 font-semibold tabular-nums">32&deg;</strong></span>
+                <span>&bull;</span>
+                <span>AZIMUTH: <strong id="cam-bearing" class="text-slate-100 font-semibold tabular-nums">354&deg; N</strong></span>
+                <span>&bull;</span>
+                <span>ZOOM: <strong id="cam-zoom" class="text-slate-100 font-semibold tabular-nums">5.2</strong></span>
+            </div>
         </div>
     </div>
 </div>
@@ -313,5 +443,5 @@
 {% block extra_scripts %}
 <!-- MapLibre GL JS v4.7.1 JS (Motor WebGL) -->
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script src="{{ url_for('static', filename='js/globo_3d.js') }}?v=4.5.0"></script>
+<script src="{{ url_for('static', filename='js/globo_3d.js') }}?v=4.14.0"></script>
 {% endblock %}

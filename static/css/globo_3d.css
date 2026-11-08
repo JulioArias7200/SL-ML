@@ -7,9 +7,11 @@
 #globo-viewport {
     position: relative;
     width: 100%;
-    height: calc(100vh - 58px);
+    height: calc(100vh - 60px);
+    height: calc(100dvh - 60px);
+    max-height: calc(100dvh - 60px);
     overflow: hidden;
-    background-color: var(--bg-page);
+    background: radial-gradient(circle at 50% 50%, #0c1222 0%, #030712 65%, #01040a 100%);
 }
 
 #map-container {
@@ -49,6 +51,7 @@ html.dark {
     position: absolute;
     z-index: 20;
     pointer-events: auto;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ==========================================================================
@@ -57,20 +60,43 @@ html.dark {
 .hud-top-left {
     top: 16px;
     left: 16px;
-    width: 360px;
+    width: 320px;
     max-width: calc(100vw - 32px);
 }
 
 .hud-card {
+    position: relative;
+    overflow: hidden;
     background: var(--hud-glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid var(--hud-glass-border);
     border-radius: 12px;
     padding: 14px 16px;
     color: var(--hud-text);
-    box-shadow: var(--hud-glass-shadow);
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), var(--hud-glass-shadow);
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Línea de Acento Superior Neón en Paneles Tácticos (Accent Horizon) */
+.hud-card::before, .hud-toolbar-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.75), transparent);
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Micro-Retícula Milimétrica en Modo Noche */
+html.dark .hud-card, html.dark .hud-toolbar-card {
+    background-image: 
+        linear-gradient(to right, rgba(148, 163, 184, 0.035) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148, 163, 184, 0.035) 1px, transparent 1px);
+    background-size: 16px 16px;
 }
 
 .hud-badge {
@@ -115,21 +141,36 @@ html.dark .hud-badge {
 .hud-top-right {
     top: 16px;
     right: 16px;
-    width: 250px;
+    width: 240px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hud-top-right.collapsed .hud-toolbar-card {
+    padding-bottom: 8px;
+}
+
+.hud-top-right.collapsed #toolbar-content-body {
+    display: none;
+}
+
+.hud-top-right.collapsed #toolbar-chevron {
+    transform: rotate(180deg);
 }
 
 .hud-toolbar-card {
+    position: relative;
+    overflow: hidden;
     background: var(--hud-glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid var(--hud-glass-border);
     border-radius: 12px;
     padding: 10px;
-    box-shadow: var(--hud-glass-shadow);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), var(--hud-glass-shadow);
     display: flex;
     flex-direction: column;
     gap: 8px;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* Encabezado sutil de la toolbar */
@@ -277,6 +318,7 @@ html.dark .hud-action-badge {
     padding: 4px 6px;
     box-shadow: var(--hud-glass-shadow);
     transition: background-color 0.2s ease, border-color 0.2s ease;
+    z-index: 25;
 }
 
 .hud-dock-btn {
@@ -314,22 +356,108 @@ html.dark .hud-dock-btn:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 
-/* ==========================================================================
-   BOTTOM-LEFT: LEYENDA TÁCTICA DE DENSIDAD
-   ========================================================================== */
-.hud-legend {
-    bottom: 24px;
-    left: 16px;
+/* Menú desplegable flyout del dock */
+#dock-dropdown-menu {
+    animation: dockMenuFadeUp 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dockMenuFadeUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 6px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0) scale(1);
+    }
+}
+
+.hud-dock-menu-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--hud-text);
+    padding: 6px 10px;
+    border-radius: 8px;
     font-size: 11px;
     font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.hud-dock-menu-btn:hover {
+    background: rgba(0, 229, 255, 0.15);
+    color: #00e5ff;
+}
+
+.hud-dock-menu-btn.active {
+    background: rgba(0, 229, 255, 0.22);
+    color: #00e5ff;
+    font-weight: 600;
+    border-color: rgba(0, 229, 255, 0.4);
+}
+
+/* ==========================================================================
+   LEYENDA TÁCTICA PLEGABLE (ESQUINA INFERIOR IZQUIERDA - NON-OVERFLOW)
+   ========================================================================== */
+.hud-legend {
+    position: absolute;
+    bottom: 24px;
+    left: 16px;
+    top: auto;
+    width: 220px;
     min-width: 175px;
+    max-width: 230px;
+    font-size: 11px;
+    font-family: 'Inter', sans-serif;
+    z-index: 35;
+    max-height: 220px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hud-legend::-webkit-scrollbar {
+    width: 4px;
+}
+
+.hud-legend::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.4);
+}
+
+.hud-legend::-webkit-scrollbar-thumb {
+    background: rgba(0, 229, 255, 0.35);
+    border-radius: 2px;
+}
+
+.hud-legend::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 229, 255, 0.65);
+}
+
+.hud-legend.collapsed {
+    padding-bottom: 8px !important;
+    max-height: 38px;
+    overflow: hidden;
+}
+
+.hud-legend.collapsed #legend-content-body {
+    display: none;
+}
+
+.hud-legend.collapsed #legend-chevron {
+    transform: rotate(180deg);
 }
 
 .legend-item {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: 6px;
+    margin-top: 5px;
 }
 
 .legend-dot {
@@ -461,12 +589,32 @@ html.dark .maplibregl-ctrl-icon {
     filter: invert(0.8) hue-rotate(180deg);
 }
 
+/* Posicionamiento del ScaleControl de MapLibre GL a la derecha de la leyenda */
+.maplibregl-ctrl-bottom-left {
+    left: 244px !important;
+    bottom: 14px !important;
+    z-index: 10 !important;
+    transition: left 0.25s ease;
+}
+
 /* ==========================================================================
    RESPONSIVIDAD MÓVIL
    ========================================================================== */
 @media (max-width: 768px) {
     .hud-top-left {
+        width: calc(100% - 32px);
         max-width: calc(100% - 32px);
+    }
+    .hud-legend {
+        top: auto;
+        bottom: 78px;
+        left: 16px;
+        width: auto;
+        max-width: calc(100% - 32px);
+        max-height: 180px;
+    }
+    .maplibregl-ctrl-bottom-left {
+        display: none !important;
     }
     .hud-top-right {
         top: auto;
@@ -482,7 +630,131 @@ html.dark .maplibregl-ctrl-icon {
         padding: 4px;
         max-width: 92vw;
     }
-    .hud-legend {
+}
+
+/* ==========================================================================
+   BOTTOM-RIGHT: TELEMETRÍA DE ORIENTACIÓN ORBITAL
+   ========================================================================== */
+.hud-bottom-right {
+    bottom: 20px;
+    right: 54px;
+    z-index: 20;
+    max-width: 210px;
+}
+
+@media (max-width: 768px) {
+    .hud-bottom-right {
         display: none;
     }
 }
+
+/* ==========================================================================
+   MODO PRESENTACIÓN / CINE (REPLIEGUE SUAVE DE HUDS)
+   ========================================================================== */
+#globo-viewport.cinema-mode .hud-top-left,
+#globo-viewport.cinema-mode .hud-top-right {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-24px);
+}
+
+#globo-viewport.cinema-mode .hud-legend,
+#globo-viewport.cinema-mode .hud-bottom-controls,
+#globo-viewport.cinema-mode .hud-bottom-right {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(24px);
+}
+
+#globo-viewport.cinema-mode #tactical-crosshair {
+    opacity: 0.10;
+}
+
+/* ==========================================================================
+   TEMAS DINÁMICOS DE BORDE Y ACENTO SEGÚN MODO ALGORÍTMICO ACTIVO
+   ========================================================================== */
+#globo-viewport[data-algo-theme="dbscan"] .hud-card,
+#globo-viewport[data-algo-theme="dbscan"] .hud-toolbar-card {
+    border-color: rgba(0, 229, 255, 0.45);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 229, 255, 0.12);
+}
+
+#globo-viewport[data-algo-theme="hdbscan"] .hud-card,
+#globo-viewport[data-algo-theme="hdbscan"] .hud-toolbar-card {
+    border-color: rgba(45, 212, 191, 0.45);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(45, 212, 191, 0.12);
+}
+
+#globo-viewport[data-algo-theme="optics"] .hud-card,
+#globo-viewport[data-algo-theme="optics"] .hud-toolbar-card {
+    border-color: rgba(251, 191, 36, 0.45);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(251, 191, 36, 0.12);
+}
+
+#globo-viewport[data-algo-theme="gmm"] .hud-card,
+#globo-viewport[data-algo-theme="gmm"] .hud-toolbar-card {
+    border-color: rgba(52, 211, 153, 0.45);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(52, 211, 153, 0.12);
+}
+
+#globo-viewport[data-algo-theme="ward"] .hud-card,
+#globo-viewport[data-algo-theme="ward"] .hud-toolbar-card {
+    border-color: rgba(192, 132, 252, 0.45);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(192, 132, 252, 0.12);
+}
+
+/* ==========================================================================
+   ESTILOS ESPECÍFICOS DE BOTONES SEGMENTADOS POR MODELO ALGORÍTMICO
+   ========================================================================== */
+.segmented-btn[data-cluster-mode="category"].active {
+    background: rgba(56, 189, 248, 0.18) !important;
+    border-color: rgba(56, 189, 248, 0.6) !important;
+    color: #38bdf8 !important;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+}
+
+.segmented-btn[data-cluster-mode="dbscan"].active {
+    background: rgba(0, 229, 255, 0.2) !important;
+    border-color: rgba(0, 229, 255, 0.7) !important;
+    color: #00e5ff !important;
+    box-shadow: 0 0 14px rgba(0, 229, 255, 0.3);
+}
+
+.segmented-btn[data-cluster-mode="hdbscan"].active {
+    background: rgba(45, 212, 191, 0.2) !important;
+    border-color: rgba(45, 212, 191, 0.7) !important;
+    color: #2dd4bf !important;
+    box-shadow: 0 0 14px rgba(45, 212, 191, 0.3);
+}
+
+.segmented-btn[data-cluster-mode="optics"].active {
+    background: rgba(251, 191, 36, 0.2) !important;
+    border-color: rgba(251, 191, 36, 0.7) !important;
+    color: #fbbf24 !important;
+    box-shadow: 0 0 14px rgba(251, 191, 36, 0.3);
+}
+
+.segmented-btn[data-cluster-mode="gmm"].active {
+    background: rgba(52, 211, 153, 0.2) !important;
+    border-color: rgba(52, 211, 153, 0.7) !important;
+    color: #34d399 !important;
+    box-shadow: 0 0 14px rgba(52, 211, 153, 0.3);
+}
+
+.segmented-btn[data-cluster-mode="ward"].active {
+    background: rgba(192, 132, 252, 0.2) !important;
+    border-color: rgba(192, 132, 252, 0.7) !important;
+    color: #c084fc !important;
+    box-shadow: 0 0 14px rgba(192, 132, 252, 0.3);
+}
+
+/* Números Tabulares Tácticos */
+.tabular-nums {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Transición Suave entre Leyendas Dinámicas */
+.hud-legend > div {
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+

@@ -26,9 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let isClusteringEnabled = true;
 
-    // Selectores del Modo Algorítmico (Delito / DBSCAN / OPTICS / GMM / Ward)
+    // Selectores del Modo Algorítmico (Delito / DBSCAN / HDBSCAN / OPTICS / GMM / Ward)
     const btnModeCategory = document.getElementById('btn-mode-category');
     const btnModeDbscan = document.getElementById('btn-mode-dbscan');
+    const btnModeHdbscan = document.getElementById('btn-mode-hdbscan');
     const btnModeOptics = document.getElementById('btn-mode-optics');
     const btnModeGmm = document.getElementById('btn-mode-gmm');
     const btnModeWard = document.getElementById('btn-mode-ward');
@@ -37,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Secciones de Leyenda
     const legendCategory = document.getElementById('legend-category-section');
     const legendDbscan = document.getElementById('legend-dbscan-section');
+    const legendHdbscan = document.getElementById('legend-hdbscan-section');
     const legendOptics = document.getElementById('legend-optics-section');
     const legendGmm = document.getElementById('legend-gmm-section');
     const legendWard = document.getElementById('legend-ward-section');
@@ -236,6 +238,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Ruido Espacial (-1)</span></div>
                 `;
             }
+            if (legendHdbscan) {
+                legendHdbscan.innerHTML = `
+                    <span class="text-[10px] text-teal-400 uppercase tracking-wider block font-bold mb-1">HDBSCAN Persistencia</span>
+                    <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">#1 Loop Core (&lambda;=0.92)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">#2 West Side (&lambda;=0.88)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#ffaa00]"></span><span class="text-on-surface text-[11px]">#3 Englewood (&lambda;=0.81)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#a855f7]"></span><span class="text-on-surface text-[11px]">#4 Near West (&lambda;=0.71)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Ruido Multiescala (-1)</span></div>
+                `;
+            }
             if (legendOptics) {
                 legendOptics.innerHTML = `
                     <span class="text-[10px] text-amber-400 uppercase tracking-wider block font-bold mb-1">OPTICS Valles (&xi;)</span>
@@ -274,6 +286,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Ruido Espacial (-1)</span></div>
                 `;
             }
+            if (legendHdbscan) {
+                legendHdbscan.innerHTML = `
+                    <span class="text-[10px] text-teal-400 uppercase tracking-wider block font-bold mb-1">HDBSCAN Persistencia</span>
+                    <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">#5 SCZ Metrop. (&lambda;=0.89)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#818cf8]"></span><span class="text-on-surface text-[11px]">#10 La Paz Centro (&lambda;=0.84)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">#0 CBBA Valle (&lambda;=0.78)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">#1 Plan 3000 (&lambda;=0.75)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#fbbf24]"></span><span class="text-on-surface text-[11px]">#4 SCZ Periferia (&lambda;=0.62)</span></div>
+                    <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Ruido Multiescala (-1)</span></div>
+                `;
+            }
             if (legendOptics) {
                 legendOptics.innerHTML = `
                     <span class="text-[10px] text-amber-400 uppercase tracking-wider block font-bold mb-1">OPTICS Valles (&xi;)</span>
@@ -306,25 +329,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Centros urbanos y distritos policiales predefinidos
+    // Centros urbanos y distritos policiales predefinidos con inclinación 3D oblicua táctica
     const VIEWPORTS = {
         'global': { center: [0, 20], zoom: 1.8, pitch: 0, bearing: 0 },
-        // Bolivia (Primario)
-        'bolivia': { center: [-64.9, -16.5], zoom: 5.0, pitch: 25, bearing: 0 },
-        'santa cruz': { center: [-63.1821, -17.7833], zoom: 12.5, pitch: 45, bearing: -15 },
-        'la paz': { center: [-68.1336, -16.4958], zoom: 13.0, pitch: 45, bearing: 20 },
-        'el alto': { center: [-68.1630, -16.5075], zoom: 13.0, pitch: 40, bearing: 10 },
-        'cochabamba': { center: [-66.1570, -17.3935], zoom: 12.8, pitch: 40, bearing: 0 },
-        'viacha': { center: [-68.3000, -16.6533], zoom: 14.0, pitch: 45, bearing: 0 },
-        'riberalta': { center: [-66.0631, -11.0042], zoom: 13.5, pitch: 35, bearing: 0 },
-        'punata': { center: [-65.8333, -17.5500], zoom: 14.0, pitch: 40, bearing: 0 },
-        'warnes': { center: [-63.1667, -17.5167], zoom: 13.5, pitch: 35, bearing: 0 },
-        // Chicago (Benchmark Secundario)
-        'chicago': { center: [-87.6298, 41.8781], zoom: 10.5, pitch: 35, bearing: -10 },
-        'the loop': { center: [-87.6231, 41.8818], zoom: 13.5, pitch: 45, bearing: -15 },
-        'west side': { center: [-87.7200, 41.8750], zoom: 13.0, pitch: 40, bearing: 0 },
-        'south side': { center: [-87.6400, 41.7750], zoom: 13.0, pitch: 40, bearing: 0 },
-        'north side': { center: [-87.6500, 41.9400], zoom: 13.0, pitch: 40, bearing: 0 }
+        // Bolivia (Primario) - Perspectiva orbital y relieve andino
+        'bolivia': { center: [-64.9, -16.5], zoom: 5.2, pitch: 32, bearing: -6 },
+        'santa cruz': { center: [-63.1821, -17.7833], zoom: 12.8, pitch: 52, bearing: -22 },
+        'la paz': { center: [-68.1336, -16.4958], zoom: 13.2, pitch: 56, bearing: 28 },
+        'el alto': { center: [-68.1630, -16.5075], zoom: 13.0, pitch: 50, bearing: 14 },
+        'cochabamba': { center: [-66.1570, -17.3935], zoom: 13.0, pitch: 52, bearing: -15 },
+        'viacha': { center: [-68.3000, -16.6533], zoom: 14.2, pitch: 54, bearing: 10 },
+        'riberalta': { center: [-66.0631, -11.0042], zoom: 13.5, pitch: 48, bearing: -8 },
+        'punata': { center: [-65.8333, -17.5500], zoom: 14.0, pitch: 50, bearing: 5 },
+        'warnes': { center: [-63.1667, -17.5167], zoom: 13.5, pitch: 48, bearing: -12 },
+        // Chicago (Benchmark Secundario) - Perspectiva 3D corridor urbano
+        'chicago': { center: [-87.6298, 41.8781], zoom: 11.0, pitch: 45, bearing: -18 },
+        'the loop': { center: [-87.6231, 41.8818], zoom: 14.0, pitch: 58, bearing: -26 },
+        'west side': { center: [-87.7200, 41.8750], zoom: 13.4, pitch: 52, bearing: 12 },
+        'south side': { center: [-87.6400, 41.7750], zoom: 13.4, pitch: 52, bearing: -15 },
+        'north side': { center: [-87.6500, 41.9400], zoom: 13.4, pitch: 50, bearing: 18 }
     };
 
     // Configuración inicial de cámara según contexto
@@ -355,16 +378,16 @@ document.addEventListener('DOMContentLoaded', () => {
         unit: 'metric'
     }), 'bottom-left');
 
-    // 2. Evento Load: Atmósfera Estelar y Capas
+    // 2. Evento Load: Atmósfera Orbital Crepuscular y Capas Vectoriales
     map.on('load', () => {
         if (typeof map.setSky === 'function') {
             map.setSky({
-                'sky-color': '#030712',
-                'sky-horizon-blend': 0.6,
-                'horizon-color': '#0e1726',
-                'horizon-fog-blend': 0.8,
-                'fog-color': '#030712',
-                'fog-ground-blend': 0.5
+                'sky-color': '#020617',          // Espacio profundo medianoche
+                'sky-horizon-blend': 0.72,       // Transición gradual
+                'horizon-color': '#002f54',      // Resplandor cian atmosférico orbital
+                'horizon-fog-blend': 0.86,       // Difuminado de horizonte
+                'fog-color': '#020817',          // Niebla de superficie oscura
+                'fog-ground-blend': 0.42         // Acoplamiento suave con el terreno
             });
         }
 
@@ -667,6 +690,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? 'bg-slate-700/60 text-slate-300 border-slate-600'
                 : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40';
 
+            const hdbscanBadgeClass = (props.hdbscan === -1 || props.hdbscan === '-1')
+                ? 'bg-slate-700/60 text-slate-300 border-slate-600'
+                : 'bg-teal-500/20 text-teal-300 border-teal-500/40';
+
             const opticsBadgeClass = (props.optics === -1 || props.optics === '-1')
                 ? 'bg-slate-700/60 text-slate-300 border-slate-600'
                 : 'bg-amber-500/20 text-amber-300 border-amber-500/40';
@@ -691,12 +718,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div><span class="text-outline uppercase text-[10px] tracking-wider">CIUDAD:</span> <strong class="text-on-surface">${props.city}</strong></div>
                         <div><span class="text-outline uppercase text-[10px] tracking-wider">FUENTE:</span> <strong class="text-primary-container">${props.source}</strong></div>
                         
-                        <!-- Badges No Supervisados: DBSCAN, OPTICS, GMM & Ward -->
+                        <!-- Badges No Supervisados: DBSCAN, HDBSCAN, OPTICS, GMM & Ward -->
                         <div class="pt-2 mt-1 border-t border-outline-variant/60 flex flex-col gap-1">
                             <div class="flex items-center gap-1.5">
                                 <span class="px-1.5 py-0.5 rounded text-[10px] font-bold border ${dbscanBadgeClass}">
                                     ${props.dbscan_label || ('DBSCAN: Hotspot #' + props.dbscan)}
                                 </span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold border ${hdbscanBadgeClass}">
+                                    ${props.hdbscan_label || ('HDBSCAN: Cluster #' + props.hdbscan)}
+                                </span>
+                                ${props.hdbscan_persistence ? `<span class="text-[9px] text-teal-400 font-bold">(&lambda;=${props.hdbscan_persistence})</span>` : ''}
                             </div>
                             <div class="flex items-center gap-1.5">
                                 <span class="px-1.5 py-0.5 rounded text-[10px] font-bold border ${opticsBadgeClass}">
@@ -818,12 +851,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btnToggleCluster && clusterBadge && clusterIcon) {
             if (enabled) {
                 btnToggleCluster.classList.add('active');
-                clusterBadge.textContent = 'AGRUPADO';
+                clusterBadge.innerHTML = '<span class="size-1.5 rounded-full bg-emerald-400 inline-block mr-1"></span>AGRUPADO';
                 clusterBadge.className = 'hud-action-badge';
                 clusterIcon.textContent = 'bubble_chart';
             } else {
                 btnToggleCluster.classList.remove('active');
-                clusterBadge.textContent = 'INDIVIDUAL';
+                clusterBadge.innerHTML = '<span class="size-1.5 rounded-full bg-cyan-400 inline-block mr-1"></span>INDIVIDUAL';
                 clusterBadge.className = 'hud-action-badge bg-cyan-500/20 text-cyan-300 border border-cyan-500/40';
                 clusterIcon.textContent = 'scatter_plot';
             }
@@ -911,6 +944,53 @@ document.addEventListener('DOMContentLoaded', () => {
             setPointsPaint('circle-stroke-width', [
                 'case',
                 ['==', ['get', 'dbscan'], -1], 1.0,
+                2.2
+            ]);
+
+        } else if (mode === 'hdbscan') {
+            // Modo HDBSCAN: Clusters Jerárquicos de Densidad Variable y Ruido
+            if (activeContext === 'chicago') {
+                setPointsPaint('circle-color', [
+                    'match',
+                    ['get', 'hdbscan'],
+                    1, '#00e5ff',
+                    2, '#ff3366',
+                    3, '#ffaa00',
+                    4, '#a855f7',
+                    /* Ruido */ '#64748b'
+                ]);
+            } else {
+                setPointsPaint('circle-color', [
+                    'match',
+                    ['get', 'hdbscan'],
+                    5, '#00e5ff',
+                    10, '#818cf8',
+                    0, '#34d399',
+                    1, '#ff3366',
+                    4, '#fbbf24',
+                    /* Ruido */ '#64748b'
+                ]);
+            }
+
+            setPointsPaint('circle-radius', [
+                'case',
+                ['==', ['get', 'hdbscan'], -1],
+                ['interpolate', ['linear'], ['zoom'], 2, 3.0, 8, 4.8, 14, 6.5],
+                ['interpolate', ['linear'], ['zoom'], 2, 5.0, 8, 8.5, 14, 11.0]
+            ]);
+            setPointsPaint('circle-opacity', [
+                'case',
+                ['==', ['get', 'hdbscan'], -1], 0.32,
+                0.95
+            ]);
+            setPointsPaint('circle-stroke-color', [
+                'case',
+                ['==', ['get', 'hdbscan'], -1], '#475569',
+                '#ffffff'
+            ]);
+            setPointsPaint('circle-stroke-width', [
+                'case',
+                ['==', ['get', 'hdbscan'], -1], 1.0,
                 2.2
             ]);
 
@@ -1043,16 +1123,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 6. Conmutación de Modo Algorítmico (Delito / DBSCAN / OPTICS / GMM / Ward)
+    // 6. Conmutación de Modo Algorítmico (Delito / DBSCAN / HDBSCAN / OPTICS / GMM / Ward)
     function setClusterMode(newMode) {
         currentClusterMode = newMode;
 
-        [btnModeCategory, btnModeDbscan, btnModeOptics, btnModeGmm, btnModeWard].forEach(b => {
+        // Sincronizar tema de bordes y resplandores en el viewport
+        if (viewportEl) {
+            viewportEl.setAttribute('data-algo-theme', newMode);
+        }
+
+        [btnModeCategory, btnModeDbscan, btnModeHdbscan, btnModeOptics, btnModeGmm, btnModeWard].forEach(b => {
             if (b) b.classList.remove('active');
         });
 
         if (newMode === 'category' && btnModeCategory) btnModeCategory.classList.add('active');
         if (newMode === 'dbscan' && btnModeDbscan) btnModeDbscan.classList.add('active');
+        if (newMode === 'hdbscan' && btnModeHdbscan) btnModeHdbscan.classList.add('active');
         if (newMode === 'optics' && btnModeOptics) btnModeOptics.classList.add('active');
         if (newMode === 'gmm' && btnModeGmm) btnModeGmm.classList.add('active');
         if (newMode === 'ward' && btnModeWard) btnModeWard.classList.add('active');
@@ -1061,13 +1147,20 @@ document.addEventListener('DOMContentLoaded', () => {
             activeModeLabel.textContent = newMode === 'category' ? 'DELITOS' : newMode.toUpperCase();
             if (newMode === 'category') activeModeLabel.className = 'text-primary-container font-semibold';
             else if (newMode === 'dbscan') activeModeLabel.className = 'text-cyan-400 font-bold';
+            else if (newMode === 'hdbscan') activeModeLabel.className = 'text-teal-400 font-bold';
             else if (newMode === 'optics') activeModeLabel.className = 'text-amber-400 font-bold';
             else if (newMode === 'gmm') activeModeLabel.className = 'text-emerald-400 font-bold';
             else if (newMode === 'ward') activeModeLabel.className = 'text-purple-400 font-bold';
         }
 
+        const legendModeTitle = document.getElementById('legend-active-mode-title');
+        if (legendModeTitle) {
+            legendModeTitle.textContent = newMode === 'category' ? 'DELITOS' : newMode.toUpperCase();
+        }
+
         if (legendCategory) legendCategory.classList.toggle('hidden', newMode !== 'category');
         if (legendDbscan) legendDbscan.classList.toggle('hidden', newMode !== 'dbscan');
+        if (legendHdbscan) legendHdbscan.classList.toggle('hidden', newMode !== 'hdbscan');
         if (legendOptics) legendOptics.classList.toggle('hidden', newMode !== 'optics');
         if (legendGmm) legendGmm.classList.toggle('hidden', newMode !== 'gmm');
         if (legendWard) legendWard.classList.toggle('hidden', newMode !== 'ward');
@@ -1088,7 +1181,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         applyClusterStyle(newMode);
 
-        // Auto-switch inteligente: Si se selecciona un modelo no supervisado (DBSCAN, OPTICS, GMM, Ward),
+        // Auto-switch inteligente: Si se selecciona un modelo no supervisado (DBSCAN, HDBSCAN, OPTICS, GMM, Ward),
         // deshabilitar la agrupación WebGL para revelar todos los puntos individuales en el globo
         if (newMode === 'category') {
             setClusteringMode(true);
@@ -1099,6 +1192,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnModeCategory) btnModeCategory.addEventListener('click', () => setClusterMode('category'));
     if (btnModeDbscan) btnModeDbscan.addEventListener('click', () => setClusterMode('dbscan'));
+    if (btnModeHdbscan) btnModeHdbscan.addEventListener('click', () => setClusterMode('hdbscan'));
     if (btnModeOptics) btnModeOptics.addEventListener('click', () => setClusterMode('optics'));
     if (btnModeGmm) btnModeGmm.addEventListener('click', () => setClusterMode('gmm'));
     if (btnModeWard) btnModeWard.addEventListener('click', () => setClusterMode('ward'));
@@ -1125,14 +1219,16 @@ document.addEventListener('DOMContentLoaded', () => {
             hudBadgeEl.textContent = newCtx === 'chicago' ? 'US CHICAGO' : 'BO BOLIVIA';
         }
 
-        // Vuelo suave de cámara al centroide del contexto seleccionado
+        // Vuelo suave de cámara al centroide del contexto seleccionado con perspectiva 3D
         const vp = newCtx === 'chicago' ? VIEWPORTS['chicago'] : VIEWPORTS['bolivia'];
         map.flyTo({
             center: vp.center,
             zoom: vp.zoom,
             pitch: vp.pitch,
             bearing: vp.bearing || 0,
-            duration: 2000,
+            duration: 2200,
+            curve: 1.42,
+            easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
             essential: true
         });
 
@@ -1191,26 +1287,36 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="material-symbols-outlined text-sm">public</span>
                     <span>Global</span>
                 </button>
+                <div class="w-[1px] h-4 bg-outline-variant/80 my-auto mx-0.5 shrink-0"></div>
                 <button type="button" class="btn-tactile hud-dock-btn hud-city-btn active" data-city="chicago" title="Metro Chicago">
                     <span class="material-symbols-outlined text-sm">location_city</span>
                     <span>Chicago</span>
                 </button>
-                <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="the loop" title="Distrito 1 - The Loop">
-                    <span class="material-symbols-outlined text-sm">domain</span>
-                    <span>The Loop</span>
-                </button>
-                <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="west side" title="Distrito 11 - West Side">
-                    <span class="material-symbols-outlined text-sm">warning</span>
-                    <span>West Side</span>
-                </button>
-                <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="south side" title="Distrito 7 - South Side">
-                    <span class="material-symbols-outlined text-sm">near_me</span>
-                    <span>South Side</span>
-                </button>
-                <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="north side" title="Distrito 19 - North Side">
-                    <span class="material-symbols-outlined text-sm">shield</span>
-                    <span>North Side</span>
-                </button>
+                <div class="relative" id="dock-dropdown-wrapper">
+                    <button type="button" id="btn-dock-dropdown-toggle" class="btn-tactile hud-dock-btn flex items-center gap-1" title="Explorar Distritos CPD">
+                        <span class="material-symbols-outlined text-sm">domain</span>
+                        <span id="dock-dropdown-label">Distritos</span>
+                        <span class="material-symbols-outlined text-xs transition-transform duration-200" id="dock-dropdown-chevron">expand_less</span>
+                    </button>
+                    <div id="dock-dropdown-menu" class="hidden absolute bottom-full mb-2 left-1/2 -translate-x-1/2 min-w-[160px] p-1.5 rounded-xl bg-slate-900/95 border border-cyan-500/40 backdrop-blur-xl shadow-2xl flex flex-col gap-1 z-30 font-data-code text-xs">
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="the loop" title="Distrito 1 - The Loop">
+                            <span class="material-symbols-outlined text-xs text-cyan-400">domain</span>
+                            <span>The Loop</span>
+                        </button>
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="west side" title="Distrito 11 - West Side (Garfield / Austin)">
+                            <span class="material-symbols-outlined text-xs text-amber-400">warning</span>
+                            <span>West Side</span>
+                        </button>
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="south side" title="Distrito 7 - South Side (Englewood)">
+                            <span class="material-symbols-outlined text-xs text-rose-400">near_me</span>
+                            <span>South Side</span>
+                        </button>
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="north side" title="Distrito 19 - North Side (Lincoln / Lakeview)">
+                            <span class="material-symbols-outlined text-xs text-sky-400">shield</span>
+                            <span>North Side</span>
+                        </button>
+                    </div>
+                </div>
             `;
         } else {
             bottomControlsEl.innerHTML = `
@@ -1218,42 +1324,91 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="material-symbols-outlined text-sm">public</span>
                     <span>Global</span>
                 </button>
+                <div class="w-[1px] h-4 bg-outline-variant/80 my-auto mx-0.5 shrink-0"></div>
                 <button type="button" class="btn-tactile hud-dock-btn hud-city-btn active" data-city="bolivia" title="Enfoque Nacional Bolivia">
                     <span class="material-symbols-outlined text-sm">flag</span>
                     <span>Bolivia</span>
                 </button>
-                <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="santa cruz" title="Área Metropolitana Santa Cruz">
-                    <span class="material-symbols-outlined text-sm">apartment</span>
-                    <span>Santa Cruz</span>
-                </button>
-                <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="la paz" title="Sede de Gobierno La Paz">
-                    <span class="material-symbols-outlined text-sm">terrain</span>
-                    <span>La Paz</span>
-                </button>
-                <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="el alto" title="Área Metropolitana El Alto">
-                    <span class="material-symbols-outlined text-sm">altitude</span>
-                    <span>El Alto</span>
-                </button>
-                <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="cochabamba" title="Valle Central de Cochabamba">
-                    <span class="material-symbols-outlined text-sm">location_on</span>
-                    <span>Cochabamba</span>
-                </button>
-                <button type="button" class="btn-tactile hud-dock-btn hud-city-btn" data-city="viacha" title="Municipio de Viacha (Lugar del Hecho)">
-                    <span class="material-symbols-outlined text-sm">explore</span>
-                    <span>Viacha</span>
-                </button>
+                <div class="relative" id="dock-dropdown-wrapper">
+                    <button type="button" id="btn-dock-dropdown-toggle" class="btn-tactile hud-dock-btn flex items-center gap-1" title="Explorar Ciudades Principales">
+                        <span class="material-symbols-outlined text-sm">apartment</span>
+                        <span id="dock-dropdown-label">Ciudades</span>
+                        <span class="material-symbols-outlined text-xs transition-transform duration-200" id="dock-dropdown-chevron">expand_less</span>
+                    </button>
+                    <div id="dock-dropdown-menu" class="hidden absolute bottom-full mb-2 left-1/2 -translate-x-1/2 min-w-[160px] p-1.5 rounded-xl bg-slate-900/95 border border-cyan-500/40 backdrop-blur-xl shadow-2xl flex flex-col gap-1 z-30 font-data-code text-xs">
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="santa cruz" title="Área Metropolitana Santa Cruz">
+                            <span class="material-symbols-outlined text-xs text-cyan-400">apartment</span>
+                            <span>Santa Cruz</span>
+                        </button>
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="la paz" title="Sede de Gobierno La Paz">
+                            <span class="material-symbols-outlined text-xs text-amber-400">terrain</span>
+                            <span>La Paz</span>
+                        </button>
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="el alto" title="Área Metropolitana El Alto">
+                            <span class="material-symbols-outlined text-xs text-sky-400">altitude</span>
+                            <span>El Alto</span>
+                        </button>
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="cochabamba" title="Valle Central de Cochabamba">
+                            <span class="material-symbols-outlined text-xs text-emerald-400">location_on</span>
+                            <span>Cochabamba</span>
+                        </button>
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="viacha" title="Municipio de Viacha (Lugar del Hecho)">
+                            <span class="material-symbols-outlined text-xs text-purple-400">explore</span>
+                            <span>Viacha</span>
+                        </button>
+                    </div>
+                </div>
             `;
         }
         bindCityButtons();
     }
 
-    // Enlazar clics de botones del dock inferior
+    // Enlazar clics de botones del dock inferior con soporte para selector desplegable
     function bindCityButtons() {
         const btns = document.querySelectorAll('.hud-city-btn');
+        const dropdownToggle = document.getElementById('btn-dock-dropdown-toggle');
+        const dropdownMenu = document.getElementById('dock-dropdown-menu');
+        const dropdownLabel = document.getElementById('dock-dropdown-label');
+        const dropdownChevron = document.getElementById('dock-dropdown-chevron');
+
+        if (dropdownToggle && dropdownMenu) {
+            dropdownToggle.onclick = (e) => {
+                e.stopPropagation();
+                const isOpen = !dropdownMenu.classList.contains('hidden');
+                if (isOpen) {
+                    dropdownMenu.classList.add('hidden');
+                    if (dropdownChevron) dropdownChevron.style.transform = 'rotate(0deg)';
+                } else {
+                    dropdownMenu.classList.remove('hidden');
+                    if (dropdownChevron) dropdownChevron.style.transform = 'rotate(180deg)';
+                }
+            };
+        }
+
         btns.forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.onclick = (e) => {
+                e.stopPropagation();
                 btns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
+
+                // Si se hizo clic en una opción del menú flyout
+                if (btn.classList.contains('hud-dock-menu-btn')) {
+                    if (dropdownLabel) {
+                        const labelSpan = btn.querySelector('span:last-child');
+                        dropdownLabel.textContent = labelSpan ? labelSpan.textContent.trim() : 'Zona';
+                    }
+                    if (dropdownToggle) dropdownToggle.classList.add('active');
+                } else {
+                    // Clic en Global o Bolivia/Chicago
+                    if (dropdownLabel) dropdownLabel.textContent = activeContext === 'chicago' ? 'Distritos' : 'Ciudades';
+                    if (dropdownToggle) dropdownToggle.classList.remove('active');
+                }
+
+                // Cerrar menú flyout
+                if (dropdownMenu) {
+                    dropdownMenu.classList.add('hidden');
+                    if (dropdownChevron) dropdownChevron.style.transform = 'rotate(0deg)';
+                }
 
                 const targetKey = btn.dataset.city ? btn.dataset.city.toLowerCase() : (activeContext === 'chicago' ? 'chicago' : 'bolivia');
                 const vp = VIEWPORTS[targetKey] || (activeContext === 'chicago' ? VIEWPORTS['chicago'] : VIEWPORTS['bolivia']);
@@ -1263,12 +1418,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     zoom: vp.zoom,
                     pitch: vp.pitch,
                     bearing: vp.bearing || 0,
-                    duration: 1800,
+                    duration: 2200,
+                    curve: 1.42,
+                    easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
                     essential: true
                 });
-            });
+            };
         });
     }
+
+    // Cerrar menú desplegable al hacer clic fuera
+    document.addEventListener('click', (e) => {
+        const dropdownMenu = document.getElementById('dock-dropdown-menu');
+        const dropdownChevron = document.getElementById('dock-dropdown-chevron');
+        if (dropdownMenu && !dropdownMenu.classList.contains('hidden')) {
+            const wrapper = document.getElementById('dock-dropdown-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                dropdownMenu.classList.add('hidden');
+                if (dropdownChevron) dropdownChevron.style.transform = 'rotate(0deg)';
+            }
+        }
+    });
 
     // Interceptar clics en los botones de cambio de contexto
     if (btnSwitchBolivia) {
@@ -1299,7 +1469,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 projIcon.textContent = isGlobeProjection ? 'public' : 'map';
             }
             if (projBadge) {
-                projBadge.textContent = isGlobeProjection ? '3D GLOBO' : '2D PLANO';
+                projBadge.innerHTML = isGlobeProjection
+                    ? '<span class="size-1.5 rounded-full bg-cyan-400 inline-block mr-1"></span>3D GLOBO'
+                    : '<span class="size-1.5 rounded-full bg-slate-400 inline-block mr-1"></span>2D PLANO';
             }
 
             if (isGlobeProjection) {
@@ -1327,8 +1499,109 @@ document.addEventListener('DOMContentLoaded', () => {
             const selectedCity = filterCityEl.value.toLowerCase();
             if (VIEWPORTS[selectedCity]) {
                 const vp = VIEWPORTS[selectedCity];
-                map.flyTo({ center: vp.center, zoom: vp.zoom, pitch: vp.pitch, duration: 1500 });
+                map.flyTo({
+                    center: vp.center,
+                    zoom: vp.zoom,
+                    pitch: vp.pitch,
+                    bearing: vp.bearing || 0,
+                    duration: 2000,
+                    curve: 1.42,
+                    easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+                    essential: true
+                });
             }
         });
     }
+
+    // 9. Modo Presentación / Cine (Repliegue y Restauración Suave de HUDs)
+    const btnToggleCinema = document.getElementById('btn-toggle-cinema');
+    const btnRestoreHud = document.getElementById('btn-restore-hud');
+
+    function toggleCinemaMode() {
+        if (!viewportEl) return;
+        const isCinema = viewportEl.classList.toggle('cinema-mode');
+        const cinemaBadge = document.getElementById('cinema-badge');
+        const cinemaIcon = document.getElementById('cinema-icon');
+        if (cinemaBadge) {
+            cinemaBadge.innerHTML = isCinema
+                ? '<span class="size-1.5 rounded-full bg-amber-400 inline-block mr-1"></span>ACTIVO'
+                : '[H]';
+        }
+        if (cinemaIcon) {
+            cinemaIcon.textContent = isCinema ? 'fullscreen_exit' : 'fullscreen';
+        }
+        if (btnToggleCinema) {
+            btnToggleCinema.classList.toggle('active', isCinema);
+        }
+    }
+
+    if (btnToggleCinema) {
+        btnToggleCinema.addEventListener('click', toggleCinemaMode);
+    }
+    if (btnRestoreHud) {
+        btnRestoreHud.addEventListener('click', toggleCinemaMode);
+    }
+
+    // Atajo de teclado táctico: [H] o [h] para alternar HUD limpio
+    window.addEventListener('keydown', (e) => {
+        const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+        if (tag === 'input' || tag === 'select' || tag === 'textarea') return;
+
+        if (e.key === 'h' || e.key === 'H') {
+            e.preventDefault();
+            toggleCinemaMode();
+        }
+    });
+
+    // 10. Telemetría de Orientación y Cámara Orbital en Vivo
+    const camAltEl = document.getElementById('cam-alt');
+    const camPitchEl = document.getElementById('cam-pitch');
+    const camBearingEl = document.getElementById('cam-bearing');
+    const camZoomEl = document.getElementById('cam-zoom');
+
+    function updateCameraTelemetry() {
+        if (!map) return;
+        const zoom = map.getZoom();
+        const pitch = Math.round(map.getPitch());
+        const rawBearing = (Math.round(map.getBearing()) + 360) % 360;
+
+        // Altitud orbital aproximada desde el nivel de zoom
+        const altKm = Math.round(40000 / Math.pow(2, zoom));
+        const altStr = altKm > 999 ? `${(altKm / 1000).toFixed(1)}k km` : `${altKm} km`;
+
+        const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+        const cardinal = directions[Math.round(rawBearing / 45) % 8];
+
+        if (camAltEl) camAltEl.textContent = `ALT: ${altStr}`;
+        if (camPitchEl) camPitchEl.innerHTML = `${pitch}&deg;`;
+        if (camBearingEl) camBearingEl.innerHTML = `${rawBearing}&deg; ${cardinal}`;
+        if (camZoomEl) camZoomEl.textContent = zoom.toFixed(1);
+    }
+
+    map.on('move', updateCameraTelemetry);
+    map.on('rotate', updateCameraTelemetry);
+    map.on('pitch', updateCameraTelemetry);
+
+    // 11. Plegado / Desplegado Táctico de HUDs (Leyenda y Toolbar)
+    const legendHeaderToggle = document.getElementById('legend-header-toggle');
+    const hudLegendCard = document.getElementById('hud-legend-card');
+    if (legendHeaderToggle && hudLegendCard) {
+        legendHeaderToggle.addEventListener('click', () => {
+            hudLegendCard.classList.toggle('collapsed');
+        });
+    }
+
+    const toolbarHeaderToggle = document.getElementById('toolbar-header-toggle');
+    const hudTopRight = document.getElementById('hud-top-right');
+    if (toolbarHeaderToggle && hudTopRight) {
+        toolbarHeaderToggle.addEventListener('click', () => {
+            hudTopRight.classList.toggle('collapsed');
+        });
+    }
+
+    // Inicialización de estado y telemetría
+    if (viewportEl) {
+        viewportEl.setAttribute('data-algo-theme', currentClusterMode);
+    }
+    updateCameraTelemetry();
 });

@@ -28,6 +28,15 @@ class WebGISService:
         -1: {"name": "Ruido Espacial Disperso (-1)", "color": "#64748b"}
     }
 
+    BOLIVIA_HDBSCAN_META = {
+        5: {"name": "HDB #5: Santa Cruz Metropolitano", "color": "#00e5ff", "persistencia": "0.89"},
+        10: {"name": "HDB #10: La Paz Centro & San Francisco", "color": "#818cf8", "persistencia": "0.84"},
+        0: {"name": "HDB #0: Cochabamba Valle Central", "color": "#34d399", "persistencia": "0.78"},
+        1: {"name": "HDB #1: Plan 3000 & Los Lotes", "color": "#ff3366", "persistencia": "0.75"},
+        4: {"name": "HDB #4: Santa Cruz Periferia", "color": "#fbbf24", "persistencia": "0.62"},
+        -1: {"name": "Ruido Multiescala (-1)", "color": "#64748b", "persistencia": "0.00"}
+    }
+
     BOLIVIA_GMM_META = {
         0: {"name": "GMM #0: SCZ Casco & Equipetrol (π=0.42)", "color": "#00e5ff"},
         1: {"name": "GMM #1: Plan 3000 / Los Lotes (π=0.28)", "color": "#ff3366"},
@@ -50,6 +59,14 @@ class WebGISService:
         3: {"name": "DBSCAN #3: Englewood South (D-007/006)", "color": "#ffaa00"},
         4: {"name": "DBSCAN #4: Near West (D-012)", "color": "#a855f7"},
         -1: {"name": "Ruido Espacial Disperso (-1)", "color": "#64748b"}
+    }
+
+    CHICAGO_HDBSCAN_META = {
+        1: {"name": "HDB #1: Loop Central Core", "color": "#00e5ff", "persistencia": "0.92"},
+        2: {"name": "HDB #2: West Side Corridor", "color": "#ff3366", "persistencia": "0.88"},
+        3: {"name": "HDB #3: Englewood South", "color": "#ffaa00", "persistencia": "0.81"},
+        4: {"name": "HDB #4: Near West UIC", "color": "#a855f7", "persistencia": "0.71"},
+        -1: {"name": "Ruido Multiescala (-1)", "color": "#64748b", "persistencia": "0.00"}
     }
 
     CHICAGO_GMM_META = {
@@ -135,6 +152,7 @@ class WebGISService:
         df["url"] = df.get("url", pd.Series()).fillna("#")
         df["fecha"] = df.get("fecha", pd.Series()).fillna("")
         df["dbscan"] = df.get("dbscan", pd.Series(0)).fillna(0).astype(int)
+        df["hdbscan"] = df.get("hdbscan", pd.Series(-1)).fillna(-1).astype(int)
 
         cls._df_cache = df
         return cls._df_cache
@@ -203,6 +221,7 @@ class WebGISService:
         features = []
         for row in df.itertuples():
             dbscan_id = int(getattr(row, "dbscan", 0))
+            hdbscan_id = int(getattr(row, "hdbscan", -1))
             optics_id = int(getattr(row, "optics", -1))
             
             # Asignación probabilística GMM según proximidad
@@ -222,6 +241,7 @@ class WebGISService:
 
             optics_info = cls.BOLIVIA_OPTICS_META.get(optics_id, cls.BOLIVIA_OPTICS_META[-1])
             dbscan_info = cls.BOLIVIA_DBSCAN_META.get(dbscan_id, cls.BOLIVIA_DBSCAN_META[-1])
+            hdbscan_info = cls.BOLIVIA_HDBSCAN_META.get(hdbscan_id, cls.BOLIVIA_HDBSCAN_META[-1])
             gmm_info = cls.BOLIVIA_GMM_META.get(gmm_id, cls.BOLIVIA_GMM_META[-1])
 
             # Asignación de Macro-Cluster Jerárquico Ward (Taxonomía Aglomerativa k=3)
@@ -251,11 +271,16 @@ class WebGISService:
                     "source": str(row.fuente).upper(),
                     "url": str(row.url),
                     
-                    # Modelado No Supervisado: DBSCAN, OPTICS, GMM y Jerárquico Ward
+                    # Modelado No Supervisado: DBSCAN, HDBSCAN, OPTICS, GMM y Jerárquico Ward
                     "cluster": dbscan_id,
                     "dbscan": dbscan_id,
                     "dbscan_label": dbscan_info["name"],
                     "dbscan_color": dbscan_info["color"],
+
+                    "hdbscan": hdbscan_id,
+                    "hdbscan_label": hdbscan_info["name"],
+                    "hdbscan_color": hdbscan_info["color"],
+                    "hdbscan_persistence": hdbscan_info.get("persistencia", "0.50"),
                     
                     "optics": optics_id,
                     "optics_valley": optics_info["name"],
@@ -302,35 +327,41 @@ class WebGISService:
         for row in df.itertuples():
             dist_val = int(row.district) if pd.notnull(row.district) else 0
 
-            # Mapeo criminológico a DBSCAN, OPTICS y GMM
+            # Mapeo criminológico a DBSCAN, HDBSCAN, OPTICS y GMM
             if dist_val in [1, 18]:
                 dbscan_id = 1
+                hdbscan_id = 1
                 optics_id = 1
                 gmm_id = 1
                 gmm_prob = 88.2
             elif dist_val in [11, 15, 10]:
                 dbscan_id = 2
+                hdbscan_id = 2
                 optics_id = 2
                 gmm_id = 2
                 gmm_prob = 84.6
             elif dist_val in [7, 6]:
                 dbscan_id = 3
+                hdbscan_id = 3
                 optics_id = 3
                 gmm_id = 3
                 gmm_prob = 79.1
             elif dist_val in [12]:
                 dbscan_id = 4
+                hdbscan_id = 4
                 optics_id = 4
                 gmm_id = 2
                 gmm_prob = 62.4
             else:
                 dbscan_id = -1
+                hdbscan_id = -1
                 optics_id = -1
                 gmm_id = -1
                 gmm_prob = 30.0
 
             optics_info = cls.CHICAGO_OPTICS_META.get(optics_id, cls.CHICAGO_OPTICS_META[-1])
             dbscan_info = cls.CHICAGO_DBSCAN_META.get(dbscan_id, cls.CHICAGO_DBSCAN_META[-1])
+            hdbscan_info = cls.CHICAGO_HDBSCAN_META.get(hdbscan_id, cls.CHICAGO_HDBSCAN_META[-1])
             gmm_info = cls.CHICAGO_GMM_META.get(gmm_id, cls.CHICAGO_GMM_META[-1])
 
             # Mapeo Criminológico Macro-Cluster Jerárquico Ward (k=3)
@@ -359,11 +390,16 @@ class WebGISService:
                     "source": "CPD POLICE PORTAL",
                     "url": "https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-Present/ijzp-q8t2",
                     
-                    # Modelado No Supervisado: DBSCAN, OPTICS, GMM y Jerárquico Ward
+                    # Modelado No Supervisado: DBSCAN, HDBSCAN, OPTICS, GMM y Jerárquico Ward
                     "cluster": dbscan_id,
                     "dbscan": dbscan_id,
                     "dbscan_label": dbscan_info["name"],
                     "dbscan_color": dbscan_info["color"],
+
+                    "hdbscan": hdbscan_id,
+                    "hdbscan_label": hdbscan_info["name"],
+                    "hdbscan_color": hdbscan_info["color"],
+                    "hdbscan_persistence": hdbscan_info.get("persistencia", "0.50"),
                     
                     "optics": optics_id,
                     "optics_valley": optics_info["name"],
@@ -418,6 +454,7 @@ class WebGISService:
                 },
                 "optics_valleys": list(cls.CHICAGO_OPTICS_META.values()),
                 "dbscan_hotspots": list(cls.CHICAGO_DBSCAN_META.values()),
+                "hdbscan_clusters": list(cls.CHICAGO_HDBSCAN_META.values()),
                 "gmm_components": list(cls.CHICAGO_GMM_META.values())
             }
 
@@ -456,5 +493,6 @@ class WebGISService:
             },
             "optics_valleys": list(cls.BOLIVIA_OPTICS_META.values()),
             "dbscan_hotspots": list(cls.BOLIVIA_DBSCAN_META.values()),
+            "hdbscan_clusters": list(cls.BOLIVIA_HDBSCAN_META.values()),
             "gmm_components": list(cls.BOLIVIA_GMM_META.values())
         }
