@@ -1,0 +1,74 @@
+\section{PROBLEMÁTICA}
+
+La gestión estratégica de la seguridad ciudadana y la prevención del delito en centros urbanos se enfrentan a un desafío mayúsculo: la incapacidad de los métodos analíticos tradicionales para procesar, segmentar y valorizar de forma oportuna grandes volúmenes de datos espaciotemporales heterogéneos y crónicas narrativas no estructuradas.
+
+De acuerdo con el diagnóstico formulado en el presente trabajo, el \textbf{problema central} radica en la \textbf{alta dificultad para identificar concentraciones delictivas emergentes (\textit{hotspots}), tipificar patrones complejos de \textit{modus operandi} y detectar anomalías criminales espaciotemporales a partir de datos masivos no etiquetados}. En las metodologías vigentes de agregación por precintos o distritos policiales, se constata que hasta un 40\% de los micro-focos delictivos permanecen invisibilizados debido al Problema de la Unidad de Área Modificable (\textit{MAUP -- Modifiable Areal Unit Problem}), el cual asume erróneamente que la criminalidad se distribuye de manera homogénea dentro de los límites administrativos oficiales.
+
+Esta problemática se origina por una serie de factores técnicos interconectados:
+\begin{enumerate}
+    \item \textbf{Distorsión de métricas de distancia:} La aplicación de distancias euclidianas planas convencionales sobre coordenadas geográficas $(\text{Latitud}, \text{Longitud})$ genera errores sistemáticos de cálculo métrico, al ignorar la curvatura geodésica de la Tierra.
+    \item \textbf{Morfología no esférica y densidades variables:} Los delitos urbanos siguen la traza de avenidas, nodos comerciales y líneas de transporte público, conformando cúmulos lineales o irregulares que los algoritmos particionales tradicionales (como K-Means estándar) son incapaces de aislar adecuadamente, además de colapsar ante densidades fluctuantes entre el centro urbano y las periferias.
+    \item \textbf{Falta de explotación semántica de texto no estructurado:} Los reportes policiales y las crónicas periodísticas contienen información crítica en lenguaje natural sobre el modo de ejecución del delito, armamento utilizado o circunstancias ambientales; sin embargo, estos campos se almacenan como texto libre sin vectorización matemática ni análisis de tópicos latentes.
+    \item \textbf{Dificultad en la detección de eventos atípicos:} Los delitos excepcionales o comportamientos espaciotemporales anómalos quedan encubiertos y diluidos en la masa de cientos de miles de delitos menores rutinarios, impidiendo la emisión de alertas operativas oportunas.
+\end{enumerate}
+
+Las consecuencias directas de esta brecha analítica se traducen en asignaciones ineficientes de patrullaje preventivo, tiempos de respuesta policial prolongados, desprotección de zonas periféricas críticas y una sobrecarga cognitiva severa para los tomadores de decisiones frente a tablas planas de datos desarticuladas.
+
+\subsection{Árbol de Problemas}
+
+El diagrama de la Figura \ref{fig:arbol_problemas} sintetiza visualmente la estructura causal de la problemática, articulando las causas basales, el problema central y las consecuencias sobre la seguridad urbana:
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    node distance=1.1cm and 0.5cm,
+    box_problema/.style={rectangle, draw=accentred!80!black, fill=accentred!10, text width=9.5cm, align=center, font=\bfseries\small, minimum height=1.3cm, rounded corners=3pt, line width=1.3pt},
+    box_efecto/.style={rectangle, draw=primaryblue!80, fill=primaryblue!8, text width=3.9cm, align=center, font=\scriptsize, minimum height=1.3cm, rounded corners=2pt, line width=0.8pt},
+    box_efecto_sup/.style={rectangle, draw=darkgray, fill=lightgray, text width=4.1cm, align=center, font=\scriptsize, minimum height=1.3cm, rounded corners=2pt, line width=0.8pt},
+    box_causa_1/.style={rectangle, draw=secondaryblue!90, fill=secondaryblue!10, text width=3.8cm, align=center, font=\scriptsize, minimum height=1.4cm, rounded corners=2pt, line width=0.8pt},
+    box_causa_2/.style={rectangle, draw=darkgray!70, fill=white, text width=3.8cm, align=center, font=\tiny, minimum height=1.4cm, rounded corners=2pt, line width=0.6pt},
+    arrow/.style={->, >=stealth, thick, color=darkgray!80}
+]
+
+    % Problema Central
+    \node (problema) [box_problema] {PROBLEMA CENTRAL:\\Margen de error del 40\% e invisibilización de micro-hotspots delictivos, patrones de modus operandi y eventos anómalos en datos urbanos no etiquetados.};
+
+    % Nivel Efectos Directos
+    \node (efecto2) [box_efecto, above=1.0cm of problema] {Desviación del 35\% en la asignación estratégica y patrullaje de recursos preventivos.};
+    \node (efecto1) [box_efecto, left=0.6cm of efecto2] {Demora crítica en la identificación de focos delictivos emergentes interdistritales.};
+    \node (efecto3) [box_efecto, right=0.6cm of efecto2] {Sobrecarga cognitiva de analistas y baja interpretabilidad de registros masivos.};
+
+    % Nivel Efectos Indirectos (Superiores)
+    \node (sup1) [box_efecto_sup, above=0.8cm of efecto1] {Incremento de la tasa de victimización e impunidad en corredores urbanos críticos.};
+    \node (sup2) [box_efecto_sup, above=0.8cm of efecto3] {Incapacidad de respuesta preventiva y formulación de políticas públicas basada en evidencia.};
+
+    % Conexiones Efectos
+    \draw [arrow] (problema) -- (efecto1);
+    \draw [arrow] (problema) -- (efecto2);
+    \draw [arrow] (problema) -- (efecto3);
+    \draw [arrow] (efecto1) -- (sup1);
+    \draw [arrow] (efecto3) -- (sup2);
+
+    % Nivel Causas Directas
+    \node (causa2) [box_causa_1, below=1.0cm of problema] {Supuesto de morfología esférica y homogeneidad espacial en algoritmos clásicos.};
+    \node (causa1) [box_causa_1, left=0.6cm of causa2] {Distorsión de métricas euclidianas planas al ignorar la curvatura geodésica.};
+    \node (causa3) [box_causa_1, right=0.6cm of causa2] {Tratamiento aislado de datos espaciales sin explotación semántica de texto.};
+
+    % Nivel Causas Indirectas (Inferiores)
+    \node (sub1) [box_causa_2, below=0.8cm of causa1] {Incompatibilidad de distancias planas con coordenadas angulares reales (Lat, Lon).};
+    \node (sub2) [box_causa_2, below=0.8cm of causa2] {Incapacidad para procesar densidades multiescala y separar formalmente el ruido.};
+    \node (sub3) [box_causa_2, below=0.8cm of causa3] {Falta de modelos generativos de tópicos (LDA) y scoring de anomalías (Autoencoders).};
+
+    % Conexiones Causas
+    \draw [arrow] (causa1) -- (problema);
+    \draw [arrow] (causa2) -- (problema);
+    \draw [arrow] (causa3) -- (problema);
+    \draw [arrow] (sub1) -- (causa1);
+    \draw [arrow] (sub2) -- (causa2);
+    \draw [arrow] (sub3) -- (causa3);
+
+\end{tikzpicture}
+\caption{Árbol de Problemas del Sistema de Inteligencia Urbana y Criminalidad.}
+\label{fig:arbol_problemas}
+\end{figure}
+

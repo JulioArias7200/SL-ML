@@ -1,0 +1,209 @@
+\section*{ANEXOS}
+\addcontentsline{toc}{section}{ANEXOS}
+
+Los Anexos compilan la documentación técnica de soporte, especificaciones de la API REST, esquemas de bases de datos, capturas de pantalla de la plataforma interactiva y fragmentos de código algorítmico fundamentales.
+
+\subsection*{Anexo A: Especificación de Endpoints de la API REST}
+
+El microservicio backend en Flask expone un conjunto de endpoints RESTful bajo formato JSON para consumo desde el frontend o clientes externos:
+
+\begin{enumerate}
+    \item \textbf{Inferencia Probabilística de Riesgo Espacial GMM:}
+    \begin{itemize}
+        \item \textbf{Ruta:} \texttt{POST /api/predict\_risk}
+        \item \textbf{Cuerpo de la Petición (\textit{Request Body}):}
+\begin{lstlisting}[language=json]
+{
+  "latitude": 41.8781,
+  "longitude": -87.6298
+}
+\end{lstlisting}
+        \item \textbf{Respuesta del Servidor (\textit{Response Body}):}
+\begin{lstlisting}[language=json]
+{
+  "status": "success",
+  "log_likelihood": -4.215,
+  "risk_score_normalized": 0.842,
+  "dominant_component": 1,
+  "component_responsibilities": [0.72, 0.15, 0.08, 0.05],
+  "risk_level": "Alto"
+}
+\end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{Clasificación Semántica de Texto en Tiempo Real (NLP):}
+    \begin{itemize}
+        \item \textbf{Ruta:} \texttt{POST /api/classify\_text}
+        \item \textbf{Cuerpo de la Petición (\textit{Request Body}):}
+\begin{lstlisting}[language=json]
+{
+  "text": "Sujeto armado desciende de motocicleta y sustrae pertenencias a transeunte con arma de fuego en via publica"
+}
+\end{lstlisting}
+        \item \textbf{Respuesta del Servidor (\textit{Response Body}):}
+\begin{lstlisting}[language=json]
+{
+  "status": "success",
+  "predicted_cluster": 3,
+  "archetype_name": "Asalto a Mano Armada en Via Publica",
+  "top_keywords": ["arma", "fuego", "calle", "atraco", "victima"],
+  "inference_time_ms": 3.8
+}
+\end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{Ejecución de Clustering Espacial Dinámico:}
+    \begin{itemize}
+        \item \textbf{Ruta:} \texttt{POST /api/run\_clustering}
+        \item \textbf{Parámetros:} \texttt{radio\_km} (float), \texttt{min\_pts} (int), \texttt{algorithm} (enum: dbscan, hdbscan, optics).
+    \end{itemize}
+\end{enumerate}
+
+\subsection*{Anexo B: Implementación Algorítmica Central (Python)}
+
+El Listado \ref{lst:haversine_dbscan} reproduce la implementación del cálculo geodésico y clustering de densidad espacial sobre coordenadas angulares en radianes:
+
+\begin{lstlisting}[language=Python, caption={Cálculo geodésico y clustering espacial con Haversine en radianes.}, label={lst:haversine_dbscan}]
+import numpy as np
+import pandas as pd
+from sklearn.cluster import DBSCAN, OPTICS
+
+RADIO_TIERRA_KM = 6371.0088
+
+def run_spatial_density(df_points, radio_km=2.5, min_pts=2):
+    """
+    Ejecuta DBSCAN y OPTICS utilizando la metrica geodesica de Haversine.
+    Convierte previamente latitud y longitud a radianes.
+    """
+    p = df_points.dropna(subset=['lat', 'lon']).copy()
+    if len(p) == 0:
+        return p
+
+    # Agrupacion de coordenadas identicas para eficiencia computacional
+    u = p.groupby(['lat', 'lon']).size().reset_index(name='n')
+    xu = np.radians(u[['lat', 'lon']].to_numpy())
+
+    # Parametrizacion del radio en radianes
+    eps_rad = radio_km / RADIO_TIERRA_KM
+    db = DBSCAN(eps=eps_rad, min_samples=min_pts, metric='haversine')
+    u['dbscan'] = db.fit(xu, sample_weight=u['n'].to_numpy()).labels_
+
+    # Clustering OPTICS con ordenamiento de alcanzabilidad
+    opt = OPTICS(min_samples=min_pts, metric='haversine')
+    u['optics'] = opt.fit(xu).labels_
+
+    # Reintegracion relacional al DataFrame original
+    resultado = p.merge(
+        u[['lat', 'lon', 'dbscan', 'optics']], 
+        on=['lat', 'lon'], 
+        how='left'
+    )
+    return resultado
+\end{lstlisting}
+
+\subsection*{Anexo C: Arquitectura del Autoencoder Neuronal para Anomalías}
+
+El Listado \ref{lst:autoencoder_anomalias} ilustra la red neuronal profunda de reconstrucción y determinación del umbral de anomalías:
+
+\begin{lstlisting}[language=Python, caption={Autoencoder con arquitectura de cuello de botella y cálculo de error MSE.}, label={lst:autoencoder_anomalias}]
+from sklearn.neural_network import MLPRegressor
+import numpy as np
+
+def detect_anomalies_autoencoder(X_features, percentile_threshold=90):
+    """
+    Entrena un autoencoder para reconstruir la matriz de caracteristicas.
+    Las instancias con mayor MSE se clasifican como anomalias.
+    """
+    X_dense = np.asarray(X_features)
+
+    # Autoencoder con cuello de botella D -> 16 -> 4 -> 16 -> D
+    ae = MLPRegressor(
+        hidden_layer_sizes=(16, 4, 16),
+        activation='relu',
+        max_iter=250,
+        random_state=42,
+        early_stopping=True
+    )
+    ae.fit(X_dense, X_dense)
+
+    # Reconstruccion y error cuadratico medio por fila
+    X_pred = ae.predict(X_dense)
+    mse = np.mean((X_dense - X_pred) ** 2, axis=1)
+
+    # Determinacion del umbral critico
+    umbral = float(np.percentile(mse, percentile_threshold))
+    es_anomalia = mse > umbral
+
+    return mse, umbral, es_anomalia, ae
+\end{lstlisting}
+
+\subsection*{Anexo D: Diagrama de la Interfaz del Visor Globo 3D WebGL}
+
+La Figura \ref{fig:anexo_globo_mockup} esquematiza la composición del cliente visual WebGL (Globo 3D), evidenciando la conmutación de capas espaciotemporales, el panel de control de hiperparámetros y el visualizador de hotspots:
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=0.95]
+    % Marco de la ventana del navegador
+    \draw[line width=1.2pt, fill=darkgray!90] (0,0) rectangle (14, 8);
+    \draw[fill=darkgray!60] (0, 7.3) rectangle (14, 8);
+    
+    % Botones ventana
+    \fill[red!80] (0.4, 7.65) circle (0.15cm);
+    \fill[yellow!80] (0.9, 7.65) circle (0.15cm);
+    \fill[green!80] (1.4, 7.65) circle (0.15cm);
+    \node[white, font=\bfseries\scriptsize] at (7, 7.65) {SISTEMA DE INTELIGENCIA URBANA // VISOR CARTOGRÁFICO 3D (WEBGL)};
+    
+    % Área de visualización del Globo (Centro-Izquierda)
+    \draw[fill=black!85] (0.3, 0.3) rectangle (9.8, 7.0);
+    
+    % Globo 3D Estilizado
+    \draw[line width=2pt, color=secondaryblue!80, fill=blue!10] (5.0, 3.65) circle (2.6cm);
+    \draw[dashed, color=secondaryblue!60] (5.0, 3.65) ellipse (2.6cm and 1.0cm);
+    \draw[dashed, color=secondaryblue!60] (5.0, 3.65) ellipse (1.0cm and 2.6cm);
+    
+    % Puntos de Crímenes (Hotspots) en el Globo
+    \fill[red!90] (4.8, 4.2) circle (0.12cm);
+    \fill[red!90] (5.0, 4.3) circle (0.15cm);
+    \fill[red!90] (5.1, 4.0) circle (0.10cm);
+    \node[right, font=\tiny, color=red!90] at (5.2, 4.3) {Chicago Hotspot};
+    
+    \fill[accentorange!90] (4.6, 2.5) circle (0.12cm);
+    \fill[accentorange!90] (4.9, 2.3) circle (0.14cm);
+    \node[right, font=\tiny, color=accentorange!90] at (5.1, 2.4) {Bolivia (137 Eventos)};
+    
+    % Panel Lateral Derecho (Controles y KPIs)
+    \draw[fill=darkgray!80] (10.1, 0.3) rectangle (13.7, 7.0);
+    \node[white, font=\bfseries\scriptsize] at (11.9, 6.6) {PANEL DE CONTROL};
+    
+    % KPIs en el panel
+    \draw[fill=primaryblue!60] (10.3, 5.2) rectangle (13.5, 6.2);
+    \node[white, font=\tiny] at (11.9, 5.9) {REGISTROS ANALIZADOS};
+    \node[white, font=\bfseries\small] at (11.9, 5.5) {+800.000 (CPD) / 137 (BO)};
+    
+    \draw[fill=accentgreen!50!black] (10.3, 4.0) rectangle (13.5, 5.0);
+    \node[white, font=\tiny] at (11.9, 4.7) {HOTSPOTS ACTIVOS};
+    \node[white, font=\bfseries\small] at (11.9, 4.3) {87 Micro-Clusters};
+    
+    % Modos Algorítmicos
+    \node[white, font=\bfseries\tiny] at (11.9, 3.5) {MODOS ALGORÍTMICOS:};
+    \draw[fill=secondaryblue, rounded corners=2pt] (10.4, 2.8) rectangle (13.4, 3.2);
+    \node[white, font=\tiny] at (11.9, 3.0) {[x] DBSCAN (Haversine)};
+    
+    \draw[fill=secondaryblue, rounded corners=2pt] (10.4, 2.2) rectangle (13.4, 2.6);
+    \node[white, font=\tiny] at (11.9, 2.4) {[x] HDBSCAN (Lambda)};
+    
+    \draw[fill=secondaryblue, rounded corners=2pt] (10.4, 1.6) rectangle (13.4, 2.0);
+    \node[white, font=\tiny] at (11.9, 1.8) {[ ] GMM Elipses $2\sigma$};
+    
+    \draw[fill=secondaryblue, rounded corners=2pt] (10.4, 1.0) rectangle (13.4, 1.4);
+    \node[white, font=\tiny] at (11.9, 1.2) {[ ] Autoencoder (Anomalías)};
+    
+    \draw[fill=accentorange, rounded corners=2pt] (10.4, 0.5) rectangle (13.4, 0.85);
+    \node[white, font=\bfseries\tiny] at (11.9, 0.67) {RECALCULAR DENSIDAD};
+    
+\end{tikzpicture}
+\caption{Diseño esquemático de la consola del visor cartográfico interactivo Globo 3D en WebGL.}
+\label{fig:anexo_globo_mockup}
+\end{figure}
+

@@ -1,0 +1,30 @@
+\section{RECURSOS Y ENLACES DEL PROYECTO}
+
+A continuación se detallan los enlaces institucionales, repositorios de código, plataformas interactivas y recursos de datos abiertos que sustentan la reproducibilidad y verificación técnica del presente trabajo:
+
+\begin{itemize}
+    \item \textbf{Plataforma Web y Dashboard Interactivo (Servicio Local y Producción):}\\
+    \url{http://localhost:5000/}\\
+    Plataforma web basada en Flask que integra el visor inmersivo Globo 3D en WebGL, tableros de métricas analíticas (Codo, Silueta, Davies-Bouldin), simulador de riesgo GMM interactivo y clasificador semántico de lenguaje natural en tiempo real.
+    
+    \item \textbf{Repositorio de Código Fuente y Arquitectura Modular (GitHub):}\\
+    \url{https://github.com/YoshGreen/SISTEMA_INTELIGENCIA_URBANA_ML_NO_SUPERVISADO}\\
+    Código fuente completo estructurado bajo buenas prácticas en Python: módulos de depuración de datos (\texttt{modules/data\_cleaning.py}), algoritmos no supervisados (\texttt{modules/algorithms/}), Blueprints de rutas Flask (\texttt{modules/routes/}), plantillas Jinja2 y recursos estáticos cartográficos.
+    
+    \item \textbf{Portal Oficial de Datos Abiertos de la Ciudad de Chicago (CPD):}\\
+    \url{https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-Present/ijzp-q8t2}\\
+    Fuente oficial primaria de los reportes policiales de criminalidad metropolitana de Chicago (más de 800.000 registros depurados correspondientes al período 2020 a 2025).
+    
+    \item \textbf{Documentación Técnica del Código Penal y Delitos de Illinois (IUCR):}\\
+    \url{https://home.chicagopolice.org/wp-content/uploads/2014/12/IUCR-Codes.pdf}\\
+    Especificación de los códigos normalizados de incidentes delictivos del Illinois Uniform Crime Reporting empleados en la clasificación tipológica del benchmark.
+    
+    \item \textbf{Ecosistema de Prensa Digital y Medios Informativos de Bolivia:}\\
+    \url{https://eldeber.com.bo/}, \quad \url{https://lostiempos.com/}, \quad \url{https://larazon.bo/}\\
+    Portales oficiales de prensa escrita y digital de donde se extrajo y estructuró el corpus nacional georreferenciado de seguridad ciudadana (137 reportes).
+    
+    \item \textbf{Motor Cartográfico WebGL y Renderizado 3D (MapLibre GL / Deck.gl):}\\
+    \url{https://maplibre.org/maplibre-gl-js/docs/}, \quad \url{https://deck.gl/}\\
+    Librerías de computación gráfica acelerada por hardware para la proyección esférica 3D e interactividad en mapas espaciales masivos.
+\end{itemize}
+

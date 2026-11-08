@@ -1,0 +1,20 @@
+\section{INTRODUCCIÓN}
+
+La criminalidad urbana y los incidentes que vulneran la seguridad ciudadana constituyen fenómenos sociotécnicos altamente dinámicos, heterogéneos y multidimensionales. Su impacto directo sobre la integridad física de las personas, el bienestar colectivo, la actividad económica y el desarrollo urbano exige que las instituciones de control, monitoreo y planificación formulen estrategias de respuesta y prevención basadas en evidencia empírica rigurosa. En este escenario, la recopilación sistemática de reportes policiales, llamadas de emergencia y crónicas periodísticas ha originado grandes repositorios de datos espaciotemporales no etiquetados.
+
+No obstante, la administración tradicional de la seguridad pública suele operar bajo esquemas reactivos, limitándose al análisis estadístico descriptivo agregado por divisiones político-administrativas rígidas (como distritos, cuadrantes o precintos policiales). Este enfoque tradicional presenta severas limitaciones metodológicas: ignora la continuidad espacial real del territorio, enmascara micro-concentraciones delictivas (\textit{hotspots}) en las fronteras entre zonas, es incapaz de descubrir patrones emergentes de \textit{modus operandi} en descripciones de texto libre y resulta ineficaz para detectar eventos delictivos atípicos o anomalías operativas que se diluyen en el volumen masivo de registros rutinarios.
+
+Frente a este desafío, las técnicas de \textbf{Aprendizaje Automático No Supervisado} (\textit{Unsupervised Machine Learning}) proveen un marco analítico y matemático idóneo para extraer estructuras latentes, segmentaciones intrínsecas y regularidades estadísticas sin requerir supervisión humana ni etiquetas preestablecidas. El presente proyecto desarrolla e implementa un sistema integral de inteligencia urbana y criminología computacional que articula múltiples paradigmas no supervisados:
+
+\begin{itemize}
+    \item \textbf{Clustering Espacial Basado en Densidad:} Algoritmos DBSCAN, HDBSCAN y OPTICS formulados con la métrica geodésica de \textit{Haversine} sobre la curvatura de la esfera terrestre, capaces de identificar agrupaciones delictivas de morfología arbitraria y separar formalmente el ruido estocástico de incidentes aislados.
+    \item \textbf{Particionamiento Multivariable y Minería Semántica de Texto:} Integración de K-Means con codificación cíclica temporal (seno y coseno de horas y días) y vectorización de texto TF-IDF (\textit{Term Frequency - Inverse Document Frequency}) para clasificar automáticamente narrativas de crímenes y descubrir arquetipos de \textit{modus operandi}.
+    \item \textbf{Modelado Probabilístico Continuo:} Mixturas de Gaussianas (GMM) ajustadas mediante el algoritmo Esperanza-Maximización (EM) y elipses de covarianza al 95.4\% ($2\sigma$) para modelar densidades suaves de riesgo.
+    \item \textbf{Taxonomía Jerárquica Distrital:} Agrupamiento aglomerativo de enlace Ward que organiza los precintos urbanos según su huella criminal relativa.
+    \item \textbf{Reducción de Dimensionalidad y Espacios Latentes:} Proyecciones lineales y no lineales (PCA, TruncatedSVD, PPCA, t-SNE y UMAP) para visualización de alta fidelidad.
+    \item \textbf{Detección Neuronal de Anomalías:} Autoencoders profundos con arquitectura de cuello de botella (\textit{bottleneck}) que aíslan crímenes excepcionales mediante el error cuadrático medio de reconstrucción (MSE).
+    \item \textbf{Visualización Cartográfica Inmersiva 3D:} Un visor interactivo global WebGL (Globo 3D) que integra de manera dual el conjunto masivo de referencia internacional de Chicago ($+800.000$ registros) con el corpus georreferenciado de seguridad ciudadana de Bolivia ($137$ crónicas estructuradas de los nueve departamentos).
+\end{itemize}
+
+El documento expone a continuación el desarrollo conceptual, matemático, metodológico y práctico del sistema, fundamentado bajo el estándar de procesos CRISP-DM / ASUM-DM.
+

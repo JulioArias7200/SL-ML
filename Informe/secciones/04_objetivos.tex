@@ -1,0 +1,77 @@
+\section{OBJETIVOS}
+
+\subsection{Objetivo Principal}
+
+Desarrollar e implementar un sistema integral de inteligencia urbana y análisis de patrones delictivos basado en algoritmos de \textbf{Aprendizaje Automático No Supervisado}, orientado a la detección autónoma de concentraciones críticas de delitos (\textit{hotspots}), la caracterización semántica del \textit{modus operandi}, el modelado probabilístico continuo del riesgo espacial y el aislamiento de eventos criminales anómalos, validado sobre el dataset masivo de referencia internacional de Chicago ($+800.000$ registros) y el corpus nacional de seguridad ciudadana de Bolivia ($137$ crónicas estructuradas), integrando sus resultados en una plataforma interactiva web y cartográfica WebGL en 3D.
+
+\subsection{Objetivos Específicos}
+
+\begin{itemize}
+    \item \textbf{Ingeniería y depuración de datos espaciotemporales y textuales:} Construir un pipeline reproducible de limpieza, auditoría y transformación que incorpore la conversión de coordenadas geográficas a radianes para métrica esférica de \textit{Haversine}, codificación de periodicidad temporal mediante funciones trigonométricas circulares $(\sin, \cos)$ de horas y días, y normalización de texto para vectorización TF-IDF.
+    \item \textbf{Clustering geoespacial basado en densidad y multiescala:} Implementar y comparar los algoritmos DBSCAN, HDBSCAN y OPTICS para descubrir agrupaciones de morfología arbitraria, gestionar densidades variables y aislar formalmente los incidentes delictivos esporádicos clasificados como ruido estadístico.
+    \item \textbf{Minería semántica de lenguaje natural y arquetipos de crimen:} Integrar el algoritmo K-Means con representaciones matriciales TF-IDF ponderadas y reducción TruncatedSVD para descubrir los clústeres semánticos de \textit{modus operandi} delictivo y habilitar un clasificador en tiempo real.
+    \item \textbf{Modelado de riesgo continuo mediante mixturas gaussianas (GMM):} Cuantificar la incertidumbre espaciotemporal del crimen ajustando modelos de densidad probabilística con matrices de covarianza completa mediante el algoritmo Esperanza-Maximización (EM), derivando elipses de riesgo a $2\sigma$ ($95.4\%$ de masa de probabilidad).
+    \item \textbf{Taxonomía distrital mediante clustering jerárquico:} Estructurar dendrogramas aglomerativos con enlace de mínima varianza de Ward sobre matrices normalizadas de incidentes por distrito policial, validando su consistencia métrica mediante el coeficiente de correlación cofenética.
+    \item \textbf{Detección no supervisada de anomalías con Autoencoders neuronales:} Diseñar y entrenar una arquitectura de red neuronal con cuello de botella ($D \to 16 \to 4 \to 16 \to D$) que compute el error cuadrático medio de reconstrucción (MSE) para individualizar delitos atípicos o casos criminales excepcionales.
+    \item \textbf{Proyección en espacios latentes de dimensionalidad reducida:} Comparar técnicas de reducción de dimensionalidad lineales (PCA, TruncatedSVD, PPCA) y no lineales (t-SNE, UMAP) para proyectar espacios de alta dimensionalidad sobre variedades visualizables en dos y tres dimensiones.
+    \item \textbf{Despliegue operativo y visualización inmersiva en Globo 3D:} Construir una arquitectura desacoplada basada en microservicios Flask (API REST) y un cliente interactivo WebGL con MapLibre GL / Deck.gl que permita explorar dinámicamente los modelos analíticos.
+\end{itemize}
+
+\subsection{Árbol de Objetivos}
+
+El Árbol de Objetivos presentado en la Figura \ref{fig:arbol_objetivos} transforma de forma biyectiva las causas del árbol de problemas en medios positivos de ejecución, y las consecuencias negativas en fines estratégicos alcanzados:
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    node distance=1.1cm and 0.5cm,
+    box_objetivo/.style={rectangle, draw=accentgreen!80!black, fill=accentgreen!10, text width=9.5cm, align=center, font=\bfseries\small, minimum height=1.3cm, rounded corners=3pt, line width=1.3pt},
+    box_fin/.style={rectangle, draw=primaryblue!80, fill=primaryblue!8, text width=3.9cm, align=center, font=\scriptsize, minimum height=1.3cm, rounded corners=2pt, line width=0.8pt},
+    box_fin_sup/.style={rectangle, draw=darkgray, fill=lightgray, text width=4.1cm, align=center, font=\scriptsize, minimum height=1.3cm, rounded corners=2pt, line width=0.8pt},
+    box_medio_1/.style={rectangle, draw=secondaryblue!90, fill=secondaryblue!10, text width=3.8cm, align=center, font=\scriptsize, minimum height=1.4cm, rounded corners=2pt, line width=0.8pt},
+    box_medio_2/.style={rectangle, draw=darkgray!70, fill=white, text width=3.8cm, align=center, font=\tiny, minimum height=1.4cm, rounded corners=2pt, line width=0.6pt},
+    arrow/.style={->, >=stealth, thick, color=darkgray!80}
+]
+
+    % Objetivo Central
+    \node (objetivo) [box_objetivo] {OBJETIVO CENTRAL:\\Desarrollar un sistema de Machine Learning No Supervisado para la detección de hotspots, caracterización de modus operandi y aislamiento de anomalías delictivas.};
+
+    % Fines Directos
+    \node (fin2) [box_fin, above=1.0cm of objetivo] {Optimizar en un 35\% la asignación táctica y focalización de recursos de patrullaje.};
+    \node (fin1) [box_fin, left=0.6cm of fin2] {Detección temprana y cartografía de micro-hotspots delictivos sin rigidez administrativa.};
+    \node (fin3) [box_fin, right=0.6cm of fin2] {Dotar a los analistas de un visor visual 3D interactivo que reduzca la sobrecarga cognitiva.};
+
+    % Fines Superiores
+    \node (finsup1) [box_fin_sup, above=0.8cm of fin1] {Mitigar la tasa de criminalidad y victimización mediante prevención focalizada en evidencia.};
+    \node (finsup2) [box_fin_sup, above=0.8cm of fin3] {Fortalecer las políticas públicas de seguridad urbana mediante analítica computacional objetiva.};
+
+    % Conexiones Fines
+    \draw [arrow] (objetivo) -- (fin1);
+    \draw [arrow] (objetivo) -- (fin2);
+    \draw [arrow] (objetivo) -- (fin3);
+    \draw [arrow] (fin1) -- (finsup1);
+    \draw [arrow] (fin3) -- (finsup2);
+
+    % Medios Directos
+    \node (medio2) [box_medio_1, below=1.0cm of objetivo] {Implementar algoritmos de densidad (DBSCAN, HDBSCAN, OPTICS) con Haversine.};
+    \node (medio1) [box_medio_1, left=0.6cm of medio2] {Aplicar métricas geodésicas ortodrómicas y codificación temporal circular $(\sin, \cos)$.};
+    \node (medio3) [box_medio_1, right=0.6cm of medio2] {Desarrollar minería semántica NLP (TF-IDF, K-Means, LDA) y Autoencoders neuronales.};
+
+    % Medios Subyacentes
+    \node (subm1) [box_medio_2, below=0.8cm of medio1] {Pipeline automatizado de preprocesamiento, tipado eficiente y conversión a Snappy Parquet.};
+    \node (subm2) [box_medio_2, below=0.8cm of medio2] {Estimación continua de superficies de riesgo con Gaussian Mixture Models y elipses $2\sigma$.};
+    \node (subm3) [box_medio_2, below=0.8cm of medio3] {Arquitectura desacoplada en Flask API REST y visualizador cartográfico interactivo Globo 3D.};
+
+    % Conexiones Medios
+    \draw [arrow] (medio1) -- (objetivo);
+    \draw [arrow] (medio2) -- (objetivo);
+    \draw [arrow] (medio3) -- (objetivo);
+    \draw [arrow] (subm1) -- (medio1);
+    \draw [arrow] (subm2) -- (medio2);
+    \draw [arrow] (subm3) -- (medio3);
+
+\end{tikzpicture}
+\caption{Árbol de Objetivos del Proyecto de Inteligencia Urbana y Criminología Computacional.}
+\label{fig:arbol_objetivos}
+\end{figure}
+
