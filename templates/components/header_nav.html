@@ -11,11 +11,11 @@
 
         <!-- Brand Táctico en Header -->
         <a href="{{ url_for('dashboard_bp.index') }}" class="flex items-center gap-2 group">
-            <span class="size-2 rounded-full bg-cyan-400 animate-pulse glow-cyan"></span>
-            <span class="font-headline-sm font-bold text-xs sm:text-sm text-white tracking-tight uppercase group-hover:text-cyan-400 transition-colors">
+            <span class="size-2 rounded-full bg-cyan-600 dark:bg-cyan-400 animate-pulse glow-cyan"></span>
+            <span class="font-headline-sm font-bold text-xs sm:text-sm text-slate-950 dark:text-white tracking-tight uppercase group-hover:text-cyan-700 dark:group-hover:text-cyan-400 transition-colors">
                 CPD Urban Intelligence
             </span>
-            <span class="hidden md:inline text-slate-400 text-[11px] font-data-code">
+            <span class="hidden md:inline text-slate-600 dark:text-slate-400 text-[11px] font-data-code">
                 // v4.8
             </span>
         </a>
@@ -40,9 +40,9 @@
     <!-- Acciones Derechas: Telemetría & Modo Noche / Día -->
     <div class="flex items-center gap-2 sm:gap-3">
         <!-- Status Pill de Telemetría -->
-        <div class="hidden xl:flex items-center gap-2 px-2.5 py-1 rounded-md bg-slate-900/80 border border-emerald-500/30 font-data-code text-xs text-slate-300 backdrop-blur-md shadow-sm">
-            <span class="size-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span class="text-emerald-400 font-semibold">GPU T4: ONLINE</span>
+        <div class="hidden xl:flex items-center gap-2 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-900/80 border border-emerald-500/40 font-data-code text-xs text-slate-700 dark:text-slate-300 backdrop-blur-md shadow-sm">
+            <span class="size-2 rounded-full bg-emerald-600 dark:bg-emerald-400 animate-pulse"></span>
+            <span class="text-emerald-700 dark:text-emerald-400 font-semibold">GPU T4: ONLINE</span>
         </div>
 
         <!-- Toggle Modo Día / Modo Noche -->

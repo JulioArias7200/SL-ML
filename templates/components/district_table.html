@@ -24,7 +24,7 @@
     <div class="w-full overflow-x-auto custom-scrollbar">
         <table class="w-full text-left font-data-code text-xs border-collapse min-w-[850px]">
             <thead>
-                <tr class="border-b border-outline-variant/60 text-outline text-[11px] uppercase tracking-wider bg-surface-container-high/40">
+                <tr class="border-b border-outline-variant/60 text-slate-800 dark:text-outline text-[11px] uppercase tracking-wider bg-slate-100/80 dark:bg-surface-container-high/40 font-bold">
                     <th class="py-2.5 px-3">Código</th>
                     <th class="py-2.5 px-3">{{ 'Zona / Municipio' if current_context != 'chicago' else 'Distrito Policial' }}</th>
                     <th class="py-2.5 px-3">Macro-Cluster (Ward)</th>
@@ -44,9 +44,9 @@
                     <td class="py-2.5 px-3 text-on-surface-variant font-medium">{{ d.name }}</td>
                     <td class="py-2.5 px-3">
                         <span class="px-2 py-0.5 rounded text-[10px] font-bold border 
-                            {% if d.macro == 'A' %}bg-rose-500/15 text-rose-300 border-rose-500/30
-                            {% elif d.macro == 'B' %}bg-cyan-500/15 text-cyan-300 border-cyan-500/30
-                            {% else %}bg-emerald-500/15 text-emerald-300 border-emerald-500/30{% endif %}">
+                            {% if d.macro == 'A' %}bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/30
+                            {% elif d.macro == 'B' %}bg-cyan-100 text-cyan-800 border-cyan-300 dark:bg-cyan-500/15 dark:text-cyan-300 dark:border-cyan-500/30
+                            {% else %}bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/30{% endif %}">
                             Cluster {{ d.macro }}
                         </span>
                     </td>
@@ -57,7 +57,7 @@
                         {{ "{:,}".format(d.total_5y) }}
                     </td>
                     <td class="py-2.5 px-3 font-semibold text-right
-                        {% if d.macro == 'A' %}text-rose-400{% elif d.macro == 'B' %}text-cyan-400{% else %}text-emerald-400{% endif %}">
+                        {% if d.macro == 'A' %}text-rose-700 dark:text-rose-400{% elif d.macro == 'B' %}text-cyan-700 dark:text-cyan-400{% else %}text-emerald-700 dark:text-emerald-400{% endif %}">
                         {{ d.density_km2 }}
                     </td>
                     <td class="py-2.5 px-3 text-center text-outline text-[11px]">
@@ -65,7 +65,7 @@
                     </td>
                     <td class="py-2.5 px-3 text-outline">{{ d.cluster }}</td>
                     <td class="py-2.5 px-3">
-                        <span class="text-[11px] font-bold text-amber-300">
+                        <span class="text-[11px] font-bold text-amber-800 dark:text-amber-300">
                             {{ d.optics_valley }}
                         </span>
                         <span class="text-[10px] text-outline block">
@@ -74,10 +74,10 @@
                     </td>
                     <td class="py-2.5 px-3">
                         <span class="text-[11px] font-bold 
-                            {% if 'ROJA' in d.status %}text-rose-400 animate-pulse
-                            {% elif 'VIGILANCIA' in d.status %}text-cyan-300
-                            {% elif 'DINÁMICO' in d.status %}text-amber-300
-                            {% else %}text-emerald-400{% endif %}">
+                            {% if 'ROJA' in d.status %}text-rose-700 dark:text-rose-400 animate-pulse
+                            {% elif 'VIGILANCIA' in d.status %}text-cyan-700 dark:text-cyan-300
+                            {% elif 'DINÁMICO' in d.status %}text-amber-700 dark:text-amber-300
+                            {% else %}text-emerald-700 dark:text-emerald-400{% endif %}">
                             {{ d.status }}
                         </span>
                     </td>

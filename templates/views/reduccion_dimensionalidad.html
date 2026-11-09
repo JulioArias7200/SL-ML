@@ -60,21 +60,21 @@
                 </p>
             </div>
 
-            <div class="p-3.5 rounded-xl bg-surface-container-lowest border border-cyan-500/30 shadow-inner font-data-code space-y-2">
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-surface-container-lowest border border-slate-300 dark:border-cyan-500/30 shadow-inner font-data-code space-y-2">
                 <div class="flex items-center justify-between">
                     <span class="text-[10px] uppercase font-bold text-primary-container tracking-wider flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-sm">functions</span>
                         Fundamentación Matemática:
                     </span>
-                    <span class="text-[9px] text-slate-400 font-mono">Notación Formal</span>
+                    <span class="text-[9px] text-slate-600 dark:text-slate-400 font-mono">Notación Formal</span>
                 </div>
                 <!-- Render KaTeX de alta resolución para la fórmula visual -->
-                <div id="math-formula-container" class="py-1.5 text-cyan-300 text-sm sm:text-base font-normal tracking-wide overflow-x-auto">
+                <div id="math-formula-container" class="py-1.5 text-slate-950 dark:text-cyan-300 text-sm sm:text-base font-bold tracking-wide overflow-x-auto">
                     $${{ data.meta.formula_latex }}$$
                 </div>
                 <!-- Respaldo tipográfico visual limpio entendible a simple vista -->
-                <div class="text-[11px] text-slate-300 font-mono tracking-wide pt-1 border-t border-slate-800/60">
-                    <span class="text-slate-500 font-semibold">Formulación algebraica:</span> <span class="text-amber-300">{{ data.meta.formula_display }}</span>
+                <div class="text-[11px] text-slate-800 dark:text-slate-300 font-mono tracking-wide pt-1 border-t border-slate-300 dark:border-slate-800/60">
+                    <span class="text-slate-600 dark:text-slate-500 font-semibold">Formulación algebraica:</span> <span class="text-amber-800 dark:text-amber-300 font-semibold">{{ data.meta.formula_display }}</span>
                 </div>
             </div>
         </div>
@@ -294,21 +294,21 @@ document.addEventListener("DOMContentLoaded", function() {
             margin: { l: 40, r: 20, t: 30, b: 40 },
             hovermode: 'closest',
             xaxis: {
-                title: { text: `Eje 1 (${algoName}_1)`, font: { color: isDark ? '#849396' : '#475569', family: 'JetBrains Mono' } },
-                gridcolor: isDark ? 'rgba(59, 73, 76, 0.25)' : 'rgba(226, 232, 240, 0.9)',
-                zerolinecolor: isDark ? 'rgba(0, 229, 255, 0.3)' : 'rgba(2, 132, 199, 0.3)',
-                tickfont: { color: isDark ? '#849396' : '#64748b' }
+                title: { text: `Eje 1 (${algoName}_1)`, font: { color: isDark ? '#dfe2ef' : '#1e293b', family: 'JetBrains Mono' } },
+                gridcolor: isDark ? 'rgba(59, 73, 76, 0.25)' : 'rgba(203, 213, 225, 0.8)',
+                zerolinecolor: isDark ? 'rgba(0, 229, 255, 0.3)' : 'rgba(3, 105, 161, 0.4)',
+                tickfont: { color: isDark ? '#849396' : '#334155' }
             },
             yaxis: {
-                title: { text: `Eje 2 (${algoName}_2)`, font: { color: isDark ? '#849396' : '#475569', family: 'JetBrains Mono' } },
-                gridcolor: isDark ? 'rgba(59, 73, 76, 0.25)' : 'rgba(226, 232, 240, 0.9)',
-                zerolinecolor: isDark ? 'rgba(0, 229, 255, 0.3)' : 'rgba(2, 132, 199, 0.3)',
-                tickfont: { color: isDark ? '#849396' : '#64748b' }
+                title: { text: `Eje 2 (${algoName}_2)`, font: { color: isDark ? '#dfe2ef' : '#1e293b', family: 'JetBrains Mono' } },
+                gridcolor: isDark ? 'rgba(59, 73, 76, 0.25)' : 'rgba(203, 213, 225, 0.8)',
+                zerolinecolor: isDark ? 'rgba(0, 229, 255, 0.3)' : 'rgba(3, 105, 161, 0.4)',
+                tickfont: { color: isDark ? '#849396' : '#334155' }
             },
             legend: {
-                font: { color: isDark ? '#dfe2ef' : '#0f172a', size: 11, family: 'Inter' },
-                bgcolor: isDark ? 'rgba(15, 19, 28, 0.85)' : 'rgba(255, 255, 255, 0.92)',
-                bordercolor: isDark ? 'rgba(59, 73, 76, 0.4)' : 'rgba(226, 232, 240, 0.9)',
+                font: { color: isDark ? '#dfe2ef' : '#090d16', size: 11, family: 'Inter' },
+                bgcolor: isDark ? 'rgba(15, 19, 28, 0.85)' : 'rgba(255, 255, 255, 0.95)',
+                bordercolor: isDark ? 'rgba(59, 73, 76, 0.4)' : 'rgba(203, 213, 225, 0.9)',
                 borderwidth: 1
             }
         };
