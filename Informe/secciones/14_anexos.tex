@@ -59,7 +59,7 @@ El microservicio backend en Flask expone un conjunto de endpoints RESTful bajo f
     \end{itemize}
 \end{enumerate}
 
-\subsection*{Anexo B: Implementación Algorítmica Central (Python)}
+\subsection*{Apéndice B: Implementación Algorítmica Central (Python)}
 
 El Listado \ref{lst:haversine_dbscan} reproduce la implementación del cálculo geodésico y clustering de densidad espacial sobre coordenadas angulares en radianes:
 
@@ -101,7 +101,7 @@ def run_spatial_density(df_points, radio_km=2.5, min_pts=2):
     return resultado
 \end{lstlisting}
 
-\subsection*{Anexo C: Arquitectura del Autoencoder Neuronal para Anomalías}
+\subsection*{Apéndice C: Arquitectura del Autoencoder Neuronal para Detección de Anomalías}
 
 El Listado \ref{lst:autoencoder_anomalias} ilustra la red neuronal profunda de reconstrucción y determinación del umbral de anomalías:
 
@@ -137,7 +137,7 @@ def detect_anomalies_autoencoder(X_features, percentile_threshold=90):
     return mse, umbral, es_anomalia, ae
 \end{lstlisting}
 
-\subsection*{Anexo D: Diagrama de la Interfaz del Visor Globo 3D WebGL}
+\subsection*{Apéndice D: Diagrama Esquemático del Visor Cartográfico Globo 3D en WebGL}
 
 La Figura \ref{fig:anexo_globo_mockup} esquematiza la composición del cliente visual WebGL (Globo 3D), evidenciando la conmutación de capas espaciotemporales, el panel de control de hiperparámetros y el visualizador de hotspots:
 
@@ -205,5 +205,6 @@ La Figura \ref{fig:anexo_globo_mockup} esquematiza la composición del cliente v
 \end{tikzpicture}
 \caption{Diseño esquemático de la consola del visor cartográfico interactivo Globo 3D en WebGL.}
 \label{fig:anexo_globo_mockup}
+\figurenote{Elaboración propia a partir de la arquitectura de interfaz de usuario implementada en MapLibre GL JS y Deck.gl para visualización inmersiva en navegadores web.}
 \end{figure}
 

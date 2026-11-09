@@ -28,6 +28,19 @@ Campello, R. J. G.~B., Moulavi, D., and Sander, J. (2013).
 \newblock In {\em Pacific-Asia Conference on Knowledge Discovery and Data
   Mining (PAKDD)}, pages 160--172. Springer.
 
+\bibitem[{Chicago Police Department}, 2024]{cpd2024}
+{Chicago Police Department} (2024).
+\newblock Illinois uniform crime reporting ({IUCR}) offense codes.
+\newblock
+  \url{https://home.chicagopolice.org/wp-content/uploads/2014/12/IUCR-Codes.pdf}.
+
+\bibitem[{City of Chicago}, 2025]{cityofchicago2025}
+{City of Chicago} (2025).
+\newblock Chicago data portal: Crimes - 2001 to present.
+\newblock
+  \url{https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-Present/ijzp-q8t2}.
+\newblock Accedido en febrero de 2025.
+
 \bibitem[Cohen and Felson, 1979]{cohen1979}
 Cohen, L.~E. and Felson, M. (1979).
 \newblock Social change and crime rate trends: A routine activity approach.
@@ -40,11 +53,27 @@ Ester, M., Kriegel, H.-P., Sander, J., and Xu, X. (1996).
 \newblock In {\em Proceedings of the Second International Conference on
   Knowledge Discovery and Data Mining (KDD-96)}, pages 226--231.
 
+\bibitem[Hinton and Salakhutdinov, 2006]{hinton2006}
+Hinton, G.~E. and Salakhutdinov, R.~R. (2006).
+\newblock Reducing the dimensionality of data with neural networks.
+\newblock {\em Science}, 313(5786):504--507.
+
 \bibitem[McInnes et~al., 2018]{mcinnes2018}
 McInnes, L., Healy, J., and Melville, J. (2018).
 \newblock Umap: Uniform manifold approximation and projection for dimension
   reduction.
 \newblock {\em arXiv preprint arXiv:1802.03426}.
+
+\bibitem[Openshaw, 1984]{openshaw1984}
+Openshaw, S. (1984).
+\newblock {\em The Modifiable Areal Unit Problem}.
+\newblock Number~38 in Concepts and Techniques in Modern Geography (CATMOG).
+  Geo Books.
+
+\bibitem[Sinnott, 1984]{sinnott1984}
+Sinnott, R.~W. (1984).
+\newblock Virtues of the haversine.
+\newblock {\em Sky and Telescope}, 68(2):159.
 
 \bibitem[van~der Maaten and Hinton, 2008]{vandermaaten2008}
 van~der Maaten, L. and Hinton, G. (2008).

@@ -434,6 +434,7 @@ INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmri12
 INPUT .\secciones\02_antecedentes.tex
 INPUT .\secciones\02_antecedentes.tex
 INPUT secciones\02_antecedentes.tex
+INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmbxi10.tfm
 INPUT .\secciones\03_problematica.tex
 INPUT .\secciones\03_problematica.tex
 INPUT secciones\03_problematica.tex
@@ -441,6 +442,8 @@ INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmr12.
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmbx12.tfm
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmr8.tfm
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmr6.tfm
+INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmr10.tfm
+INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmri10.tfm
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\enc\dvips\lm\lm-mathsy.enc
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\rm-lmr5.tfm
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\lmmi5.tfm
@@ -454,15 +457,12 @@ INPUT .\secciones\04_objetivos.tex
 INPUT .\secciones\04_objetivos.tex
 INPUT secciones\04_objetivos.tex
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmr5.tfm
-INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmr10.tfm
-INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmri10.tfm
 INPUT .\secciones\05_justificacion.tex
 INPUT .\secciones\05_justificacion.tex
 INPUT secciones\05_justificacion.tex
 INPUT .\secciones\06_marco_teorico.tex
 INPUT .\secciones\06_marco_teorico.tex
 INPUT secciones\06_marco_teorico.tex
-INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmbxi10.tfm
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\tex\latex\lm\t1lmtt.fd
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\tex\latex\lm\t1lmtt.fd
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\tex\latex\lm\t1lmtt.fd

@@ -12,7 +12,7 @@ Las dificultades observadas en este conjunto de datos son las siguientes:
 \begin{itemize}
     \item \textbf{Agrupación por distritos administrativos fijos:} Tradicionalmente, los delitos se suman y reportan dentro de los límites de los 22 distritos policiales de la ciudad. Esto asume que el peligro se reparte de forma pareja en todo el distrito, cuando en la práctica los delitos se concentran en esquinas o cuadras específicas y dejan otras zonas completamente tranquilas.
     \item \textbf{Uso de distancias planas:} Al calcular la cercanía entre dos delitos usando fórmulas de línea recta plana sobre coordenadas geográficas (latitud y longitud), se producen desajustes de distancia al no tomar en cuenta la curvatura de la Tierra a la latitud de Chicago ($41.8^\circ\text{ N}$).
-    \item \textbf{Registros incompletos y volumen masivo:} Al procesar el archivo bruto, se identificaron $14.015$ registros que no tienen coordenadas geográficas cargadas (1.16\% del total), los cuales deben ser apartados para no perjudicar los análisis en mapas. Además, el gran volumen de datos genera demoras de 2 a 3 días cuando se quiere cruzar información entre diferentes comisarías.
+    \item \textbf{Registros incompletos y volumen masivo:} Al procesar el archivo bruto, se identificaron $14.015$ registros que no tienen coordenadas geográficas cargadas (1.16\% del total), los cuales deben ser apartados para no perjudicar los análisis en mapas. Además, el procesamiento de $1.2\text{ millones}$ de filas genera demoras de 48 a 72 horas cuando se quiere cruzar información entre diferentes comisarías.
 \end{itemize}
 
 La Figura \ref{fig:arbol_problemas_chicago} presenta el Árbol de Problemas correspondiente a la base de datos de Chicago.
@@ -56,7 +56,7 @@ La Figura \ref{fig:arbol_problemas_chicago} presenta el Árbol de Problemas corr
     % Nivel Causas Base / Estructurales
     \node (sub1) [box_causa_2, below=0.7cm of causa1] {El sistema asume un mapa plano sin aplicar la fórmula esférica de la curvatura terrestre.};
     \node (sub2) [box_causa_2, below=0.7cm of causa2] {La ciudad está dividida oficialmente en 22 distritos policiales de tamaño y población desiguales.};
-    \node (sub3) [box_causa_2, below=0.7cm of causa3] {Archivo original de gran tamaño (324.5 MB) con 1.2 millones de filas guardadas en tablas relacionales.};
+    \node (sub3) [box_causa_2, below=0.7cm of causa3] {Archivo original en bruto de 324.5 MB con 1.2 millones de filas en tablas relacionales.};
 
     % Conexiones Causas
     \draw [arrow] (causa1) -- (problema);
@@ -69,6 +69,7 @@ La Figura \ref{fig:arbol_problemas_chicago} presenta el Árbol de Problemas corr
 \end{tikzpicture}
 \caption{Árbol de Problemas del Conjunto de Datos de Chicago.}
 \label{fig:arbol_problemas_chicago}
+\figurenote{Elaboración propia con base en el diagnóstico del repositorio histórico de datos policiales abiertos del Departamento de Policía de Chicago (CPD).}
 \end{figure}
 
 \clearpage
@@ -80,8 +81,8 @@ El conjunto de datos de Bolivia se construyó mediante la recolección automáti
 Al tratarse de información extraída directamente de artículos periodísticos en internet y no de un sistema policial oficial, presenta los siguientes aspectos observados:
 \begin{itemize}
     \item \textbf{Acumulación de noticias en puntos centrales idénticos:} La prensa suele indicar la ciudad o el barrio en general (por ejemplo, "ocurrió en Cochabamba"), pero rara vez menciona la calle y número exacto. Al ubicar estos hechos en el mapa mediante un diccionario geográfico, el 38.7\% de las noticias reciben la coordenada central del municipio. Esto hace que 53 noticias de Cochabamba y 26 noticias de otras ciudades queden colocadas exactamente en el mismo punto físico, generando distancias de cero metros entre hechos ocurridos en días y circunstancias totalmente distintas.
-    \item \textbf{Textos libres y variados en español:} Las noticias están escritas como párrafos de texto libre con extensiones muy variadas (desde notas breves de 15 palabras hasta reportajes de 450 palabras). Contienen palabras de relleno periodístico que dificultan extraer automáticamente la forma de actuar de los delincuentes.
-    \item \textbf{Separación de cientos de kilómetros entre ciudades:} La distancia entre las capitales departamentales es muy grande (por ejemplo, más de $500\text{ km}$ entre La Paz y Santa Cruz), mientras que los delitos dentro de un barrio ocurren a pocas cuadras. Esto provoca que los gráficos de agrupación vean primero la distancia gigante entre ciudades y dejen en segundo plano las diferencias entre barrios.
+    \item \textbf{Textos libres y variados en español:} Las noticias están escritas como párrafos de texto libre con extensiones que van de 15 a 450 palabras por crónica. Contienen términos periodísticos diversos que dispersan las palabras clave sobre la forma de actuar de los delincuentes.
+    \item \textbf{Separación de cientos de kilómetros entre ciudades:} La distancia entre capitales departamentales (por ejemplo, más de $500\text{ km}$ entre La Paz y Santa Cruz) supera ampliamente la distancia local entre barrios ($<5\text{ km}$). Esto provoca que los gráficos de agrupación capturen prioritariamente la distancia entre ciudades y atenúen las diferencias internas entre barrios.
     \item \textbf{Casos aislados y noticias poco comunes:} Al buscar zonas calientes con algoritmos de densidad, un 8.7\% de las noticias (12 casos) quedan marcadas como puntos sueltos o ruido por estar alejadas de los centros principales, mientras que un 10.2\% (14 noticias) son clasificadas como hechos atípicos por tener un vocabulario muy diferente al resto.
 \end{itemize}
 
@@ -100,7 +101,7 @@ La Figura \ref{fig:arbol_problemas_bolivia} presenta el Árbol de Problemas corr
 ]
 
     % Problema Central
-    \node (problema_b) [box_problema_b] {PROBLEMA CENTRAL:\\Gran cantidad de noticias de delitos quedan registradas en el mismo punto del mapa al no tener dirección exacta, junto a textos largos en español que no están estructurados.};
+    \node (problema_b) [box_problema_b] {PROBLEMA CENTRAL:\\El 38.7\% de las noticias de delitos se registran con coordenadas repetidas de centroide por falta de dirección exacta, junto a crónicas en texto libre sin estructurar.};
 
     % Nivel Efectos Directos
     \node (efecto2_b) [box_efecto_b, above=0.8cm of problema_b] {Un 8.7\% de noticias (12 casos) quedan como puntos sueltos o ruido en los mapas de densidad.};
@@ -119,9 +120,9 @@ La Figura \ref{fig:arbol_problemas_bolivia} presenta el Árbol de Problemas corr
     \draw [arrow] (efecto3_b) -- (sup2_b);
 
     % Nivel Causas Directas
-    \node (causa2_b) [box_causa_1_b, below=0.8cm of problema_b] {Gran cantidad de palabras de relleno periodístico que dificultan encontrar los temas principales.};
+    \node (causa2_b) [box_causa_1_b, below=0.8cm of problema_b] {Vocabulario periodístico variado que dispersa los términos clave del delito en las crónicas.};
     \node (causa1_b) [box_causa_1_b, left=0.45cm of causa2_b] {Asignación del centro de la ciudad a noticias que no tienen nombre de calle o esquina precisa.};
-    \node (causa3_b) [box_causa_1_b, right=0.45cm of causa2_b] {La gran distancia entre departamentos opaca las diferencias entre zonas de una misma ciudad.};
+    \node (causa3_b) [box_causa_1_b, right=0.45cm of causa2_b] {Separación de más de 500 km entre ciudades que sobrepasa la escala de distancia entre barrios.};
 
     % Nivel Causas Base / Estructurales
     \node (sub1_b) [box_causa_2_b, below=0.7cm of causa1_b] {Extracción por internet desde periódicos digitales que redactan en texto libre sin datos de GPS.};
@@ -139,6 +140,7 @@ La Figura \ref{fig:arbol_problemas_bolivia} presenta el Árbol de Problemas corr
 \end{tikzpicture}
 \caption{Árbol de Problemas del Conjunto de Datos de Bolivia.}
 \label{fig:arbol_problemas_bolivia}
+\figurenote{Elaboración propia con base en el corpus de noticias de sucesos y crónicas periodísticas digitales de los nueve departamentos de Bolivia.}
 \end{figure}
 
 \clearpage
