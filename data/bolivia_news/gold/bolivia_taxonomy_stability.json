@@ -1,0 +1,94 @@
+{
+  "ctx": "bolivia",
+  "units_count": 7,
+  "total_events": 85,
+  "total_corpus_crónicas": 137,
+  "optimal_k": 3,
+  "linkage": "ward",
+  "transformation": "hellinger_sqrt",
+  "mean_ari": 0.432,
+  "ci_95": [
+    0.077,
+    1.0
+  ],
+  "units": {
+    "Cochabamba": {
+      "zone_name": "Cochabamba",
+      "ref_cluster": 3,
+      "stability_pct": 66.0,
+      "total_crónicas": 15
+    },
+    "Equipetrol": {
+      "zone_name": "Equipetrol",
+      "ref_cluster": 1,
+      "stability_pct": 65.0,
+      "total_crónicas": 3
+    },
+    "La Paz": {
+      "zone_name": "La Paz",
+      "ref_cluster": 2,
+      "stability_pct": 92.0,
+      "total_crónicas": 21
+    },
+    "Los Lotes": {
+      "zone_name": "Los Lotes",
+      "ref_cluster": 1,
+      "stability_pct": 88.5,
+      "total_crónicas": 3
+    },
+    "Plan 3000": {
+      "zone_name": "Plan 3000",
+      "ref_cluster": 3,
+      "stability_pct": 81.5,
+      "total_crónicas": 5
+    },
+    "San Francisco": {
+      "zone_name": "San Francisco",
+      "ref_cluster": 2,
+      "stability_pct": 93.0,
+      "total_crónicas": 3
+    },
+    "Santa Cruz": {
+      "zone_name": "Santa Cruz",
+      "ref_cluster": 3,
+      "stability_pct": 54.5,
+      "total_crónicas": 35
+    }
+  },
+  "excluded_units": {
+    "San Pedro": 2,
+    "Pampa de la Isla": 2,
+    "Terminal de Buses La Paz": 2,
+    "Tarija": 2,
+    "La Cancha": 2,
+    "Sucre": 2,
+    "Gran Poder": 1,
+    "El Prado": 1,
+    "Villa 1 de Mayo": 1,
+    "Villa Victoria": 1,
+    "La Ramada": 1,
+    "Miraflores": 1,
+    "Beni": 1,
+    "El Alto": 1,
+    "Pampahasi": 1,
+    "Cruce Villa Adela": 1,
+    "Los Pozos": 1,
+    "Río Seco": 1,
+    "Plaza Murillo": 1,
+    "Sopocachi": 1,
+    "Oruro": 1
+  },
+  "categories": [
+    "Robo agravado y asalto",
+    "Agresión física y lesiones",
+    "Homicidio y asesinato",
+    "Hurto y descuidismo",
+    "Narcotráfico y sustancias",
+    "Delitos financieros y estafas"
+  ],
+  "script_version": "1.0.0",
+  "script_sha256": "a1768df940ff62b06767cdadf75c3e6767257592dea46bd38fe5714f93adb85d",
+  "random_seed": 42,
+  "bootstrap_B": 200,
+  "generated_at": "2026-11-09T17:54:29.438558"
+}

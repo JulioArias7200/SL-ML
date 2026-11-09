@@ -80,14 +80,35 @@ def predict_nlp():
 @api_bp.route('/spatial_filter', methods=['GET'])
 def spatial_filter():
     ctx = request.args.get('ctx', 'bolivia').lower()
+    district = request.args.get('district')
+    default_eps = 300 if ctx == 'chicago' else 2500
+    default_min_pts = 25 if ctx == 'chicago' else 2
     try:
-        eps = int(request.args.get('eps', 300))
-        min_pts = int(request.args.get('min_pts', 25))
+        eps_str = request.args.get('eps')
+        eps = int(eps_str) if eps_str is not None else default_eps
+        min_pts_str = request.args.get('min_pts')
+        min_pts = int(min_pts_str) if min_pts_str is not None else default_min_pts
     except ValueError:
         return jsonify({"error": "Parámetros numéricos inválidos"}), 400
-        
-    hud_data = SpatialDensityService.calculate_haversine_hud(eps_meters=eps, min_pts=min_pts, ctx=ctx)
-    return jsonify(hud_data)
+
+    franja = request.args.get('franja', 'todo')
+    delito = request.args.get('delito', 'todos')
+    layers_arg = request.args.get('layers')
+    if layers_arg:
+        layers = [layer.strip() for layer in layers_arg.split(',') if layer.strip()]
+    else:
+        layers = ["dbscan", "hdbscan", "optics", "noise"]
+
+    result = SpatialDensityService.filter_spatial_map(
+        ctx=ctx,
+        eps=eps,
+        min_pts=min_pts,
+        franja=franja,
+        delito=delito,
+        layers=layers,
+        district=district
+    )
+    return jsonify(result)
 
 @api_bp.route('/optics_data', methods=['GET'])
 def optics_data():
@@ -111,3 +132,50 @@ def telemetry():
 def districts():
     ctx = request.args.get('ctx', 'bolivia').lower()
     return jsonify(SpatialDensityService.get_zones(ctx=ctx))
+
+@api_bp.route('/model_comparison', methods=['GET'])
+def model_comparison():
+    ctx = request.args.get('ctx', 'bolivia').lower()
+    district = request.args.get('district')
+    return jsonify(SpatialDensityService.comparar_modelos(ctx=ctx, district=district))
+
+@api_bp.route('/taxonomy', methods=['GET'])
+def get_taxonomy():
+    ctx = request.args.get('ctx', 'bolivia').lower()
+    linkage_m = request.args.get('linkage', 'ward').lower()
+    k = request.args.get('k', type=int)
+    t = request.args.get('t', type=float)
+    use_hellinger_param = request.args.get('hellinger', 'true').lower()
+    use_hellinger = use_hellinger_param not in ['false', '0', 'no']
+    data = SpatialDensityService.calcular_taxonomia(
+        ctx=ctx,
+        linkage_method=linkage_m,
+        k=k,
+        t=t,
+        use_hellinger=use_hellinger
+    )
+    return jsonify(data)
+
+@api_bp.route('/zones_table', methods=['GET'])
+def get_zones_table():
+    ctx = request.args.get('ctx', 'bolivia').lower()
+    linkage_m = request.args.get('linkage', 'ward').lower()
+    k = request.args.get('k', type=int)
+    t = request.args.get('t', type=float)
+    data = SpatialDensityService.tabla_zonas(
+        ctx=ctx,
+        linkage=linkage_m,
+        k=k,
+        t=t
+    )
+    return jsonify(data)
+
+@api_bp.route('/validation_data', methods=['GET'])
+def get_validation_data():
+    ctx = request.args.get('ctx', 'bolivia').lower()
+    district = request.args.get('district', type=int)
+    data = SpatialDensityService.get_validation_data(
+        ctx=ctx,
+        district=district
+    )
+    return jsonify(data)

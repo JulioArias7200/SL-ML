@@ -50,89 +50,89 @@ document.addEventListener('DOMContentLoaded', () => {
         bolivia: [
             {
                 id: 0,
-                label: "GMM #0 (π=0.42)",
-                name: "SCZ Casco & Equipetrol",
-                center: [-63.1821, -17.7833],
-                a: 6800, // Semi-eje mayor en metros
-                b: 3900, // Semi-eje menor en metros
-                angle: 45, // Inclinación autovector en grados
-                color: "#00e5ff",
-                weight: 0.42,
-                description: "Núcleo de alta densidad transaccional y delitos patrimoniales (SCZ Casco)."
+                label: "GMM #0 (π=0.14)",
+                name: "Plan 3000 / Los Lotes",
+                center: [-63.1529, -17.8356],
+                a: 3436,
+                b: 1200,
+                angle: -148.1,
+                color: "#ff3366",
+                weight: 0.14,
+                description: "Cuenca urbana periférica de alta tasa de agresión física y robo agravado (Plan 3000 / Los Lotes)."
             },
             {
                 id: 1,
-                label: "GMM #1 (π=0.28)",
-                name: "Plan 3000 / Los Lotes",
-                center: [-63.1380, -17.8350],
-                a: 5800,
-                b: 3200,
-                angle: -35,
-                color: "#ff3366",
-                weight: 0.28,
-                description: "Cuenca urbana periférica de alta tasa de agresión física y robo agravado."
+                label: "GMM #1 (π=0.24)",
+                name: "La Paz Centro & Prado",
+                center: [-68.1350, -16.4972],
+                a: 1886,
+                b: 1200,
+                angle: 142.7,
+                color: "#818cf8",
+                weight: 0.24,
+                description: "Corredor andino de alta concentración topográfica (El Prado / Centro Paceño)."
             },
             {
                 id: 2,
                 label: "GMM #2 (π=0.18)",
                 name: "Cochabamba Cercado",
-                center: [-66.1600, -17.3950],
-                a: 6500,
-                b: 2800,
-                angle: 20,
+                center: [-66.1570, -17.3935],
+                a: 1800,
+                b: 1200,
+                angle: 90.0,
                 color: "#34d399",
                 weight: 0.18,
                 description: "Eje metropolitano de delitos patrimoniales y lesiones en Cercado y Cancha."
             },
             {
                 id: 3,
-                label: "GMM #3 (π=0.12)",
-                name: "La Paz & El Alto",
-                center: [-68.1450, -16.5020],
-                a: 5500,
-                b: 2500,
-                angle: -40,
-                color: "#818cf8",
-                weight: 0.12,
-                description: "Corredor andino de alta concentración topográfica (El Prado / Ceja)."
+                label: "GMM #3 (π=0.45)",
+                name: "SCZ Casco & Equipetrol",
+                center: [-63.1789, -17.7797],
+                a: 3899,
+                b: 1561,
+                angle: -168.8,
+                color: "#00e5ff",
+                weight: 0.45,
+                description: "Núcleo de alta densidad transaccional y delitos patrimoniales (SCZ Casco & Equipetrol)."
             }
         ],
         chicago: [
             {
-                id: 1,
-                label: "GMM #1 (π=0.35)",
-                name: "The Loop Central",
-                center: [-87.6250, 41.8820],
-                a: 3200,
-                b: 1800,
-                angle: 15,
+                id: 0,
+                label: "GMM #0 (π=0.22)",
+                name: "The Loop / Central West",
+                center: [-87.6672, 41.8816],
+                a: 8534,
+                b: 2849,
+                angle: -170.1,
                 color: "#00e5ff",
-                weight: 0.35,
+                weight: 0.22,
                 description: "Alta densidad de hurtos diurnos (Theft) y delitos patrimoniales comerciales."
             },
             {
-                id: 2,
-                label: "GMM #2 (π=0.40)",
-                name: "West Side Garfield/Austin",
-                center: [-87.7150, 41.8800],
-                a: 4200,
-                b: 2200,
-                angle: -10,
+                id: 1,
+                label: "GMM #1 (π=0.45)",
+                name: "South Side (Englewood/Gresham)",
+                center: [-87.6317, 41.7581],
+                a: 10746,
+                b: 6282,
+                angle: 122.4,
                 color: "#ff3366",
-                weight: 0.40,
-                description: "Foco crítico de agresiones (Battery), robos y armas (Distritos 11 & 15)."
+                weight: 0.45,
+                description: "Corredor sur con concentración de delitos violentos y asaltos armados (Distritos 6, 7)."
             },
             {
-                id: 3,
-                label: "GMM #3 (π=0.25)",
-                name: "South Side Englewood",
-                center: [-87.6450, 41.7750],
-                a: 4000,
-                b: 2400,
-                angle: 5,
+                id: 2,
+                label: "GMM #2 (π=0.32)",
+                name: "West & North Side (Garfield/Austin)",
+                center: [-87.7142, 41.9321],
+                a: 11620,
+                b: 6012,
+                angle: -136.6,
                 color: "#ffaa00",
-                weight: 0.25,
-                description: "Corredor sur con concentración de delitos violentos y asaltos (Distrito 7)."
+                weight: 0.32,
+                description: "Foco crítico de agresiones (Battery), robos y armas (Distritos 11, 15, 25)."
             }
         ]
     };
@@ -901,29 +901,11 @@ document.addEventListener('DOMContentLoaded', () => {
             setPointsPaint('circle-stroke-width', 1.8);
 
         } else if (mode === 'dbscan') {
-            if (activeContext === 'chicago') {
-                setPointsPaint('circle-color', [
-                    'match',
-                    ['get', 'dbscan'],
-                    1, '#00e5ff',
-                    2, '#ff3366',
-                    3, '#ffaa00',
-                    4, '#a855f7',
-                    /* Ruido */ '#64748b'
-                ]);
-            } else {
-                setPointsPaint('circle-color', [
-                    'match',
-                    ['get', 'dbscan'],
-                    0, '#00e5ff',
-                    1, '#34d399',
-                    2, '#ff3366',
-                    3, '#fbbf24',
-                    4, '#10b981',
-                    5, '#818cf8',
-                    /* Ruido */ '#64748b'
-                ]);
-            }
+            setPointsPaint('circle-color', [
+                'case',
+                ['==', ['get', 'dbscan'], -1], '#64748b',
+                ['coalesce', ['get', 'dbscan_color'], '#00e5ff']
+            ]);
 
             setPointsPaint('circle-radius', [
                 'case',
@@ -949,28 +931,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } else if (mode === 'hdbscan') {
             // Modo HDBSCAN: Clusters Jerárquicos de Densidad Variable y Ruido
-            if (activeContext === 'chicago') {
-                setPointsPaint('circle-color', [
-                    'match',
-                    ['get', 'hdbscan'],
-                    1, '#00e5ff',
-                    2, '#ff3366',
-                    3, '#ffaa00',
-                    4, '#a855f7',
-                    /* Ruido */ '#64748b'
-                ]);
-            } else {
-                setPointsPaint('circle-color', [
-                    'match',
-                    ['get', 'hdbscan'],
-                    5, '#00e5ff',
-                    10, '#818cf8',
-                    0, '#34d399',
-                    1, '#ff3366',
-                    4, '#fbbf24',
-                    /* Ruido */ '#64748b'
-                ]);
-            }
+            setPointsPaint('circle-color', [
+                'case',
+                ['==', ['get', 'hdbscan'], -1], '#64748b',
+                ['coalesce', ['get', 'hdbscan_color'], '#34d399']
+            ]);
 
             setPointsPaint('circle-radius', [
                 'case',
@@ -995,31 +960,11 @@ document.addEventListener('DOMContentLoaded', () => {
             ]);
 
         } else if (mode === 'optics') {
-            if (activeContext === 'chicago') {
-                setPointsPaint('circle-color', [
-                    'match',
-                    ['get', 'optics'],
-                    1, '#00e5ff',
-                    2, '#ff3366',
-                    3, '#ffaa00',
-                    4, '#a855f7',
-                    /* Ruido */ '#64748b'
-                ]);
-            } else {
-                setPointsPaint('circle-color', [
-                    'match',
-                    ['get', 'optics'],
-                    0, '#00e5ff',
-                    1, '#38bdf8',
-                    2, '#ff3366',
-                    3, '#f43f5e',
-                    4, '#10b981',
-                    5, '#818cf8',
-                    6, '#34d399',
-                    7, '#34d399',
-                    /* Ruido */ '#64748b'
-                ]);
-            }
+            setPointsPaint('circle-color', [
+                'case',
+                ['==', ['get', 'optics'], -1], '#64748b',
+                ['coalesce', ['get', 'optics_color'], '#fbbf24']
+            ]);
 
             setPointsPaint('circle-radius', [
                 'case',
@@ -1045,26 +990,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } else if (mode === 'gmm') {
             // Modo 4: Componentes Gaussianas y Elipses Multivariantes GMM
-            if (activeContext === 'chicago') {
-                setPointsPaint('circle-color', [
-                    'match',
-                    ['get', 'gmm'],
-                    1, '#00e5ff',
-                    2, '#ff3366',
-                    3, '#ffaa00',
-                    /* Dispersión */ '#64748b'
-                ]);
-            } else {
-                setPointsPaint('circle-color', [
-                    'match',
-                    ['get', 'gmm'],
-                    0, '#00e5ff',
-                    1, '#ff3366',
-                    2, '#34d399',
-                    3, '#818cf8',
-                    /* Dispersión */ '#64748b'
-                ]);
-            }
+            setPointsPaint('circle-color', [
+                'case',
+                ['==', ['get', 'gmm'], -1], '#64748b',
+                ['coalesce', ['get', 'gmm_color'], '#00e5ff']
+            ]);
 
             setPointsPaint('circle-radius', [
                 'case',
@@ -1090,25 +1020,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } else if (mode === 'ward') {
             // Modo 5: Macro-Clusters Jerárquicos Aglomerativos (Ward Linkage k=3)
-            if (activeContext === 'chicago') {
-                setPointsPaint('circle-color', [
-                    'match',
-                    ['get', 'ward_macro'],
-                    'A', '#ff3366',
-                    'B', '#00e5ff',
-                    'C', '#34d399',
-                    /* Fallback */ '#94a3b8'
-                ]);
-            } else {
-                setPointsPaint('circle-color', [
-                    'match',
-                    ['get', 'ward_macro'],
-                    'A', '#ff3366',
-                    'B', '#fbbf24',
-                    'C', '#34d399',
-                    /* Fallback */ '#94a3b8'
-                ]);
-            }
+            setPointsPaint('circle-color', [
+                'coalesce', ['get', 'ward_color'], '#94a3b8'
+            ]);
 
             setPointsPaint('circle-radius', [
                 'interpolate', ['linear'], ['zoom'],

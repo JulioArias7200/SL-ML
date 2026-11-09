@@ -1,0 +1,352 @@
+<!-- SECCIÓN 6: VALIDACIÓN METODOLÓGICA Y ANÁLISIS DE SENSIBILIDAD (PLEGABLE / OPCIONAL) -->
+<section id="validation-section" class="scroll-mt-16 space-y-4 font-data-code">
+    <details id="validation-details" class="group/val rounded-xl border border-outline-variant bg-surface-container shadow-sm transition-all overflow-hidden" open>
+        <!-- Cabecera del Acordeón Plegable -->
+        <summary class="cursor-pointer p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-surface-container hover:bg-surface-container-high transition-colors select-none list-none">
+            <div class="flex items-start md:items-center gap-3">
+                <span class="size-8 rounded-lg bg-primary-container/20 text-primary-container flex items-center justify-center shrink-0 border border-primary-container/40">
+                    <span class="material-symbols-outlined text-lg">science</span>
+                </span>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-primary-container">
+                            Fase 6 · Validación empírica
+                        </span>
+                        <span class="text-[10px] px-2 py-0.5 rounded bg-surface-container-highest border border-outline-variant text-outline">
+                            {{ validation_data.scope_label }}
+                        </span>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-bold font-headline-md text-on-surface flex items-center gap-2 mt-0.5">
+                        Validación metodológica, codo k-distance y sensibilidad multiescala
+                    </h3>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 self-end md:self-auto shrink-0">
+                <span class="text-[11px] text-outline font-data-code hidden sm:inline">
+                    Click para alternar vista
+                </span>
+                <span class="material-symbols-outlined text-outline transition-transform duration-200 group-open/val:rotate-180">
+                    expand_more
+                </span>
+            </div>
+        </summary>
+
+        <!-- Contenido Desplegable de Validación -->
+        <div class="p-4 sm:p-6 border-t border-outline-variant/60 space-y-8 bg-surface-container-lowest/80">
+
+            <!-- Fila 1: Gráfico k-distance y Justificación Geométrica del Codo -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Gráfico SVG k-distance -->
+                <div class="lg:col-span-8 p-4 rounded-xl border border-outline-variant/60 bg-surface-container shadow-sm space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-outline-variant/40 pb-2.5">
+                        <div>
+                            <h4 class="text-sm font-bold text-on-surface font-headline-md flex items-center gap-2">
+                                <span class="size-2 rounded-full" style="background-color: var(--algo-dbscan);"></span>
+                                Curva k-distance (k={{ validation_data.k_distance.k }} vecinos) y codo secante
+                            </h4>
+                            <p class="text-[11px] text-outline mt-0.5">
+                                Distancias esféricas Haversine ordenadas en metros vs. percentil acumulado de incidentes.
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span class="text-[10px] px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-bold">
+                                Codo ε = {{ validation_data.k_distance.calibrated_eps_m }} m
+                            </span>
+                            <span class="text-[10px] text-outline">
+                                (p{{ validation_data.k_distance.elbow_pct }}%)
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Canvas SVG k-distance -->
+                    <div class="w-full overflow-x-auto custom-scrollbar">
+                        <svg id="svg-kdistance" class="w-full min-w-[480px] h-52 text-xs" viewBox="0 0 500 200" role="img" aria-label="Curva k-distance">
+                            <!-- Fondo y Cuadrícula -->
+                            <rect x="45" y="15" width="435" height="155" fill="rgba(15, 23, 42, 0.4)" rx="4" />
+                            <line x1="45" y1="53" x2="480" y2="53" stroke="currentColor" class="text-outline/15" stroke-dasharray="2,2" />
+                            <line x1="45" y1="92" x2="480" y2="92" stroke="currentColor" class="text-outline/15" stroke-dasharray="2,2" />
+                            <line x1="45" y1="131" x2="480" y2="131" stroke="currentColor" class="text-outline/15" stroke-dasharray="2,2" />
+                            <line x1="45" y1="170" x2="480" y2="170" stroke="currentColor" class="text-outline/30" />
+                            <line x1="45" y1="15" x2="45" y2="170" stroke="currentColor" class="text-outline/30" />
+
+                            <!-- Ejes y Etiquetas -->
+                            <text x="40" y="170" text-anchor="end" class="fill-outline text-[9px] font-mono">0 m</text>
+                            <text x="40" y="96" text-anchor="end" class="fill-outline text-[9px] font-mono">{{ (validation_data.k_distance.max_dist_m / 2) | int }} m</text>
+                            <text x="40" y="22" text-anchor="end" class="fill-outline text-[9px] font-mono">{{ validation_data.k_distance.max_dist_m | int }} m</text>
+                            <text x="45" y="185" text-anchor="start" class="fill-outline text-[9px] font-mono">0%</text>
+                            <text x="262" y="185" text-anchor="middle" class="fill-outline text-[9px] font-mono">50%</text>
+                            <text x="480" y="185" text-anchor="end" class="fill-outline text-[9px] font-mono">100%</text>
+
+                            <!-- Línea Secante de Referencia (Cuerda) -->
+                            <line x1="{{ validation_data.k_distance.secant_line.x1 }}" 
+                                  y1="{{ validation_data.k_distance.secant_line.y1 }}" 
+                                  x2="{{ validation_data.k_distance.secant_line.x2 }}" 
+                                  y2="{{ validation_data.k_distance.secant_line.y2 }}" 
+                                  stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.2" />
+
+                            <!-- Proyección Vertical del Codo -->
+                            <line x1="{{ validation_data.k_distance.elbow_marker.svg_x }}" 
+                                  y1="170" 
+                                  x2="{{ validation_data.k_distance.elbow_marker.svg_x }}" 
+                                  y2="{{ validation_data.k_distance.elbow_marker.svg_y }}" 
+                                  stroke="#f43f5e" stroke-dasharray="2,2" stroke-width="1" />
+
+                            <!-- Polilínea Curva k-distance -->
+                            <polyline fill="none" stroke="var(--algo-dbscan)" stroke-width="2.2" points="{{ validation_data.k_distance.polyline_points }}" />
+
+                            <!-- Marcador del Codo Óptimo -->
+                            <circle cx="{{ validation_data.k_distance.elbow_marker.svg_x }}" 
+                                    cy="{{ validation_data.k_distance.elbow_marker.svg_y }}" 
+                                    r="5" fill="#f43f5e" stroke="#ffffff" stroke-width="1.5" />
+                            
+                            <!-- Etiqueta del Codo -->
+                            <rect x="{{ validation_data.k_distance.elbow_marker.svg_x - 55 }}" 
+                                  y="{{ validation_data.k_distance.elbow_marker.svg_y - 25 }}" 
+                                  width="110" height="18" rx="3" fill="#1e293b" stroke="#f43f5e" stroke-width="1" />
+                            <text x="{{ validation_data.k_distance.elbow_marker.svg_x }}" 
+                                  y="{{ validation_data.k_distance.elbow_marker.svg_y - 13 }}" 
+                                  text-anchor="middle" class="fill-rose-300 text-[9px] font-bold font-mono">
+                                Codo: ε={{ validation_data.k_distance.calibrated_eps_m }} m
+                            </text>
+                        </svg>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-between text-[10px] text-outline pt-1">
+                        <span>Línea secante punteada: cuerda extrema entre p₀ y p₁₀₀</span>
+                        <span>Métrica: radio esférico Haversine con R=6.371.008,8 m</span>
+                    </div>
+                </div>
+
+                <!-- Justificación Matemática y Formulación Teórica -->
+                <div class="lg:col-span-4 p-4 rounded-xl border border-outline-variant/60 bg-surface-container shadow-sm space-y-3 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-1.5 text-xs font-bold text-on-surface mb-2">
+                            <span class="material-symbols-outlined text-sm text-primary-container">functions</span>
+                            <span>Criterio analítico del codo</span>
+                        </div>
+                        <p class="text-xs text-on-surface-variant leading-relaxed">
+                            {{ validation_data.k_distance.criterion_explanation }}
+                        </p>
+                    </div>
+
+                    <div class="p-3 rounded-lg bg-surface-container-high/60 border border-outline-variant/40 space-y-1.5">
+                        <span class="text-[10px] text-outline uppercase font-semibold block">Distancia perpendicular secante:</span>
+                        <code class="text-[10px] font-mono text-primary-container block break-all leading-tight">
+                            {{ validation_data.k_distance.formula }}
+                        </code>
+                        <span class="text-[10px] text-on-surface-variant block mt-1">
+                            El punto de codo maximiza d_⊥ respecto a la recta secante, garantizando el corte óptimo de densidad.
+                        </span>
+                    </div>
+
+                    <div class="text-[11px] text-outline pt-2 border-t border-outline-variant/30 space-y-1">
+                        <div><strong>Efecto de ε menor:</strong> fragmentación en micro-núcleos inestables y ruido elevado (> 20%).</div>
+                        <div><strong>Efecto de ε mayor:</strong> fusión masiva de focos delictivos independientes en macro-bloques.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fila 2: Análisis de Sensibilidad (Variación de ε y MinPts) -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between border-b border-outline-variant/40 pb-2">
+                    <div>
+                        <h4 class="text-sm font-bold text-on-surface font-headline-md flex items-center gap-2">
+                            <span class="material-symbols-outlined text-base text-primary-container">tune</span>
+                            Análisis de sensibilidad multiescala: respuesta de clústeres y ruido
+                        </h4>
+                        <p class="text-[11px] text-outline mt-0.5">
+                            Evaluación sistemática de la robustez del clustering ante variaciones paramétricas en torno al valor calibrado.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Tarjeta Sensibilidad 1: Variando ε (MinPts fijo) -->
+                    <div class="p-4 rounded-xl border border-outline-variant/60 bg-surface-container shadow-sm space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-on-surface flex items-center gap-1.5">
+                                <span class="size-2 rounded-full bg-cyan-400"></span>
+                                Variación del radio ε (MinPts = {{ validation_data.sensitivity.base_min_pts }} fijo)
+                            </span>
+                            <span class="text-[10px] text-outline font-mono">
+                                Base: {{ validation_data.sensitivity.base_eps }} m
+                            </span>
+                        </div>
+
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left text-xs border-collapse font-data-code">
+                                <thead>
+                                    <tr class="text-outline border-b border-outline-variant/40 text-[10px] uppercase">
+                                        <th class="py-1.5 px-2">Radio (ε)</th>
+                                        <th class="py-1.5 px-2 text-right">Clústeres</th>
+                                        <th class="py-1.5 px-2 text-right">% Ruido</th>
+                                        <th class="py-1.5 px-2 text-center">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant/20 text-[11px]">
+                                    {% for pt in validation_data.sensitivity.by_eps %}
+                                    <tr class="{{ 'bg-primary-container/10 font-bold' if pt.is_calibrated else 'hover:bg-surface-container-high/40' }}">
+                                        <td class="py-1.5 px-2 font-mono text-on-surface">
+                                            {{ pt.eps_m }} m
+                                        </td>
+                                        <td class="py-1.5 px-2 text-right font-mono text-cyan-400">
+                                            {{ pt.clusters }}
+                                        </td>
+                                        <td class="py-1.5 px-2 text-right font-mono text-rose-400">
+                                            {{ pt.noise_pct }}%
+                                        </td>
+                                        <td class="py-1.5 px-2 text-center">
+                                            {% if pt.is_calibrated %}
+                                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-primary-container text-on-primary font-bold">CALIBRADO</span>
+                                            {% else %}
+                                            <span class="text-[9px] text-outline font-normal">referencial</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta Sensibilidad 2: Variando MinPts (ε fijo) -->
+                    <div class="p-4 rounded-xl border border-outline-variant/60 bg-surface-container shadow-sm space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-on-surface flex items-center gap-1.5">
+                                <span class="size-2 rounded-full bg-emerald-400"></span>
+                                Variación de MinPts (ε = {{ validation_data.sensitivity.base_eps }} m fijo)
+                            </span>
+                            <span class="text-[10px] text-outline font-mono">
+                                Base: {{ validation_data.sensitivity.base_min_pts }} pts
+                            </span>
+                        </div>
+
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left text-xs border-collapse font-data-code">
+                                <thead>
+                                    <tr class="text-outline border-b border-outline-variant/40 text-[10px] uppercase">
+                                        <th class="py-1.5 px-2">MinPts</th>
+                                        <th class="py-1.5 px-2 text-right">Clústeres</th>
+                                        <th class="py-1.5 px-2 text-right">% Ruido</th>
+                                        <th class="py-1.5 px-2 text-center">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant/20 text-[11px]">
+                                    {% for pt in validation_data.sensitivity.by_min_pts %}
+                                    <tr class="{{ 'bg-primary-container/10 font-bold' if pt.is_calibrated else 'hover:bg-surface-container-high/40' }}">
+                                        <td class="py-1.5 px-2 font-mono text-on-surface">
+                                            {{ pt.min_pts }}
+                                        </td>
+                                        <td class="py-1.5 px-2 text-right font-mono text-emerald-400">
+                                            {{ pt.clusters }}
+                                        </td>
+                                        <td class="py-1.5 px-2 text-right font-mono text-rose-400">
+                                            {{ pt.noise_pct }}%
+                                        </td>
+                                        <td class="py-1.5 px-2 text-center">
+                                            {% if pt.is_calibrated %}
+                                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-primary-container text-on-primary font-bold">CALIBRADO</span>
+                                            {% else %}
+                                            <span class="text-[9px] text-outline font-normal">referencial</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-lg bg-surface-container-high/50 border border-outline-variant/40 text-xs text-on-surface-variant leading-relaxed">
+                    {{ validation_data.sensitivity.interpretation }}
+                </div>
+            </div>
+
+            <!-- Fila 3: Distribución Temporal de Incidentes por Hora / Franja -->
+            <div class="p-4 rounded-xl border border-outline-variant/60 bg-surface-container shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-outline-variant/40 pb-2.5">
+                    <div>
+                        <h4 class="text-sm font-bold text-on-surface font-headline-md flex items-center gap-2">
+                            <span class="material-symbols-outlined text-base text-primary-container">schedule</span>
+                            Distribución circadiana de incidentes
+                        </h4>
+                        <p class="text-[11px] text-outline mt-0.5">
+                            {{ validation_data.hourly.summary }}
+                        </p>
+                    </div>
+                    {% if validation_data.hourly.available %}
+                    <div class="flex items-center gap-3 text-[10px] font-mono shrink-0">
+                        <span class="flex items-center gap-1.5">
+                            <span class="size-2 rounded-full bg-sky-500"></span>
+                            <span>Diurno (06:00 - 19:59)</span>
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                            <span class="size-2 rounded-full bg-purple-500"></span>
+                            <span>Nocturno (20:00 - 05:59)</span>
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if validation_data.hourly.available %}
+                <!-- Histograma 24 Horas en Chicago -->
+                <div class="w-full overflow-x-auto custom-scrollbar">
+                    <svg class="w-full min-w-[700px] h-36 text-xs" viewBox="0 0 720 140" role="img" aria-label="Histograma de 24 horas">
+                        <line x1="20" y1="115" x2="700" y2="115" stroke="currentColor" class="text-outline/40" />
+                        {% for h in validation_data.hourly.hours %}
+                        {% set bar_x = 25 + h.hour * 28 %}
+                        <!-- Barra de la hora -->
+                        <rect x="{{ bar_x }}" 
+                              y="{{ 115 - h.bar_height }}" 
+                              width="22" 
+                              height="{{ h.bar_height }}" 
+                              rx="2" 
+                              fill="{{ h.color }}" 
+                              fill-opacity="0.85" 
+                              class="hover:opacity-100 transition-opacity cursor-pointer">
+                            <title>{{ h.hour_label }}: {{ "{:,}".format(h.count) }} hechos ({{ h.pct }}%)</title>
+                        </rect>
+                        <!-- Etiqueta de hora -->
+                        <text x="{{ bar_x + 11 }}" 
+                              y="128" 
+                              text-anchor="middle" 
+                              class="fill-outline text-[8px] font-mono">
+                            {{ h.hour_label.split(':')[0] }}h
+                        </text>
+                        {% endfor %}
+                    </svg>
+                </div>
+                {% else %}
+                <!-- Panel de Franjas en Bolivia -->
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-2 font-data-code text-xs">
+                    {% for fr in validation_data.hourly.bolivia_franjas %}
+                    <div class="p-3 rounded-lg border border-outline-variant/50 bg-surface-container-high/60 flex flex-col justify-between">
+                        <span class="text-[10px] text-outline uppercase font-semibold block truncate" title="{{ fr.franja }}">
+                            {{ fr.franja.split('(')[0].strip() }}
+                        </span>
+                        <div class="mt-2 flex items-baseline justify-between">
+                            <span class="text-base font-bold font-mono" style="color: {{ fr.color }};">
+                                {{ fr.count }}
+                            </span>
+                            <span class="text-[10px] text-outline font-mono">
+                                {{ fr.pct }}%
+                            </span>
+                        </div>
+                        <div class="w-full bg-surface-container-highest rounded-full h-1 mt-2 overflow-hidden">
+                            <div class="h-full rounded-full" style="width: {{ fr.pct }}%; background-color: {{ fr.color }};"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="p-3 rounded-lg bg-surface-container-high/40 border border-outline-variant/40 text-[11px] text-outline">
+                    <strong>Nota de fuente periodística:</strong> En el corpus de noticias de prensa boliviana, el 75% de las crónicas no reporta la hora exacta de los incidentes. Por rigor metodológico, no se simulan horas artificiales y se expone la distribución de franjas explícitamente reportadas.
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </details>
+</section>
+

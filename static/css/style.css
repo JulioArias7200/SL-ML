@@ -25,6 +25,20 @@
     --nav-active-border: #0284c7;
     --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.08);
     --grid-line-color: rgba(148, 163, 184, 0.15);
+
+    /* Paleta fija de algoritmos espaciales - Modo claro */
+    --algo-dbscan: #0284c7;
+    --algo-dbscan-bg: #e0f2fe;
+    --algo-dbscan-border: #7dd3fc;
+    --algo-hdbscan: #16a34a;
+    --algo-hdbscan-bg: #dcfce7;
+    --algo-hdbscan-border: #86efac;
+    --algo-optics: #d97706;
+    --algo-optics-bg: #fef3c7;
+    --algo-optics-border: #fcd34d;
+    --color-alert: #e11d48;
+    --color-alert-bg: #ffe4e6;
+    --color-alert-border: #fda4af;
 }
 
 /* Variables CSS para modo oscuro (Dark Theme) */
@@ -49,6 +63,20 @@ html.dark {
     --nav-active-border: #00e5ff;
     --card-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
     --grid-line-color: rgba(59, 73, 76, 0.15);
+
+    /* Paleta fija de algoritmos espaciales - Modo oscuro */
+    --algo-dbscan: #38bdf8;
+    --algo-dbscan-bg: rgba(56, 189, 248, 0.12);
+    --algo-dbscan-border: rgba(56, 189, 248, 0.35);
+    --algo-hdbscan: #4ade80;
+    --algo-hdbscan-bg: rgba(74, 222, 128, 0.12);
+    --algo-hdbscan-border: rgba(74, 222, 128, 0.35);
+    --algo-optics: #fbbf24;
+    --algo-optics-bg: rgba(251, 191, 36, 0.12);
+    --algo-optics-border: rgba(251, 191, 36, 0.35);
+    --color-alert: #fb7185;
+    --color-alert-bg: rgba(244, 63, 94, 0.15);
+    --color-alert-border: rgba(244, 63, 94, 0.4);
 }
 
 /* Transiciones específicas de color y fondo (sin transition: all) */

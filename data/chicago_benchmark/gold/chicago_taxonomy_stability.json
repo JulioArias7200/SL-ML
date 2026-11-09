@@ -1,0 +1,183 @@
+{
+  "ctx": "chicago",
+  "units_count": 22,
+  "total_events": 292171,
+  "years_range": "2024-2025",
+  "optimal_k": 3,
+  "linkage": "ward",
+  "transformation": "hellinger_sqrt",
+  "mean_ari": 0.769,
+  "ci_95": [
+    0.226,
+    1.0
+  ],
+  "units": {
+    "1": {
+      "district_id": 1,
+      "district_name": "Distrito 1",
+      "ref_cluster": 1,
+      "stability_pct": 100.0,
+      "total_events": 16771
+    },
+    "2": {
+      "district_id": 2,
+      "district_name": "Distrito 2",
+      "ref_cluster": 3,
+      "stability_pct": 100.0,
+      "total_events": 14934
+    },
+    "3": {
+      "district_id": 3,
+      "district_name": "Distrito 3",
+      "ref_cluster": 3,
+      "stability_pct": 46.0,
+      "total_events": 14837
+    },
+    "4": {
+      "district_id": 4,
+      "district_name": "Distrito 4",
+      "ref_cluster": 3,
+      "stability_pct": 46.0,
+      "total_events": 15530
+    },
+    "5": {
+      "district_id": 5,
+      "district_name": "Distrito 5",
+      "ref_cluster": 3,
+      "stability_pct": 46.5,
+      "total_events": 11691
+    },
+    "6": {
+      "district_id": 6,
+      "district_name": "Distrito 6",
+      "ref_cluster": 3,
+      "stability_pct": 45.5,
+      "total_events": 16775
+    },
+    "7": {
+      "district_id": 7,
+      "district_name": "Distrito 7",
+      "ref_cluster": 2,
+      "stability_pct": 100.0,
+      "total_events": 12157
+    },
+    "8": {
+      "district_id": 8,
+      "district_name": "Distrito 8",
+      "ref_cluster": 3,
+      "stability_pct": 100.0,
+      "total_events": 19535
+    },
+    "9": {
+      "district_id": 9,
+      "district_name": "Distrito 9",
+      "ref_cluster": 3,
+      "stability_pct": 50.0,
+      "total_events": 12741
+    },
+    "10": {
+      "district_id": 10,
+      "district_name": "Distrito 10",
+      "ref_cluster": 2,
+      "stability_pct": 100.0,
+      "total_events": 11901
+    },
+    "11": {
+      "district_id": 11,
+      "district_name": "Distrito 11",
+      "ref_cluster": 2,
+      "stability_pct": 100.0,
+      "total_events": 15680
+    },
+    "12": {
+      "district_id": 12,
+      "district_name": "Distrito 12",
+      "ref_cluster": 1,
+      "stability_pct": 96.0,
+      "total_events": 18026
+    },
+    "14": {
+      "district_id": 14,
+      "district_name": "Distrito 14",
+      "ref_cluster": 1,
+      "stability_pct": 100.0,
+      "total_events": 10963
+    },
+    "15": {
+      "district_id": 15,
+      "district_name": "Distrito 15",
+      "ref_cluster": 2,
+      "stability_pct": 100.0,
+      "total_events": 9981
+    },
+    "16": {
+      "district_id": 16,
+      "district_name": "Distrito 16",
+      "ref_cluster": 1,
+      "stability_pct": 94.0,
+      "total_events": 10153
+    },
+    "17": {
+      "district_id": 17,
+      "district_name": "Distrito 17",
+      "ref_cluster": 1,
+      "stability_pct": 94.0,
+      "total_events": 9047
+    },
+    "18": {
+      "district_id": 18,
+      "district_name": "Distrito 18",
+      "ref_cluster": 1,
+      "stability_pct": 100.0,
+      "total_events": 15222
+    },
+    "19": {
+      "district_id": 19,
+      "district_name": "Distrito 19",
+      "ref_cluster": 1,
+      "stability_pct": 100.0,
+      "total_events": 15795
+    },
+    "20": {
+      "district_id": 20,
+      "district_name": "Distrito 20",
+      "ref_cluster": 1,
+      "stability_pct": 94.0,
+      "total_events": 6411
+    },
+    "22": {
+      "district_id": 22,
+      "district_name": "Distrito 22",
+      "ref_cluster": 3,
+      "stability_pct": 100.0,
+      "total_events": 9020
+    },
+    "24": {
+      "district_id": 24,
+      "district_name": "Distrito 24",
+      "ref_cluster": 1,
+      "stability_pct": 94.0,
+      "total_events": 9984
+    },
+    "25": {
+      "district_id": 25,
+      "district_name": "Distrito 25",
+      "ref_cluster": 3,
+      "stability_pct": 100.0,
+      "total_events": 15017
+    }
+  },
+  "categories": [
+    "Agresión y violencia personal",
+    "Fraude y engaño financiero",
+    "Hurto y sustracción patrimonial",
+    "Narcóticos y orden público",
+    "Robo con fuerza y allanamiento",
+    "Violencia armada y homicidio"
+  ],
+  "script_version": "1.0.0",
+  "script_sha256": "a1768df940ff62b06767cdadf75c3e6767257592dea46bd38fe5714f93adb85d",
+  "random_seed": 42,
+  "bootstrap_B": 200,
+  "generated_at": "2026-11-09T17:54:29.156499"
+}

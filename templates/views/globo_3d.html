@@ -326,74 +326,33 @@
             <!-- 2. Leyenda Modo DBSCAN -->
             <div id="legend-dbscan-section" class="hidden space-y-1">
                 <span class="text-[10px] text-cyan-400 uppercase tracking-wider block font-bold mb-1">DBSCAN Hotspots</span>
-                {% if current_context == 'chicago' %}
-                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">#1 The Loop</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">#2 Harrison West</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#ffaa00]"></span><span class="text-on-surface text-[11px]">#3 Englewood South</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#a855f7]"></span><span class="text-on-surface text-[11px]">#4 Near West UIC</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Ruido Espacial (-1)</span></div>
-                {% else %}
-                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">#0 Santa Cruz Core</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">#1 Cochabamba</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">#2 Plan 3000 / Lotes</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#818cf8]"></span><span class="text-on-surface text-[11px]">#5 La Paz Centro</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Ruido Espacial (-1)</span></div>
-                {% endif %}
+                {% for item in metadata.dbscan_hotspots[:8] %}
+                <div class="legend-item"><span class="legend-dot" style="background-color: {{ item.color }};"></span><span class="text-on-surface text-[11px]">{{ item.name }}</span></div>
+                {% endfor %}
             </div>
 
             <!-- 2.5. Leyenda Modo HDBSCAN (Jerárquico y Persistencia) -->
             <div id="legend-hdbscan-section" class="hidden space-y-1">
                 <span class="text-[10px] text-teal-400 uppercase tracking-wider block font-bold mb-1">HDBSCAN Persistencia</span>
-                {% if current_context == 'chicago' %}
-                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">#1 Loop Core (&lambda;=0.92)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">#2 West Side (&lambda;=0.88)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#ffaa00]"></span><span class="text-on-surface text-[11px]">#3 Englewood (&lambda;=0.81)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#a855f7]"></span><span class="text-on-surface text-[11px]">#4 Near West (&lambda;=0.71)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Ruido Multiescala (-1)</span></div>
-                {% else %}
-                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">#5 SCZ Metrop. (&lambda;=0.89)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#818cf8]"></span><span class="text-on-surface text-[11px]">#10 La Paz Centro (&lambda;=0.84)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">#0 CBBA Valle (&lambda;=0.78)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">#1 Plan 3000 (&lambda;=0.75)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#fbbf24]"></span><span class="text-on-surface text-[11px]">#4 SCZ Periferia (&lambda;=0.62)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Ruido Multiescala (-1)</span></div>
-                {% endif %}
+                {% for item in metadata.hdbscan_clusters[:8] %}
+                <div class="legend-item"><span class="legend-dot" style="background-color: {{ item.color }};"></span><span class="text-on-surface text-[11px]">{{ item.name }}{% if item.persistencia %} (&lambda;={{ item.persistencia }}){% endif %}</span></div>
+                {% endfor %}
             </div>
 
             <!-- 3. Leyenda Modo OPTICS -->
             <div id="legend-optics-section" class="hidden space-y-1">
                 <span class="text-[10px] text-amber-400 uppercase tracking-wider block font-bold mb-1">OPTICS Valles (&xi;)</span>
-                {% if current_context == 'chicago' %}
-                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">Valle #1 Loop (88m)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Valle #2 Harrison (125m)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#ffaa00]"></span><span class="text-on-surface text-[11px]">Valle #3 Englewood (145m)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#a855f7]"></span><span class="text-on-surface text-[11px]">Valle #4 Near West (172m)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Pico Ruido / Salto</span></div>
-                {% else %}
-                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">Valle #0 SCZ (295m)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#38bdf8]"></span><span class="text-on-surface text-[11px]">Sub #1 Equipetrol (240m)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Valle #2 Plan 3000 (340m)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">Valle #7 Cochabamba (380m)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#818cf8]"></span><span class="text-on-surface text-[11px]">Valle #5 La Paz (430m)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Picos Ruido (>2500m)</span></div>
-                {% endif %}
+                {% for item in metadata.optics_valleys[:8] %}
+                <div class="legend-item"><span class="legend-dot" style="background-color: {{ item.color }};"></span><span class="text-on-surface text-[11px]">{{ item.name }}{% if item.depth %} ({{ item.depth }}m){% endif %}</span></div>
+                {% endfor %}
             </div>
 
             <!-- 4. Leyenda Modo GMM -->
             <div id="legend-gmm-section" class="hidden space-y-1">
                 <span class="text-[10px] text-emerald-400 uppercase tracking-wider block font-bold mb-1">GMM Gaussianas (&pi;)</span>
-                {% if current_context == 'chicago' %}
-                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">Loop Comercial (&pi;=0.35)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">West Side (&pi;=0.40)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#ffaa00]"></span><span class="text-on-surface text-[11px]">South Side (&pi;=0.25)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Dispersión (>3&sigma;)</span></div>
-                {% else %}
-                <div class="legend-item"><span class="legend-dot bg-[#00e5ff]"></span><span class="text-on-surface text-[11px]">SCZ Casco (&pi;=0.42)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#ff3366]"></span><span class="text-on-surface text-[11px]">Plan 3000 (&pi;=0.28)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#34d399]"></span><span class="text-on-surface text-[11px]">Cochabamba (&pi;=0.18)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#818cf8]"></span><span class="text-on-surface text-[11px]">La Paz / El Alto (&pi;=0.12)</span></div>
-                <div class="legend-item"><span class="legend-dot bg-[#64748b]"></span><span class="text-outline text-[11px]">Dispersión (>3&sigma;)</span></div>
-                {% endif %}
+                {% for item in metadata.gmm_components %}
+                <div class="legend-item"><span class="legend-dot" style="background-color: {{ item.color }};"></span><span class="text-on-surface text-[11px]">{{ item.name }}</span></div>
+                {% endfor %}
             </div>
 
             <!-- 5. Leyenda Modo Ward (Macro-Clusters Jerárquicos) -->

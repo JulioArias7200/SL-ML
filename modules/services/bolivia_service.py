@@ -84,8 +84,8 @@ class BoliviaService:
 
     @classmethod
     def get_clusters_data(cls):
-        gold_fp = os.path.join(cls._get_base_dir(), 'data', 'bolivia_news', 'gold', 'spatial_clusters_bolivia.csv')
-        legacy_fp = os.path.join(cls._get_base_dir(), 'data', 'web_scraping_news', 'dashboard_eventos_clusters_bolivia.csv')
+        gold_fp = os.path.join(cls._get_base_dir(), 'data', 'bolivia_news', 'gold', 'dashboard_eventos_clusters_bolivia.csv')
+        legacy_fp = os.path.join(cls._get_base_dir(), 'data', 'bolivia_news', 'gold', 'spatial_clusters_bolivia.csv')
         fp = gold_fp if os.path.exists(gold_fp) else legacy_fp
         if os.path.exists(fp):
             mtime = os.path.getmtime(fp)

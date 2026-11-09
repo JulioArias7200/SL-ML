@@ -1,325 +1,718 @@
 {% extends "layouts/base.html" %}
 
 {% block title %}
-{{ 'Bolivia Urban Intelligence' if current_context != 'chicago' else 'CPD Urban Intelligence' }} // Módulo #03: Geoespacial &amp; Densidad (OPTICS &amp; DBSCAN)
+{{ 'Bolivia' if current_context != 'chicago' else 'Chicago CPD' }} // Análisis geoespacial de densidad y taxonomía jerárquica
 {% endblock %}
 
 {% block content %}
 <div id="spatial-root" data-context="{{ current_context }}" class="flex flex-col min-w-0 bg-surface">
-    <!-- 1. ENCABEZADO TÁCTICO DEL MÓDULO GEOESPACIAL -->
-    <section class="border-b border-outline-variant/80 bg-surface-container-lowest/80 px-4 sm:px-6 lg:px-8 py-5">
+
+    <!-- 1. Encabezado principal del módulo -->
+    <header class="border-b border-outline-variant/80 bg-surface-container-lowest/80 px-4 sm:px-6 lg:px-8 py-5">
         <nav class="flex items-center gap-2 text-xs font-data-code text-outline mb-2">
             <a class="hover:text-primary-container transition-colors" href="{{ url_for('dashboard_bp.index', ctx=current_context) }}">Inicio</a>
             <span>/</span>
-            <span class="text-primary-container font-semibold">Módulo #03: Geoespacial &amp; Densidad</span>
+            <span class="text-primary-container font-semibold">Análisis geoespacial y taxonomía</span>
             <span>/</span>
-            <span class="text-on-surface uppercase">{{ current_context }}</span>
+            <span class="text-on-surface capitalize">{{ current_context }}</span>
         </nav>
 
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <h1 class="text-on-surface text-lg sm:text-xl md:text-2xl lg:text-3xl font-black tracking-tight font-headline-lg flex items-center gap-3">
-                    MÓDULO ANALÍTICO #03 // ANÁLISIS GEOESPACIAL DE DENSIDAD &amp; TAXONOMÍA URBANA
+                <h1 class="text-on-surface text-xl sm:text-2xl lg:text-3xl font-black tracking-tight font-headline-lg">
+                    Análisis geoespacial de densidad y taxonomía jerárquica
                 </h1>
                 <p class="text-on-surface-variant text-xs sm:text-sm mt-1 max-w-4xl leading-relaxed">
                     {% if current_context == 'chicago' %}
-                    Clustering Espacial Basado en Densidad con Métrica Haversine (DBSCAN/HDBSCAN), Ordenamiento Multiescala (OPTICS Reachability) y Segmentación Jerárquica Aglomerativa (Ward) sobre la Red Urbana de Chicago (CPD).
+                    Clustering espacial con métrica de Haversine (DBSCAN y HDBSCAN), ordenamiento multiescala (OPTICS) y taxonomía distrital aglomerativa (Ward) sobre el benchmark oficial de Chicago.
                     {% else %}
-                    Clustering Espacial Basado en Densidad con Métrica Haversine (DBSCAN/HDBSCAN), Ordenamiento Multiescala (OPTICS Reachability) y Taxonomía de Micro-Zonas sobre Noticias de Prensa Curadas en Bolivia (Santa Cruz, La Paz, Cochabamba, Plan 3000).
+                    Clustering espacial con métrica de Haversine (DBSCAN y HDBSCAN), ordenamiento multiescala (OPTICS) y taxonomía de micro-zonas sobre el corpus curado de noticias de prensa de Bolivia.
                     {% endif %}
                 </p>
             </div>
-        </div>
 
-        <!-- Telemetría & Badges -->
-        <div class="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-outline-variant/40 font-data-code text-xs">
-            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-outline-variant text-on-surface">
-                <span class="material-symbols-outlined text-[14px] text-primary-container">straighten</span>
-                <span>Métrica: <strong class="text-primary-container">Haversine Calibrada</strong> (&epsilon;={{ hud_params.eps_meters }}m, MinPts={{ hud_params.min_pts }})</span>
-            </div>
-            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-outline-variant text-on-surface">
-                <span class="material-symbols-outlined text-[14px] text-amber-400">landscape</span>
-                <span>Modelo OPTICS: <strong class="text-amber-300">&xi; = {{ optics_data.xi }}</strong> ({{ optics_data.active_valleys_count }} Valles / Cuencas)</span>
-            </div>
-            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-outline-variant text-on-surface">
-                <span class="material-symbols-outlined text-[14px] text-emerald-400">dataset</span>
-                <span>Muestra: <strong class="text-emerald-400">{{ hud_params.sample_size }}</strong></span>
-            </div>
-            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-outline-variant text-on-surface">
-                <span class="material-symbols-outlined text-[14px] text-cyan-400">verified</span>
-                <span>Validación: <strong class="text-cyan-300">Silhouette {{ hud_params.silhouette_spatial }}</strong> | Cophenetic {{ hud_params.cophenetic_r }}</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- 2. CONTENIDO PRINCIPAL: MAPA, CONSOLA TÁCTICA MULTIMODELO, DENDROGRAMA Y TABLA -->
-    <div class="p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1700px] w-full mx-auto">
-        <!-- Visor Cartográfico Táctico con HUD Móvil Adaptativo y Capas Multiescala -->
-        {% include 'components/map_viewport_tactical.html' %}
-
-        <!-- SUITE ANALÍTICA DE DENSIDAD // SELECTOR INTERACTIVO EN 3 TARJETAS (DBSCAN / HDBSCAN / OPTICS) -->
-        <section class="space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1">
-                <div class="flex items-center gap-2">
-                    <span class="size-2 rounded-full bg-primary-container animate-pulse"></span>
-                    <h2 class="font-headline-sm text-xs sm:text-sm font-bold uppercase tracking-wider text-on-surface">
-                        SUITE ANALÍTICA DE DENSIDAD // SELECCIÓN DE MODELO
-                    </h2>
+            <!-- Selector de contexto visible Bolivia | Chicago -->
+            <div class="shrink-0 flex items-center gap-2 font-data-code">
+                <span class="text-xs text-outline hidden sm:inline">Contexto activo:</span>
+                <div class="segmented-control">
+                    <a href="{{ url_for('spatial_density_bp.view', ctx='bolivia') }}"
+                       class="segmented-btn {{ 'active' if current_context == 'bolivia' else '' }}"
+                       title="Cargar corpus de Bolivia (prensa nacional)">
+                        Bolivia (prensa)
+                    </a>
+                    <a href="{{ url_for('spatial_density_bp.view', ctx='chicago') }}"
+                       class="segmented-btn {{ 'active' if current_context == 'chicago' else '' }}"
+                       title="Cargar benchmark oficial de Chicago CPD">
+                        Chicago (CPD)
+                    </a>
                 </div>
-                <span class="text-[11px] font-data-code text-outline">
-                    Presiona una tarjeta para desplegar métricas, gráficos e inspección
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. Navegación interna fija con anclas (Resumen · Mapa · Modelos · Taxonomía · Tabla) -->
+    <nav class="sticky top-0 z-30 bg-surface/95 backdrop-blur border-b border-outline-variant/60 px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-3 text-xs font-data-code shadow-sm">
+        <div class="flex items-center gap-1 sm:gap-2 overflow-x-auto custom-scrollbar">
+            <span class="text-outline text-[11px] uppercase tracking-wider hidden md:inline mr-1">Secciones:</span>
+            <a href="#resumen" class="px-3 py-1.5 rounded-lg border border-transparent hover:border-outline-variant/60 hover:bg-surface-container-high text-on-surface font-semibold transition-colors flex items-center gap-1.5">
+                <span class="size-1.5 rounded-full bg-primary-container"></span>
+                <span>Resumen</span>
+            </a>
+            <a href="#mapa" class="px-3 py-1.5 rounded-lg border border-transparent hover:border-outline-variant/60 hover:bg-surface-container-high text-on-surface font-semibold transition-colors flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sm text-outline">map</span>
+                <span>Mapa</span>
+            </a>
+            <a href="#modelos" class="px-3 py-1.5 rounded-lg border border-transparent hover:border-outline-variant/60 hover:bg-surface-container-high text-on-surface font-semibold transition-colors flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sm text-outline">tune</span>
+                <span>Modelos</span>
+            </a>
+            <a href="#taxonomia" class="px-3 py-1.5 rounded-lg border border-transparent hover:border-outline-variant/60 hover:bg-surface-container-high text-on-surface font-semibold transition-colors flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sm text-outline">account_tree</span>
+                <span>Taxonomía</span>
+            </a>
+            <a href="#tabla" class="px-3 py-1.5 rounded-lg border border-transparent hover:border-outline-variant/60 hover:bg-surface-container-high text-on-surface font-semibold transition-colors flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sm text-outline">table_chart</span>
+                <span>Tabla</span>
+            </a>
+            <a href="#validacion" class="px-3 py-1.5 rounded-lg border border-transparent hover:border-outline-variant/60 hover:bg-surface-container-high text-on-surface font-semibold transition-colors flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sm text-outline">science</span>
+                <span>Validación</span>
+            </a>
+        </div>
+
+        <div class="flex items-center gap-2 text-[11px] text-outline hidden lg:flex">
+            <span class="material-symbols-outlined text-sm text-emerald-500">verified</span>
+            <span>Métrica activa: <strong>Haversine esférica</strong></span>
+        </div>
+    </nav>
+
+    <!-- 3. Contenedor principal de las 5 secciones -->
+    <main class="p-4 sm:p-6 lg:p-8 space-y-10 max-w-[1700px] w-full mx-auto">
+
+        <!-- ================================================================== -->
+        <!-- SECCIÓN 1: RESUMEN EJECUTIVO (KPIs + HALLAZGOS CLAVE)              -->
+        <!-- ================================================================== -->
+        <section id="resumen" class="scroll-mt-16 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold font-headline-md text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary-container text-xl">analytics</span>
+                        Resumen ejecutivo
+                    </h2>
+                    <p class="text-xs text-on-surface-variant font-data-code mt-0.5">
+                        ¿Qué muestra esto? Síntesis cuantitativa del comportamiento geoespacial, calidad del agrupamiento e indicadores de concentración delictiva.
+                    </p>
+                </div>
+                <span class="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-surface-container-high border border-outline-variant text-outline self-start sm:self-auto">
+                    {{ 'Periodo 2024–2026 · Bolivia (137 crónicas · 60 georreferenciadas)' if current_context == 'bolivia' else ('Periodo 2024–2025 · Distrito ' ~ (hud_params.district | default(1)) ~ ' CPD (292.171 eventos totales en 22 distritos)') }}
                 </span>
             </div>
 
-            <!-- Las 3 Tarjetas Interactivas Selectoras -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-data-code" id="density-cards-selector">
-                <!-- Tarjeta 1: DBSCAN -->
-                <button type="button" 
-                        data-algo-card="dbscan"
-                        class="algo-tab-card text-left p-4 rounded-xl border border-cyan-400 bg-surface-container-high transition-all duration-300 relative overflow-hidden group cursor-pointer shadow-[0_0_15px_rgba(0,229,255,0.18)] active">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center gap-2">
-                            <div class="size-7 rounded-lg bg-cyan-500/15 border border-cyan-500/40 flex items-center justify-center text-cyan-400">
-                                <span class="material-symbols-outlined text-base">radar</span>
-                            </div>
-                            <span class="font-bold text-xs text-on-surface uppercase tracking-wide">DBSCAN Estándar</span>
-                        </div>
-                        <span class="card-status-badge text-[9px] px-2 py-0.5 rounded font-bold uppercase bg-cyan-100 text-cyan-800 border-cyan-300 dark:bg-cyan-500/20 dark:text-cyan-300 dark:border-cyan-500/40 border">Activo</span>
+            <!-- Barra de 4 KPIs con línea de contexto -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 font-data-code">
+                <!-- KPI 1: Incidentes -->
+                <div class="p-4 rounded-xl border border-outline-variant/60 bg-surface-container shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-outline text-[11px] mb-1">
+                        <span class="uppercase tracking-wider">Incidentes analizados</span>
+                        <span class="material-symbols-outlined text-sm text-primary-container">dataset</span>
                     </div>
-                    <p class="text-[11px] text-outline line-clamp-2 mb-3">
-                        Clustering espacial con radio esférico rígido Haversine (&epsilon;) y mínimo de vecinos (MinPts).
-                    </p>
-                    <div class="grid grid-cols-2 gap-2 pt-2.5 border-t border-outline-variant/30 text-[10px]">
-                        <div>
-                            <span class="text-outline block">PARÁMETRO:</span>
-                            <span class="font-bold text-cyan-700 dark:text-cyan-400">&epsilon;={{ hud_params.eps_meters }}m</span>
-                        </div>
-                        <div>
-                            <span class="text-outline block">CLUSTERS:</span>
-                            <span class="font-bold text-on-surface">{{ hud_params.active_hotspots }} Hotspots</span>
-                        </div>
+                    <div class="text-xl sm:text-2xl font-black text-on-surface tracking-tight">
+                        {{ '137 crónicas' if current_context == 'bolivia' else (hud_params.evaluated_records | string ~ ' eventos') }}
                     </div>
-                </button>
+                    <div class="pt-2 mt-2 border-t border-outline-variant/30 text-[11px] text-outline">
+                        {{ '137 crónicas analizadas · 137 georreferenciadas' if current_context == 'bolivia' else ('Distrito ' ~ (hud_params.district | default(1)) ~ ' CPD · 100% densidad real') }}
+                    </div>
+                </div>
 
-                <!-- Tarjeta 2: HDBSCAN -->
-                <button type="button" 
-                        data-algo-card="hdbscan"
-                        class="algo-tab-card text-left p-4 rounded-xl border border-outline-variant/60 bg-surface-container hover:bg-surface-container-high transition-all duration-300 relative overflow-hidden group cursor-pointer hover:border-emerald-500/50">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center gap-2">
-                            <div class="size-7 rounded-lg bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                                <span class="material-symbols-outlined text-base">hub</span>
-                            </div>
-                            <span class="font-bold text-xs text-on-surface uppercase tracking-wide">HDBSCAN Adaptativo</span>
-                        </div>
-                        <span class="card-status-badge hidden text-[9px] px-2 py-0.5 rounded font-bold uppercase bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40 border">Activo</span>
+                <!-- KPI 2: Hotspots DBSCAN -->
+                <div class="p-4 rounded-xl border border-outline-variant/60 bg-surface-container shadow-sm flex flex-col justify-between" style="border-top: 3px solid var(--algo-dbscan);">
+                    <div class="flex items-center justify-between text-outline text-[11px] mb-1">
+                        <span class="uppercase tracking-wider">Hotspots DBSCAN</span>
+                        <span class="size-2 rounded-full" style="background-color: var(--algo-dbscan);"></span>
                     </div>
-                    <p class="text-[11px] text-outline line-clamp-2 mb-3">
-                        Densidad variable multiescala sin radio rígido. Métrica de persistencia y estabilidad &lambda;.
-                    </p>
-                    <div class="grid grid-cols-2 gap-2 pt-2.5 border-t border-outline-variant/30 text-[10px]">
-                        <div>
-                            <span class="text-outline block">PARÁMETRO:</span>
-                            <span class="font-bold text-emerald-700 dark:text-emerald-400">MinCluster={{ hdbscan_data.min_cluster_size }}</span>
-                        </div>
-                        <div>
-                            <span class="text-outline block">CLUSTERS:</span>
-                            <span class="font-bold text-on-surface">{{ hdbscan_data.active_clusters }} Estables</span>
-                        </div>
+                    <div class="text-xl sm:text-2xl font-black tracking-tight" style="color: var(--algo-dbscan);">
+                        {{ hud_params.active_hotspots }} núcleos
                     </div>
-                </button>
+                    <div class="pt-2 mt-2 border-t border-outline-variant/30 text-[11px] text-outline">
+                        ε = {{ hud_params.eps_meters }} m · MinPts = {{ hud_params.min_pts }}
+                    </div>
+                </div>
 
-                <!-- Tarjeta 3: OPTICS -->
-                <button type="button" 
-                        data-algo-card="optics"
-                        class="algo-tab-card text-left p-4 rounded-xl border border-outline-variant/60 bg-surface-container hover:bg-surface-container-high transition-all duration-300 relative overflow-hidden group cursor-pointer hover:border-amber-500/50">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center gap-2">
-                            <div class="size-7 rounded-lg bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-600 dark:text-amber-400">
-                                <span class="material-symbols-outlined text-base">analytics</span>
-                            </div>
-                            <span class="font-bold text-xs text-on-surface uppercase tracking-wide">OPTICS Multiescala</span>
-                        </div>
-                        <span class="card-status-badge hidden text-[9px] px-2 py-0.5 rounded font-bold uppercase bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40 border">Activo</span>
+                <!-- KPI 3: Ruido Espacial -->
+                <div class="p-4 rounded-xl border border-outline-variant/60 bg-surface-container shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-outline text-[11px] mb-1">
+                        <span class="uppercase tracking-wider">Ruido espacial</span>
+                        <span class="material-symbols-outlined text-sm text-outline">filter_alt</span>
                     </div>
-                    <p class="text-[11px] text-outline line-clamp-2 mb-3">
-                        Ordenamiento de alcanzabilidad (Reachability Plot) y detección de cuencas por pendiente &xi;.
-                    </p>
-                    <div class="grid grid-cols-2 gap-2 pt-2.5 border-t border-outline-variant/30 text-[10px]">
-                        <div>
-                            <span class="text-outline block">PARÁMETRO:</span>
-                            <span class="font-bold text-amber-700 dark:text-amber-400">&xi;={{ optics_data.xi }}</span>
-                        </div>
-                        <div>
-                            <span class="text-outline block">CUENCAS:</span>
-                            <span class="font-bold text-on-surface">{{ optics_data.active_valleys_count }} Valles</span>
-                        </div>
+                    <div class="text-xl sm:text-2xl font-black text-on-surface tracking-tight">
+                        {{ hud_params.noise_pct }}%
                     </div>
-                </button>
+                    <div class="pt-2 mt-2 border-t border-outline-variant/30 text-[11px] text-outline">
+                        {{ hud_params.noise_count }} eventos aislados (-1)
+                    </div>
+                </div>
+
+                <!-- KPI 4: Coeficiente Cofenético -->
+                <div class="p-4 rounded-xl border border-outline-variant/60 bg-surface-container shadow-sm flex flex-col justify-between" style="border-top: 3px solid var(--algo-hdbscan);">
+                    <div class="flex items-center justify-between text-outline text-[11px] mb-1">
+                        <span class="uppercase tracking-wider">Consistencia cofenética</span>
+                        <span class="size-2 rounded-full" style="background-color: var(--algo-hdbscan);"></span>
+                    </div>
+                    <div class="text-xl sm:text-2xl font-black tracking-tight" style="color: var(--algo-hdbscan);">
+                        r = {{ hud_params.cophenetic_r }}
+                    </div>
+                    <div class="pt-2 mt-2 border-t border-outline-variant/30 text-[11px] text-outline">
+                        Enlace de Ward · correlación topológica
+                    </div>
+                </div>
             </div>
 
-            <!-- CONTENEDOR DINÁMICO DE MÉTRICAS (UN SOLO PANEL QUE CONMUTA SEGÚN LA TARJETA SELECCIONADA) -->
-            <div id="algo-details-container" class="rounded-xl border border-outline-variant/80 bg-surface-container overflow-hidden shadow-xl font-data-code">
-                
-                <!-- 1. PANEL DE MÉTRICAS DBSCAN -->
-                <div id="panel-algo-dbscan" class="algo-detail-panel p-4 sm:p-6 space-y-4">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/60 gap-2">
-                        <div class="flex items-center gap-2">
-                            <span class="size-2 rounded-full bg-cyan-400 animate-ping"></span>
-                            <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">
-                                CLUSTERING CON RADIO RÍGIDO // HAVERSINE DENSITY ENGINE
-                            </span>
-                        </div>
-                        <div class="text-[11px] text-outline flex items-center gap-2">
-                            <span>Métrica: <strong class="text-on-surface">Haversine Esférica</strong></span>
-                            <span>|</span>
-                            <span>Muestra: <strong class="text-on-surface">{{ hud_params.sample_size }}</strong></span>
-                        </div>
+            <!-- Caja: Hallazgos clave generados automáticamente -->
+            <div class="p-4 sm:p-5 rounded-xl border border-outline-variant/60 bg-surface-container shadow-sm space-y-3">
+                <div class="flex items-center justify-between border-b border-outline-variant/40 pb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="size-2 rounded-full bg-primary-container animate-pulse"></span>
+                        <h3 class="text-xs sm:text-sm font-bold font-data-code text-on-surface uppercase tracking-wider">
+                            Hallazgos clave
+                        </h3>
                     </div>
+                    <span class="text-[11px] font-data-code text-outline">
+                        Generados dinámicamente desde el dataset activo
+                    </span>
+                </div>
 
-                    <!-- Cuadrícula de KPIs DBSCAN -->
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                        <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40">
-                            <span class="text-outline text-[10px] block uppercase">Radio Esférico (&epsilon;)</span>
-                            <span class="text-sm sm:text-base font-bold text-cyan-400">{{ hud_params.eps_meters }} m</span>
-                            <span class="text-[9px] text-outline block">{{ hud_params.eps_radians }} rad</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40">
-                            <span class="text-outline text-[10px] block uppercase">Vecinos Mínimos (MinPts)</span>
-                            <span class="text-sm sm:text-base font-bold text-on-surface">{{ hud_params.min_pts }} puntos</span>
-                            <span class="text-[9px] text-outline block">Umbral de punto núcleo</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40">
-                            <span class="text-outline text-[10px] block uppercase">Hotspots Formados</span>
-                            <span class="text-sm sm:text-base font-bold text-emerald-400">{{ hud_params.active_hotspots }} Núcleos</span>
-                            <span class="text-[9px] text-outline block">Silueta: {{ hud_params.silhouette_spatial }}</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40">
-                            <span class="text-outline text-[10px] block uppercase">Ruido Residual (-1)</span>
-                            <span class="text-sm sm:text-base font-bold text-rose-400">{{ hud_params.noise_count }} ({{ hud_params.noise_pct }}%)</span>
-                            <span class="text-[9px] text-outline block">Puntos dispersos aislados</span>
-                        </div>
-                    </div>
-
-                    <!-- Desglose de Macro-Núcleos DBSCAN -->
-                    <div class="mt-4 pt-3 border-t border-outline-variant/30">
-                        <span class="text-[11px] text-outline font-bold uppercase tracking-wider block mb-2.5">
-                            Macro-Núcleos Geográficos Identificados (DBSCAN):
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 font-data-code text-xs">
+                    {% for h in hallazgos %}
+                    <div class="p-3 rounded-lg border transition-colors flex items-start gap-2.5
+                        {% if 'Advertencia' in h %}
+                        border-amber-400/40 bg-amber-500/10 text-amber-900 dark:text-amber-200
+                        {% else %}
+                        border-outline-variant/40 bg-surface-container-high text-on-surface-variant
+                        {% endif %}">
+                        <span class="material-symbols-outlined text-base shrink-0 mt-0.5
+                            {% if 'Advertencia' in h %}
+                            text-amber-500
+                            {% elif 'HDBSCAN' in h %}
+                            text-emerald-500
+                            {% elif 'Ward' in h %}
+                            text-primary-container
+                            {% else %}
+                            text-cyan-500
+                            {% endif %}">
+                            {% if 'Advertencia' in h %}warning{% else %}check_circle{% endif %}
                         </span>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-                            {% for hs in dbscan_data.hotspots %}
-                            <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40 flex flex-col justify-between hover:border-cyan-400/40 transition-colors">
-                                <div class="flex items-center justify-between mb-1.5">
-                                    <span class="text-xs font-bold text-on-surface flex items-center gap-1.5">
-                                        <span class="size-2 rounded-full" style="background-color: {{ hs.color }};"></span>
-                                        <span>{{ hs.name }}</span>
-                                    </span>
-                                </div>
-                                <div class="text-[11px] text-on-surface-variant mb-2">
-                                    Delito Top: <strong class="text-on-surface">{{ hs.top_delito }}</strong>
-                                </div>
-                                <div class="flex justify-between text-[10px] text-outline pt-1.5 border-t border-outline-variant/20">
-                                    <span>Volumen: <strong class="text-on-surface">{{ hs.count }}</strong></span>
-                                    <span>Densidad: <strong class="text-cyan-400">{{ hs.density }}</strong></span>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
+                        <p class="leading-relaxed flex-1">
+                            {{ h }}
+                        </p>
                     </div>
-                </div>
-
-                <!-- 2. PANEL DE MÉTRICAS HDBSCAN -->
-                <div id="panel-algo-hdbscan" class="algo-detail-panel p-4 sm:p-6 space-y-4 hidden">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/60 gap-2">
-                        <div class="flex items-center gap-2">
-                            <span class="size-2 rounded-full bg-emerald-400 animate-ping"></span>
-                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">
-                                CLUSTERING DE DENSIDADES VARIABLES // HDBSCAN HIERARCHICAL ENGINE
-                            </span>
-                        </div>
-                        <div class="text-[11px] text-outline flex items-center gap-2">
-                            <span>Métrica: <strong class="text-on-surface">Minimum Spanning Tree (MST)</strong></span>
-                            <span>|</span>
-                            <span>Persistencia: <strong class="text-emerald-400">&lambda; = 1/distancia</strong></span>
-                        </div>
-                    </div>
-
-                    <!-- Cuadrícula de KPIs HDBSCAN -->
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                        <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40">
-                            <span class="text-outline text-[10px] block uppercase">Min Cluster Size</span>
-                            <span class="text-sm sm:text-base font-bold text-emerald-400">{{ hdbscan_data.min_cluster_size }} puntos</span>
-                            <span class="text-[9px] text-outline block">Condensación mínima</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40">
-                            <span class="text-outline text-[10px] block uppercase">Clusters Persistentes</span>
-                            <span class="text-sm sm:text-base font-bold text-on-surface">{{ hdbscan_data.active_clusters }} Estables</span>
-                            <span class="text-[9px] text-outline block">Densidad no uniforme</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40">
-                            <span class="text-outline text-[10px] block uppercase">Eventos Rescatados</span>
-                            <span class="text-sm sm:text-base font-bold text-cyan-400">+{{ hdbscan_data.rescued_count }} recuperados</span>
-                            <span class="text-[9px] text-outline block">Que DBSCAN descartaba</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40">
-                            <span class="text-outline text-[10px] block uppercase">Estabilidad Media (&lambda;)</span>
-                            <span class="text-sm sm:text-base font-bold text-amber-400">&lambda;={{ hdbscan_data.lambda_stability_mean }}</span>
-                            <span class="text-[9px] text-outline block">GLOSH Outlier={{ hdbscan_data.glosh_outlier_mean }}</span>
-                        </div>
-                    </div>
-
-                    <div class="p-3 rounded-lg bg-surface-container-high border border-emerald-500/20 text-xs text-on-surface-variant leading-relaxed">
-                        <strong class="text-emerald-400">Ventaja Algorítmica HDBSCAN:</strong> {{ hdbscan_data.insights }}
-                    </div>
-
-                    <!-- Diagrama de Estabilidad Lambda y Árbol Condensado -->
-                    <div class="mt-4 pt-3 border-t border-outline-variant/30">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-2.5 gap-1">
-                            <span class="text-[11px] text-outline font-bold uppercase tracking-wider block">
-                                Espectro de Estabilidad y Persistencia de Clústeres (&lambda; = 1/distancia):
-                            </span>
-                            <span class="text-[10px] text-outline">Mayor &lambda; &rarr; Clúster más denso y persistente</span>
-                        </div>
-                        
-                        <div class="space-y-2">
-                            {% for c in hdbscan_data.clusters %}
-                            <div class="p-2.5 rounded-lg bg-surface-container-high border border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:border-emerald-500/40 transition-colors">
-                                <div class="flex items-center gap-2 min-w-[220px]">
-                                    <span class="size-2 rounded-full shrink-0" style="background-color: {{ c.color }};"></span>
-                                    <span class="text-xs font-semibold text-on-surface">{{ c.name }}</span>
-                                </div>
-                                <div class="flex-1 max-w-md mx-2 hidden md:block">
-                                    <!-- Barra de persistencia lambda -->
-                                    <div class="w-full h-2 rounded-full bg-surface-container-lowest overflow-hidden flex">
-                                        <div class="h-full rounded-full transition-all duration-700" 
-                                             style="width: {{ (c.stability_lambda / 8.0 * 100) | round(1) }}%; background-color: {{ c.color }};"></div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3 text-[11px]">
-                                    <span class="text-outline">Persistencia: <strong class="text-emerald-400">&lambda; = {{ c.stability_lambda }}</strong></span>
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
-                                        {{ c.persistency }}
-                                    </span>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3. PANEL DE MÉTRICAS OPTICS (CONTIENE EL REACHABILITY PLOT) -->
-                <div id="panel-algo-optics" class="algo-detail-panel hidden">
-                    {% include 'components/optics_reachability_card.html' %}
+                    {% endfor %}
                 </div>
             </div>
         </section>
 
-        <!-- Panel del Dendrograma Jerárquico Aglomerativo (Ward Linkage) -->
-        {% include 'components/dendrogram_card.html' %}
+        <!-- ================================================================== -->
+        <!-- SECCIÓN 2: MAPA PROTAGONISTA                                       -->
+        <!-- ================================================================== -->
+        <section id="mapa" class="scroll-mt-16 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold font-headline-md text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary-container text-xl">map</span>
+                        Visor cartográfico táctico
+                    </h2>
+                    <p class="text-xs text-on-surface-variant font-data-code mt-0.5">
+                        ¿Qué muestra esto? Distribución territorial de los eventos delictivos y delimitación de cúmulos espaciales sobre la red urbana.
+                    </p>
+                </div>
+                <span class="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-surface-container-high border border-outline-variant text-outline self-start sm:self-auto">
+                    {{ 'Periodo 2024–2026 · 137 eventos georreferenciados' if current_context == 'bolivia' else ('Periodo 2024–2025 · Distrito ' ~ (selected_district | default(1)) ~ ' CPD') }}
+                </span>
+            </div>
 
-        <!-- Tabla de Taxonomía de Zonas / Distritos Urbanos -->
-        {% include 'components/district_table.html' %}
-    </div>
+            <!-- Visor Cartográfico Táctico con HUD Móvil Adaptativo y Capas Multiescala -->
+            {% include 'components/map_viewport_tactical.html' %}
+        </section>
+
+        <!-- ================================================================== -->
+        <!-- SECCIÓN 3: COMPARADOR DE MODELOS DE DENSIDAD                       -->
+        <!-- ================================================================== -->
+        <section id="modelos" class="scroll-mt-16 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold font-headline-md text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary-container text-xl">tune</span>
+                        Comparador de modelos de densidad
+                    </h2>
+                    <p class="text-xs text-on-surface-variant font-data-code mt-0.5">
+                        ¿Qué muestra esto? Evaluación comparativa directa entre agrupamiento de radio rígido (DBSCAN), densidad variable (HDBSCAN) y ordenamiento multiescala (OPTICS) bajo las mismas métricas estandarizadas.
+                    </p>
+                </div>
+                <span class="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-surface-container-high border border-outline-variant text-outline self-start sm:self-auto">
+                    {{ 'Periodo 2024–2026 · Bolivia (137 crónicas auditadas)' if current_context == 'bolivia' else ('Periodo 2024–2025 · Distrito ' ~ (selected_district | default(1)) ~ ' CPD') }}
+                </span>
+            </div>
+
+            <!-- Banner de auditoría de procedencia y reproducibilidad -->
+            {% if model_comparison.precalculated %}
+            <div class="rounded-xl border border-primary-container/30 bg-primary-container/10 p-3 sm:p-4 text-xs font-data-code text-on-surface flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-sm">
+                <div class="flex items-center gap-2.5">
+                    <span class="material-symbols-outlined text-primary-container text-base">verified</span>
+                    <div>
+                        <strong class="font-bold text-on-surface">Métricas espaciales auditadas:</strong>
+                        <span class="text-on-surface-variant ml-1">
+                            {% if model_comparison.ctx == 'chicago' %}
+                            Calculado sobre <strong>Distrito {{ model_comparison.district | default(1) }} ({{ model_comparison.metadata.n_sampled_points | default(16771) }} eventos completos, 100% densidad real)</strong>. Coordenadas únicas: {{ model_comparison.metadata.unique_coords | default(3281) }} ({{ model_comparison.metadata.pct_duplicated | default(80.44) }}% duplicadas). {{ model_comparison.boundary_warning }}
+                            {% else %}
+                            Calculado sobre el <strong>corpus periodístico de 137 crónicas (60 georreferenciadas · 25 ubicaciones únicas)</strong> con radio esférico calibrado a 2500 m y MinPts=2 ponderado por eventos locales.
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5 self-end sm:self-auto">
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-surface-container-highest text-outline font-mono border border-outline-variant/40">
+                        {{ model_comparison.metadata.version | default('v3.0.0') }} · {{ model_comparison.district_scope | default('audited') }}
+                    </span>
+                </div>
+            </div>
+            {% else %}
+            <div class="rounded-xl border border-rose-500/40 bg-rose-500/10 p-4 text-xs font-data-code text-rose-300 flex items-start gap-3 shadow-sm">
+                <span class="material-symbols-outlined text-rose-400 text-xl shrink-0 mt-0.5">warning</span>
+                <div class="space-y-1">
+                    <strong class="font-bold text-rose-200">Precálculo de modelos no disponible</strong>
+                    <p class="text-rose-300/80 leading-relaxed">
+                        Las métricas de densidad para Chicago requieren ejecución offline y no se muestran valores ficticios. Para generar el benchmark auditado, ejecuta en la terminal:
+                    </p>
+                    <code class="inline-block mt-1 px-2.5 py-1 rounded bg-black/40 text-rose-200 font-mono text-[11px] border border-rose-500/30">
+                        python scripts/precalcular_modelos_chicago.py --n-points 25000 --sil-subsample 10000 --seed 42
+                    </code>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Las 3 tarjetas lado a lado (DBSCAN, HDBSCAN, OPTICS) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 font-data-code items-start">
+                {% for m in model_comparison.models_list %}
+                <div class="rounded-xl border border-outline-variant/60 bg-surface-container p-4 sm:p-5 shadow-sm transition-all duration-300 flex flex-col justify-between"
+                     style="border-top: 4px solid var({{ m.color_var }});">
+                    
+                    <!-- Encabezado de la tarjeta -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="size-2.5 rounded-full" style="background-color: var({{ m.color_var }});"></span>
+                                <h3 class="font-bold text-sm text-on-surface">{{ m.title }}</h3>
+                            </div>
+                            <span class="text-[10px] px-2 py-0.5 rounded font-semibold border"
+                                  style="background-color: var({{ m.color_var }}-bg); color: var({{ m.color_var }}); border-color: var({{ m.color_var }}-border);">
+                                {{ m.parameters }}
+                            </span>
+                        </div>
+                        <p class="text-xs text-on-surface-variant leading-relaxed mb-4">
+                            {{ m.desc }}
+                        </p>
+
+                        <!-- Lista estandarizada de métricas (MISMO orden en las 3 tarjetas) -->
+                        <div class="space-y-2.5 pt-3 border-t border-outline-variant/40 text-xs">
+                            <!-- 1. N.º de clústeres -->
+                            <div class="flex items-center justify-between">
+                                <span class="text-outline">N.º de clústeres:</span>
+                                {% if m.clusters is not none %}
+                                <strong class="text-on-surface font-bold text-sm">{{ m.clusters }}</strong>
+                                {% else %}
+                                <span class="text-rose-400 text-xs">no disponible; ejecuta el script de precálculo</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- 2. % de ruido -->
+                            <div class="flex items-center justify-between">
+                                <span class="text-outline">% de ruido:</span>
+                                {% if m.noise_pct is not none %}
+                                <span class="font-semibold text-rose-500">
+                                    {{ m.noise_pct }}%
+                                    {% if m.noise_count is not none %}
+                                    <span class="text-[10px] text-outline font-normal">({{ m.noise_count | string }} pts)</span>
+                                    {% endif %}
+                                </span>
+                                {% else %}
+                                <span class="text-rose-400 text-xs">no disponible</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- 3. Cobertura espacial -->
+                            <div class="flex items-center justify-between">
+                                <span class="text-outline">Cobertura espacial:</span>
+                                {% if m.coverage_pct is not none %}
+                                <strong class="font-bold text-emerald-500">{{ m.coverage_pct }}%</strong>
+                                {% else %}
+                                <span class="text-rose-400 text-xs">no disponible</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- 4. Silhouette espacial (métrica secundaria referencial) -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex flex-col">
+                                    <span class="text-outline">Silhouette espacial: <span class="text-amber-500 font-medium text-[10px]">(referencial)</span></span>
+                                    <span class="text-[9px] text-outline" title="Poco fiable para clústeres de densidad: puede ser negativo y desfavorece agrupaciones de densidad variable o formas arbitrarias">Silhouette calculado sin ruido (métrica referencial)</span>
+                                </div>
+                                {% if m.silhouette_spatial is not none %}
+                                <div class="text-right">
+                                    <strong class="font-bold text-on-surface">{{ m.silhouette_spatial }}</strong>
+                                    {% if (m.silhouette_deduplicated is defined and m.silhouette_deduplicated is not none) or (m.silhouette_dedup is defined and m.silhouette_dedup is not none) %}
+                                    <span class="block text-[10px] text-amber-500 font-semibold" title="Evaluado sobre coordenadas únicas sin puntos colapsados a distancia 0">
+                                        dedup: {{ m.silhouette_deduplicated | default(m.silhouette_dedup) }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                {% else %}
+                                <span class="text-outline text-xs">no disponible</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Micro-hotspots de una sola coordenada -->
+                            {% if m.single_coord_clusters is defined and m.single_coord_clusters is not none %}
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-outline">Micro-hotspots (1 coord):</span>
+                                <span class="text-on-surface font-semibold text-[11px]">{{ m.single_coord_clusters }} clústeres</span>
+                            </div>
+                            {% endif %}
+
+                            <!-- 5. Tiempo de ejecución -->
+                            <div class="flex items-center justify-between">
+                                <span class="text-outline">Tiempo de ejecución:</span>
+                                {% if m.execution_time_ms is not none %}
+                                <span class="text-on-surface font-mono text-[11px]">
+                                    {% if m.execution_time_ms >= 1000 %}
+                                    {{ (m.execution_time_ms / 1000.0) | round(2) }} s ({{ m.execution_time_ms }} ms)
+                                    {% else %}
+                                    {{ m.execution_time_ms }} ms
+                                    {% endif %}
+                                </span>
+                                {% else %}
+                                <span class="text-rose-400 text-xs">no disponible</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- 6. Mini-barra visual de ruido / cobertura -->
+                            {% if m.coverage_pct is not none and m.noise_pct is not none %}
+                            <div class="pt-1.5 space-y-1">
+                                <div class="flex justify-between text-[10px] text-outline">
+                                    <span>Cobertura: {{ m.coverage_pct }}%</span>
+                                    <span>Ruido: {{ m.noise_pct }}%</span>
+                                </div>
+                                <div class="h-2 w-full rounded-full bg-surface-container-highest overflow-hidden flex" title="Cobertura vs Ruido">
+                                    <div class="h-full rounded-l-full" style="width: {{ m.coverage_pct }}%; background-color: var({{ m.color_var }});"></div>
+                                    <div class="h-full bg-slate-500 rounded-r-full" style="width: {{ m.noise_pct }}%;"></div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- Procedencia auditada -->
+                            {% if m.provenance %}
+                            <div class="pt-2 text-[10px] text-outline leading-tight border-t border-outline-variant/30 flex items-start gap-1">
+                                <span class="material-symbols-outlined text-[12px] text-primary-container shrink-0 mt-0.5">history_edu</span>
+                                <span>{{ m.provenance }}</span>
+                            </div>
+                            {% endif %}
+
+                            <!-- Extras específicos de OPTICS -->
+                            {% if m.id == 'optics' %}
+                            <div class="pt-2.5 mt-2 border-t border-outline-variant/30 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-outline">N.º de valles activos:</span>
+                                    <strong class="font-bold text-amber-500">{{ m.active_valleys }} valles &xi;</strong>
+                                </div>
+
+                                <!-- Mini Reachability Plot SVG -->
+                                <div class="pt-1">
+                                    <div class="flex items-center justify-between text-[10px] text-outline mb-1">
+                                        <span>Mini diagrama de alcanzabilidad</span>
+                                        <span>Valles detectados</span>
+                                    </div>
+                                    <div class="p-2 rounded-lg bg-surface-container-lowest border border-outline-variant/60">
+                                        <svg class="w-full h-12" viewBox="0 0 100 40" preserveAspectRatio="none">
+                                            <line x1="0" y1="20" x2="100" y2="20" stroke="#fbbf24" stroke-width="0.8" stroke-dasharray="2 1" opacity="0.6"/>
+                                            {% for pt in m.mini_reachability %}
+                                            <rect x="{{ (loop.index0 * 9.5) + 2 }}" 
+                                                  y="{{ 40 - (pt.dist / (500 if current_context == 'chicago' else 800) * 36) | round }}" 
+                                                  width="6.5" 
+                                                  height="{{ (pt.dist / (500 if current_context == 'chicago' else 800) * 36) | round }}" 
+                                                  fill="{{ pt.color }}" 
+                                                  rx="0.8"
+                                                  opacity="{{ '0.5' if pt.valley == -1 else '0.9' }}"
+                                                  class="cursor-pointer hover:opacity-100 transition-opacity mini-reach-bar"
+                                                  data-mini-valley="{{ pt.valley }}"
+                                                  data-mini-name="{{ pt.name }}">
+                                                <title>{{ pt.name }}: {{ pt.dist }}m (Valle #{{ pt.valley }})</title>
+                                            </rect>
+                                            {% endfor %}
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Acordeón "Ver detalle" por tarjeta -->
+                    <details class="group mt-4 pt-3 border-t border-outline-variant/40">
+                        <summary class="cursor-pointer text-xs font-bold text-on-surface flex items-center justify-between select-none hover:text-primary-container transition-colors">
+                            <span>Ver detalle técnico</span>
+                            <span class="material-symbols-outlined text-base transition-transform group-open:rotate-180">expand_more</span>
+                        </summary>
+
+                        <div class="mt-3 pt-2 text-xs space-y-3 font-data-code">
+                            {% if m.id == 'dbscan' %}
+                            <!-- Detalle DBSCAN: Macro-núcleos -->
+                            <div>
+                                <span class="text-[10px] text-outline font-bold uppercase tracking-wider block mb-2">
+                                    Macro-núcleos identificados:
+                                </span>
+                                <div class="space-y-2">
+                                    {% for hs in dbscan_data.hotspots %}
+                                    <div class="p-2.5 rounded-lg bg-surface-container-high border border-outline-variant/40 flex flex-col justify-between">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="font-bold text-on-surface text-[11px] flex items-center gap-1.5">
+                                                <span class="size-2 rounded-full" style="background-color: {{ hs.color }};"></span>
+                                                {{ hs.name }}
+                                            </span>
+                                        </div>
+                                        <div class="text-[10px] text-on-surface-variant">
+                                            Delito top: <strong>{{ hs.top_delito }}</strong>
+                                        </div>
+                                        <div class="flex justify-between text-[9px] text-outline pt-1 mt-1 border-t border-outline-variant/20">
+                                            <span>Volumen: {{ hs.count }}</span>
+                                            <span style="color: var(--algo-dbscan);">Densidad: {{ hs.density }}</span>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            {% elif m.id == 'hdbscan' %}
+                            <!-- Detalle HDBSCAN: Persistencia lambda y rescatados -->
+                            <div>
+                                <div class="p-2.5 rounded-lg bg-surface-container-high border border-emerald-500/20 text-[11px] text-on-surface-variant leading-relaxed mb-2.5">
+                                    <strong style="color: var(--algo-hdbscan);">Rescate de eventos:</strong> {{ hdbscan_data.insights }}
+                                </div>
+                                <span class="text-[10px] text-outline font-bold uppercase tracking-wider block mb-2">
+                                    Clústeres por estabilidad persistente (&lambda;):
+                                </span>
+                                <div class="space-y-2">
+                                    {% for c in hdbscan_data.clusters[:5] %}
+                                    <div class="p-2.5 rounded-lg bg-surface-container-high border border-outline-variant/40 flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <span class="size-2 rounded-full" style="background-color: {{ c.color }};"></span>
+                                            <span class="text-[11px] font-semibold text-on-surface">{{ c.name }}</span>
+                                        </div>
+                                        <span class="text-[10px] font-bold" style="color: var(--algo-hdbscan);">&lambda; = {{ c.stability_lambda }}</span>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            {% elif m.id == 'optics' %}
+                            <!-- Detalle OPTICS: Valles jerárquicos extraídos y topografía multiescala -->
+                            <div class="space-y-3">
+                                <div class="p-2.5 rounded-lg bg-surface-container-high border border-amber-500/20 text-[11px] text-on-surface-variant leading-relaxed">
+                                    <strong class="text-amber-400">Topografía multiescala:</strong> {{ optics_data.insights }}
+                                </div>
+
+                                <div class="flex items-center justify-between text-[10px] text-outline uppercase font-bold tracking-wider">
+                                    <span>Valles extraídos (ξ = {{ optics_data.xi }}):</span>
+                                    <span class="text-amber-400">{{ optics_data.active_valleys_count }} activos</span>
+                                </div>
+
+                                <div class="space-y-2">
+                                    {% for v in optics_data.valleys[:4] %}
+                                    <div class="p-2.5 rounded-lg bg-surface-container-high border border-outline-variant/40 flex flex-col justify-between space-y-1.5 hover:border-amber-500/30 transition-colors">
+                                        <div class="flex items-center justify-between gap-1">
+                                            <span class="font-bold text-on-surface text-[11px] flex items-center gap-1.5 truncate">
+                                                <span class="size-2 rounded-full shrink-0" style="background-color: {{ v.hex }};"></span>
+                                                <span class="truncate">{{ v.name }}</span>
+                                            </span>
+                                            <span class="px-1.5 py-0.2 rounded text-[9px] font-bold border shrink-0
+                                                {% if 'ROJA' in v.status %}bg-rose-500/15 text-rose-300 border-rose-500/30
+                                                {% elif 'VIGILANCIA' in v.status %}bg-cyan-500/15 text-cyan-300 border-cyan-500/30
+                                                {% else %}bg-emerald-500/15 text-emerald-300 border-emerald-500/30{% endif %}">
+                                                {{ v.status }}
+                                            </span>
+                                        </div>
+                                        <div class="text-[10px] text-on-surface-variant flex items-center justify-between pt-0.5">
+                                            <span>Profundidad media: <strong class="text-amber-400 font-mono">{{ v.depth_m }} m</strong></span>
+                                            <span>Muestras: <strong class="font-mono text-on-surface">{{ "{:,}".format(v.incidents) }}</strong></span>
+                                        </div>
+                                        <div class="text-[9px] text-outline pt-1 border-t border-outline-variant/20 flex items-center justify-between">
+                                            <span class="truncate max-w-[160px]">{{ v.subclusters }}</span>
+                                            <span class="text-amber-400/90 font-medium">{{ v.density_eval }}</span>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="p-2.5 rounded-lg bg-surface-container-high/60 border border-outline-variant/40 space-y-1 text-[10px] text-outline">
+                                    <div class="flex items-center justify-between">
+                                        <span>Umbral dinámico de corte:</span>
+                                        <strong class="text-on-surface font-mono">{{ "{:,}".format(optics_data.threshold_m) }} m</strong>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span>Ruido / Picos aislados:</span>
+                                        <strong class="text-rose-400 font-mono">{{ optics_data.noise_count }} ({{ optics_data.noise_pct }}%)</strong>
+                                    </div>
+                                </div>
+
+                                <a href="#optics-full-details" class="block text-center py-2 px-3 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold transition-colors">
+                                    Explorar reachability plot y valles completos &darr;
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </details>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Detalle Técnico Expandido de OPTICS: Diagrama de Alcanzabilidad y Diagnóstico de Valles a Ancho Completo -->
+            <div id="optics-full-details" class="scroll-mt-16">
+                {% include 'components/optics_reachability_card.html' %}
+            </div>
+
+            <!-- Mini Matriz ARI 3x3 de concordancia entre modelos -->
+            {% if model_comparison.ari_matrix %}
+            <div class="rounded-xl border border-outline-variant/60 bg-surface-container p-4 sm:p-5 shadow-sm space-y-4 font-data-code">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/40 gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary-container text-lg">grid_on</span>
+                        <h3 class="text-xs sm:text-sm font-bold text-on-surface uppercase tracking-wider">
+                            Coincidencia entre modelos de densidad (índice de Rand ajustado · ARI)
+                        </h3>
+                    </div>
+                    <span class="text-[11px] text-outline">
+                        1,0 = agrupamientos idénticos · 0,0 = concordancia aleatoria
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+                    <!-- Mini matriz 3x3 -->
+                    <div class="lg:col-span-5 overflow-x-auto">
+                        <table class="w-full text-xs text-center border-collapse">
+                            <thead>
+                                <tr>
+                                    <th class="p-2 text-left text-outline font-semibold border-b border-outline-variant/40 text-[11px]">Algoritmo</th>
+                                    {% for col in model_comparison.ari_matrix.models %}
+                                    <th class="p-2 text-on-surface font-bold border-b border-outline-variant/40 text-[11px]">
+                                        {{ col }}
+                                    </th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row_name in model_comparison.ari_matrix.models %}
+                                {% set row_idx = loop.index0 %}
+                                <tr class="border-b border-outline-variant/20">
+                                    <td class="p-2 text-left font-bold text-on-surface text-[11px]">
+                                        {{ row_name }}
+                                    </td>
+                                    {% for col_name in model_comparison.ari_matrix.models %}
+                                    {% set col_idx = loop.index0 %}
+                                    {% set val = model_comparison.ari_matrix.scores[row_idx][col_idx] %}
+                                    <td class="p-2">
+                                        <span class="inline-block px-2 py-1 rounded text-xs font-bold font-mono
+                                            {% if val == 1.0 %}
+                                            bg-primary-container/20 text-primary-container border border-primary-container/30
+                                            {% elif val >= 0.85 %}
+                                            bg-emerald-500/20 text-emerald-400 border border-emerald-500/30
+                                            {% elif val >= 0.70 %}
+                                            bg-sky-500/20 text-sky-400 border border-sky-500/30
+                                            {% else %}
+                                            bg-surface-container-high text-on-surface-variant border border-outline-variant/40
+                                            {% endif %}">
+                                            {{ "%.3f"|format(val) }}
+                                        </span>
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Explicación y Nota Metodológica de Honestidad -->
+                    <div class="lg:col-span-7 space-y-3 text-xs leading-relaxed">
+                        <p class="text-on-surface-variant">
+                            {{ model_comparison.ari_matrix.explanation }}
+                        </p>
+                        {% if model_comparison.ari_matrix.mutual_clustered_ari %}
+                        <div class="p-2.5 rounded-lg bg-surface-container-high border border-outline-variant/40 text-[11px] text-on-surface-variant">
+                            <strong class="text-on-surface block mb-1">ARI mutuo agrupado (excluyendo ruido -1 de ambos modelos):</strong>
+                            <span>{{ model_comparison.ari_matrix.mutual_clustered_ari.note }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="p-3 rounded-lg border border-amber-400/30 bg-amber-500/10 text-amber-900 dark:text-amber-200 flex items-start gap-2">
+                            <span class="material-symbols-outlined text-base text-amber-500 shrink-0 mt-0.5">info</span>
+                            <p class="leading-relaxed text-[11px]">
+                                <strong>Nota metodológica sobre honestidad de métricas:</strong> El coeficiente de Silhouette espacial es una métrica referencial poco fiable para modelos de densidad: penaliza agrupaciones de formas arbitrarias o densidad variable y puede ser negativo (en Chicago resulta negativo porque eventos en bordes de núcleos densos están a menor distancia euclidiana de otros clústeres contiguos que de los extremos remotos de su propio conglomerado). Además, se calcula excluyendo el ruido espacial (-1), lo que favorece a modelos que descartan más eventos marginales. Evalúa siempre la silueta en conjunto con la <strong>tasa de cobertura espacial</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- ================================================================== -->
+        <!-- SECCIÓN 4: TAXONOMÍA JERÁRQUICA Y CLUSTERMAP                       -->
+        <!-- ================================================================== -->
+        <section id="taxonomia" class="scroll-mt-16 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold font-headline-md text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary-container text-xl">account_tree</span>
+                        Taxonomía jerárquica y clustermap
+                    </h2>
+                    <p class="text-xs text-on-surface-variant font-data-code mt-0.5">
+                        ¿Qué muestra esto? Agrupación aglomerativa de distritos y zonas según homogeneidad en sus patrones delictivos multivariados.
+                    </p>
+                </div>
+                <span class="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-surface-container-high border border-outline-variant text-outline self-start sm:self-auto">
+                    {{ 'Periodo 2020–2024 · 6 macro-zonas (n ≥ 3)' if current_context == 'bolivia' else 'Periodo 2024–2025 · 22 distritos CPD (excluido D-31)' }}
+                </span>
+            </div>
+
+            <!-- Panel del Dendrograma Jerárquico Aglomerativo (Ward Linkage) -->
+            {% include 'components/dendrogram_card.html' %}
+        </section>
+
+        <!-- ================================================================== -->
+        <!-- SECCIÓN 5: TABLA DE ZONAS Y PERFILES DELICTIVOS                    -->
+        <!-- ================================================================== -->
+        <section id="tabla" class="scroll-mt-16 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold font-headline-md text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary-container text-xl">table_chart</span>
+                        Tabla de zonas y perfiles delictivos
+                    </h2>
+                    <p class="text-xs text-on-surface-variant font-data-code mt-0.5">
+                        ¿Qué muestra esto? Detalle granular por distrito o zona urbana con métricas operativas, volumen y niveles de alerta preventiva.
+                    </p>
+                </div>
+                <span class="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-surface-container-high border border-outline-variant text-outline self-start sm:self-auto">
+                    {{ 'Periodo 2024–2026 · Bolivia (39 crónicas en 6 zonas)' if current_context == 'bolivia' else 'Periodo 2024–2025 · Chicago CPD (22 distritos)' }}
+                </span>
+            </div>
+
+            <!-- Tabla de Taxonomía de Zonas / Distritos Urbanos -->
+            {% include 'components/district_table.html' %}
+        </section>
+
+        <!-- ================================================================== -->
+        <!-- SECCIÓN 6: VALIDACIÓN METODOLÓGICA Y SENSIBILIDAD (PLEGABLE)       -->
+        <!-- ================================================================== -->
+        <section id="validacion" class="scroll-mt-16 space-y-4">
+            {% include 'components/validation_card.html' %}
+        </section>
+
+    </main>
 </div>
 {% endblock %}
 

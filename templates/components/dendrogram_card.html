@@ -1,23 +1,23 @@
 <!-- PANEL DEL DENDROGRAMA JERÁRQUICO AGLOMERATIVO // MULTI-CONTEXTO -->
-<section id="dendrogram-interactive-container" class="rounded-xl border border-outline-variant bg-surface-container p-4 sm:p-6 shadow-sm font-data-code space-y-4">
+<section id="dendrogram-interactive-container" class="rounded-xl border border-outline-variant bg-surface-container p-4 sm:p-6 shadow-sm font-data-code space-y-5">
     <!-- Header del Módulo con Selector de Métodos de Enlace (Linkage Criteria) -->
     <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-3 border-b border-outline-variant/70 gap-3">
         <div>
             <div class="flex items-center gap-2 mb-1">
                 <span class="size-2 rounded-full bg-primary-container animate-pulse"></span>
                 <span class="text-xs font-bold uppercase tracking-wider text-primary-container">
-                    TAXONOMÍA DELICTIVA // CLUSTERING JERÁRQUICO AGLOMERATIVO
+                    Taxonomía delictiva · Clustering jerárquico aglomerativo
                 </span>
                 <span class="text-[10px] px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">
-                    {{ 'BOLIVIA' if current_context != 'chicago' else 'CHICAGO CPD' }}
+                    {{ clustermap_data.scope_badge }}
                 </span>
             </div>
             <h2 class="text-base sm:text-lg font-bold font-headline-md text-on-surface flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary-container">account_tree</span>
-                ÁRBOL TAXONÓMICO &amp; MATRIZ CLUSTERMAP MULTIVARIADA
+                Árbol taxonómico y matriz clustermap multivariada
             </h2>
             <p id="dendro-linkage-desc" class="text-xs text-on-surface-variant font-data-code mt-0.5 max-w-3xl leading-relaxed">
-                Minimiza la suma total de varianzas intraclúster mediante el criterio de Ward. Permite estructurar distritos y zonas según patrones homogéneos de criminalidad.
+                Minimiza la suma total de varianzas intraclúster mediante el criterio de Ward sobre proporciones delictivas transformadas con Hellinger (&radic;p). La transformación se aplica porque las proporciones son datos composicionales (suman 1); las distancias cofenéticas con y sin ella no son directamente comparables. Sus alturas representan incrementos en la suma de cuadrados (&Delta;SS).
             </p>
         </div>
 
@@ -29,6 +29,7 @@
                 <button type="button" 
                         data-linkage="{{ opt.id }}"
                         data-r="{{ opt.cophenetic_r }}"
+                        data-r-dir="{{ opt.cophenetic_direct_r }}"
                         data-desc="{{ opt.desc }}"
                         class="btn-linkage px-2 py-1 rounded text-[11px] font-bold transition-all {{ 'bg-primary-container text-on-primary shadow-sm' if opt.active else 'text-outline hover:text-on-surface' }}">
                     {{ opt.name.split('(')[0].strip() }}
@@ -38,29 +39,50 @@
 
             <!-- Coeficiente Cofenético -->
             <div class="px-2.5 py-1.5 rounded-lg bg-surface-container-high border border-outline-variant/80 flex items-center gap-1.5">
-                <span class="text-outline text-[11px]">Correlación (r):</span>
-                <strong id="dendro-cophenetic-val" class="text-emerald-700 dark:text-emerald-400 font-bold text-xs">
-                    r = {{ '0.812' if current_context == 'chicago' else '0.789' }}
+                <span class="text-outline text-[11px]">Cofenética (r):</span>
+                <strong id="dendro-cophenetic-val" class="text-emerald-700 dark:text-emerald-400 font-bold text-xs" title="Correlación cofenética con Hellinger vs sin Hellinger">
+                    r = {{ clustermap_data.cophenetic_r }}
                 </strong>
+                <span id="dendro-cophenetic-direct" class="text-[10px] text-outline">
+                    (sin Hellinger: {{ clustermap_data.cophenetic_direct_r }})
+                </span>
             </div>
         </div>
     </div>
 
-    <!-- Barra de Herramientas: Slider de Umbral de Corte Dinámico (t) y Toggle de Vistas (Dendrograma vs Clustermap) -->
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-3 p-3.5 rounded-xl bg-surface-container-lowest/90 border border-outline-variant/60">
+    <!-- Banner de Estabilidad Taxonómica (Bootstrap B=200 offline) -->
+    <div class="rounded-xl border border-primary-container/30 bg-primary-container/10 p-3 sm:p-4 text-xs font-data-code text-on-surface flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm">
+        <div class="flex items-start sm:items-center gap-2.5">
+            <span class="material-symbols-outlined text-primary-container text-base shrink-0 mt-0.5 sm:mt-0">verified</span>
+            <div>
+                <strong class="font-bold text-on-surface">Estabilidad de la taxonomía (Bootstrap B={{ clustermap_data.stability.bootstrap_B }}, semilla fija {{ clustermap_data.stability.random_seed }}):</strong>
+                <span class="text-on-surface-variant ml-1">
+                    ARI medio de agrupamiento = <strong>{{ clustermap_data.stability.mean_ari }}</strong> (IC 95%: [{{ clustermap_data.stability.ci_95[0] }}, {{ clustermap_data.stability.ci_95[1] }}]). El remuestreo bootstrap evalúa la consistencia frente al ruido de muestreo dentro de cada unidad territorial (variabilidad interna de crónicas/reportes), no la selección o adición de unidades.
+                </span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+            <span class="text-[10px] px-2 py-0.5 rounded bg-surface-container-highest text-outline font-mono border border-outline-variant/40">
+                v{{ clustermap_data.stability.script_version }} · SHA: {{ clustermap_data.stability.script_sha256[:10] }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Barra de Herramientas: Slider de Umbral de Corte Dinámico (t) y Guía de Silueta -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 rounded-xl bg-surface-container-lowest/90 border border-outline-variant/60">
         <!-- Control 1: Slider de Umbral de Corte Dinámico (t) -->
-        <div class="md:col-span-8 flex flex-col justify-center">
-            <div class="flex flex-wrap justify-between items-center mb-1 text-xs gap-1">
+        <div class="lg:col-span-7 flex flex-col justify-center space-y-2">
+            <div class="flex flex-wrap justify-between items-center text-xs gap-1">
                 <label for="slider-dendro-threshold" class="text-on-surface flex items-center gap-1.5 font-semibold">
                     <span class="material-symbols-outlined text-sm text-primary-container">horizontal_rule</span>
-                    Umbral de Corte de Distancia Cofenética (t):
+                    Umbral de corte de distancia (t):
                 </label>
                 <div class="flex items-center gap-2">
                     <span id="val-dendro-threshold" class="px-2 py-0.5 rounded bg-primary-container/20 text-primary-container font-bold border border-primary-container/40 text-xs">
-                        t = {{ clustermap_data.default_threshold }}
+                        t = {{ clustermap_data.active_t }}
                     </span>
                     <span id="val-dendro-clusters" class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40 font-bold border text-xs">
-                        k = 3 Macro-Grupos
+                        k = {{ clustermap_data.active_k }} grupos
                     </span>
                 </div>
             </div>
@@ -69,246 +91,296 @@
                    min="{{ clustermap_data.min_t }}" 
                    max="{{ clustermap_data.max_t }}" 
                    step="{{ clustermap_data.step_t }}" 
-                   value="{{ clustermap_data.default_threshold }}"
+                   value="{{ clustermap_data.active_t }}"
+                   data-max-h="{{ clustermap_data.max_t }}"
                    class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary-container">
-            <div class="flex justify-between text-[10px] text-outline mt-1 font-mono">
-                <span>{{ clustermap_data.min_t }} (Micro-partición fina)</span>
-                <span>Óptimo Calibrado</span>
-                <span>{{ clustermap_data.max_t }} (Macro-fusión global)</span>
+            <div class="flex justify-between text-[10px] text-outline font-mono">
+                <span>{{ clustermap_data.min_t }} (partición fina)</span>
+                <span class="text-primary-container font-semibold">
+                    Corte sugerido: t = {{ clustermap_data.suggested_cut_t }} (k = {{ clustermap_data.suggested_cut_k }}, mayor salto &Delta;h)
+                </span>
+                <span>{{ clustermap_data.max_t }} (macro-fusión)</span>
             </div>
         </div>
 
-        <!-- Control 2: Toggle de Vista (Árbol SVG vs Matriz Clustermap) -->
-        <div class="md:col-span-4 flex flex-col justify-center border-t md:border-t-0 md:border-l border-outline-variant/40 pt-2 md:pt-0 md:pl-3">
-            <span class="text-outline text-[11px] block mb-1">Visualización Activa:</span>
-            <div class="flex gap-1.5">
-                <button type="button" 
-                        id="btn-view-dendrogram" 
-                        class="flex-1 py-1.5 px-2 rounded bg-primary-container text-on-primary font-bold text-[11px] text-center shadow-sm transition-all flex items-center justify-center gap-1">
-                    <span class="material-symbols-outlined text-[13px]">account_tree</span>
-                    <span>Árbol SVG</span>
-                </button>
-                <button type="button" 
-                        id="btn-view-clustermap" 
-                        class="flex-1 py-1.5 px-2 rounded bg-surface-container border border-outline-variant text-outline hover:text-on-surface text-[11px] text-center transition-all flex items-center justify-center gap-1">
-                    <span class="material-symbols-outlined text-[13px]">grid_on</span>
-                    <span>Clustermap (Heatmap)</span>
-                </button>
+        <!-- Control 2: Mini curva de Silhouette para orientación de corte k=2..6 -->
+        <div class="lg:col-span-5 flex flex-col justify-center border-t lg:border-t-0 lg:border-l border-outline-variant/40 pt-3 lg:pt-0 lg:pl-4 space-y-1.5">
+            <div class="flex items-center justify-between text-xs">
+                <span class="text-outline font-semibold">Mini curva de Silhouette (orientación k=2..6):</span>
+                <span class="text-[10px] text-outline">referencial</span>
             </div>
-        </div>
-    </div>
-
-    <!-- CONTENEDOR VISTA 1: ÁRBOL VECTORIAL DEL DENDROGRAMA CON CORTE DINÁMICO -->
-    <div id="dendrogram-tree-view" class="space-y-3">
-        {% if current_context == 'chicago' %}
-        <!-- Badges de Macro-Clusters (CHICAGO) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 font-data-code text-xs">
-            <div class="p-3 rounded-lg bg-rose-950/20 border border-rose-800/40 flex items-start gap-2.5 dendro-badge-card cursor-pointer hover:border-rose-500 transition-colors" data-branch="A">
-                <span class="size-3 mt-0.5 rounded-full bg-rose-500 shrink-0"></span>
-                <div>
-                    <strong class="text-rose-300 font-semibold block text-xs">Macro-Cluster A (Violencia Armada &amp; Crítico)</strong>
-                    <p class="text-[11px] text-outline mt-0.5 leading-snug">Distritos 011 (Harrison), 007 (Englewood), 010 (Ogden), 015 (Austin), 006 (Gresham).</p>
-                </div>
-            </div>
-            <div class="p-3 rounded-lg bg-cyan-950/20 border border-cyan-800/40 flex items-start gap-2.5 dendro-badge-card cursor-pointer hover:border-cyan-500 transition-colors" data-branch="B">
-                <span class="size-3 mt-0.5 rounded-full bg-cyan-400 shrink-0"></span>
-                <div>
-                    <strong class="text-cyan-300 font-semibold block text-xs">Macro-Cluster B (Comercial &amp; Alta Densidad)</strong>
-                    <p class="text-[11px] text-outline mt-0.5 leading-snug">Distritos 001 (Central Loop), 018 (Near North), 019 (Town Hall), 012 (Near West).</p>
-                </div>
-            </div>
-            <div class="p-3 rounded-lg bg-emerald-950/20 border border-emerald-800/40 flex items-start gap-2.5 dendro-badge-card cursor-pointer hover:border-emerald-500 transition-colors" data-branch="C">
-                <span class="size-3 mt-0.5 rounded-full bg-emerald-400 shrink-0"></span>
-                <div>
-                    <strong class="text-emerald-300 font-semibold block text-xs">Macro-Cluster C (Residencial Estable)</strong>
-                    <p class="text-[11px] text-outline mt-0.5 leading-snug">Distritos 016 (Jefferson Park), 017 (Albany), 020 (Lincoln), 008 (Chicago Lawn).</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Visualizador Vectorial del Dendrograma Chicago -->
-        <div class="w-full bg-surface-container-lowest rounded-lg border border-outline-variant/40 p-3 sm:p-4 overflow-x-auto custom-scrollbar">
-            <div class="min-w-[650px] sm:min-w-[780px] h-60 relative grid-matrix-bg p-2 flex flex-col justify-between">
-                <div class="flex justify-between items-center text-[10px] font-data-code text-outline border-b border-outline-variant/30 pb-1">
-                    <span>Distancia Cofenética de Fusión (Ward Incremental)</span>
-                    <span class="text-primary-container font-semibold">Hover en ramas para Brushing &amp; Linking con mapa</span>
-                </div>
-
-                <!-- Árbol SVG Vectorial Chicago -->
-                <svg id="svg-dendrogram-chicago" class="w-full h-44 overflow-visible" fill="none" viewBox="0 0 760 160">
-                    <!-- Línea de Umbral de Corte Horizontal Dinámica -->
-                    <line id="dendro-cut-line" stroke="#00e5ff" stroke-dasharray="4 4" stroke-width="1.8" x1="10" x2="750" y1="75" y2="75" class="transition-all duration-150"></line>
-                    <text id="dendro-cut-text" fill="#00e5ff" font-family="'JetBrains Mono'" font-size="10" font-weight="700" x="590" y="70" class="transition-all duration-150">Corte t=45.0 (k=3)</text>
-
-                    <!-- Macro-Rama A (Rojo: Distritos 11, 7, 15, 10, 6) -->
-                    <g class="dendro-branch-group cursor-pointer transition-all" data-branch="A">
-                        <path d="M 40,140 L 40,110 L 80,110 L 80,140" stroke="#ff3366" stroke-width="2"></path>
-                        <path d="M 60,110 L 60,85 L 120,85 L 120,140" stroke="#ff3366" stroke-width="2"></path>
-                        <path d="M 90,85 L 90,70 L 170,70 L 170,140" stroke="#ff3366" stroke-width="2"></path>
-                        <path d="M 130,70 L 130,40 L 260,40" stroke="#ff3366" stroke-width="2.5"></path>
-                    </g>
-
-                    <!-- Macro-Rama B (Cyan: Distritos 1, 18, 19, 12) -->
-                    <g class="dendro-branch-group cursor-pointer transition-all" data-branch="B">
-                        <path d="M 280,140 L 280,115 L 340,115 L 340,140" stroke="#00e5ff" stroke-width="2"></path>
-                        <path d="M 310,115 L 310,90 L 400,90 L 400,140" stroke="#00e5ff" stroke-width="2"></path>
-                        <path d="M 355,90 L 355,40 L 260,40" stroke="#00e5ff" stroke-width="2.5"></path>
-                    </g>
-
-                    <!-- Macro-Rama C (Verde: Distritos 16, 17, 20, 8, 4) -->
-                    <g class="dendro-branch-group cursor-pointer transition-all" data-branch="C">
-                        <path d="M 480,140 L 480,120 L 540,120 L 540,140" stroke="#34d399" stroke-width="2"></path>
-                        <path d="M 510,120 L 510,95 L 600,95 L 600,140" stroke="#34d399" stroke-width="2"></path>
-                        <path d="M 555,95 L 555,80 L 680,80 L 680,140" stroke="#34d399" stroke-width="2"></path>
-                        <path d="M 617,80 L 617,25 L 307,25" stroke="#34d399" stroke-width="2.5"></path>
-                    </g>
-
-                    <!-- Raíz Principal del Dendrograma -->
-                    <path d="M 260,40 L 260,25" stroke="#849396" stroke-width="2"></path>
-                </svg>
-
-                <!-- Etiquetas de Distritos en la Base del Dendrograma -->
-                <div class="flex justify-between px-2 text-[9px] font-data-code text-outline border-t border-outline-variant/30 pt-1">
-                    <span class="text-rose-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Harrison">D-011</span>
-                    <span class="text-rose-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Englewood">D-007</span>
-                    <span class="text-rose-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Austin">D-015</span>
-                    <span class="text-rose-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Ogden">D-010</span>
-                    <span class="text-cyan-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Central">D-001</span>
-                    <span class="text-cyan-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Near North">D-018</span>
-                    <span class="text-cyan-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Town Hall">D-019</span>
-                    <span class="text-emerald-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Jefferson Park">D-016</span>
-                    <span class="text-emerald-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Albany">D-017</span>
-                    <span class="text-emerald-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Lincoln">D-020</span>
-                    <span class="text-emerald-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Chicago Lawn">D-008</span>
-                </div>
-            </div>
-        </div>
-
-        {% else %}
-        <!-- Badges de Macro-Clusters (BOLIVIA) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 font-data-code text-xs">
-            <div class="p-3 rounded-lg bg-rose-950/20 border border-rose-800/40 flex items-start gap-2.5 dendro-badge-card cursor-pointer hover:border-rose-500 transition-colors" data-branch="A">
-                <span class="size-3 mt-0.5 rounded-full bg-rose-500 shrink-0"></span>
-                <div>
-                    <strong class="text-rose-300 font-semibold block text-xs">Macro-Cluster A (Jerárquico #2: Gravedad Crítica)</strong>
-                    <p class="text-[11px] text-outline mt-0.5 leading-snug">Santa Cruz Casco Central (Gravedad=40, Robo Agravado 62.5%, 16 hechos).</p>
-                </div>
-            </div>
-            <div class="p-3 rounded-lg bg-amber-950/20 border border-amber-800/40 flex items-start gap-2.5 dendro-badge-card cursor-pointer hover:border-amber-500 transition-colors" data-branch="B">
-                <span class="size-3 mt-0.5 rounded-full bg-amber-400 shrink-0"></span>
-                <div>
-                    <strong class="text-amber-300 font-semibold block text-xs">Macro-Cluster B (Jerárquico #1: Violencia &amp; Homicidio)</strong>
-                    <p class="text-[11px] text-outline mt-0.5 leading-snug">Cochabamba Cercado (Gravedad=30) &amp; Plan 3000 (Gravedad=14, Homicidios 25%).</p>
-                </div>
-            </div>
-            <div class="p-3 rounded-lg bg-emerald-950/20 border border-emerald-800/40 flex items-start gap-2.5 dendro-badge-card cursor-pointer hover:border-emerald-500 transition-colors" data-branch="C">
-                <span class="size-3 mt-0.5 rounded-full bg-emerald-400 shrink-0"></span>
-                <div>
-                    <strong class="text-emerald-300 font-semibold block text-xs">Macro-Cluster C (Jerárquico #0: Menor Gravedad &amp; Moderado)</strong>
-                    <p class="text-[11px] text-outline mt-0.5 leading-snug">Equipetrol (Gravedad=9), La Paz (Gravedad=8), Los Lotes (Gravedad=7), Pampa (Gravedad=6).</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Visualizador Vectorial del Dendrograma Bolivia -->
-        <div class="w-full bg-surface-container-lowest rounded-lg border border-outline-variant/40 p-3 sm:p-4 overflow-x-auto custom-scrollbar">
-            <div class="min-w-[650px] sm:min-w-[780px] h-60 relative grid-matrix-bg p-2 flex flex-col justify-between">
-                <div class="flex justify-between items-center text-[10px] font-data-code text-outline border-b border-outline-variant/30 pb-1">
-                    <span>Distancia Cofenética de Fusión (Ward Incremental)</span>
-                    <span class="text-primary-container font-semibold">Hover en ramas para Brushing &amp; Linking con mapa</span>
-                </div>
-
-                <!-- Árbol SVG Vectorial Bolivia -->
-                <svg id="svg-dendrogram-bolivia" class="w-full h-44 overflow-visible" fill="none" viewBox="0 0 760 160">
-                    <!-- Línea de Umbral de Corte Horizontal Dinámica -->
-                    <line id="dendro-cut-line" stroke="#00e5ff" stroke-dasharray="4 4" stroke-width="1.8" x1="10" x2="750" y1="94" y2="94" class="transition-all duration-150"></line>
-                    <text id="dendro-cut-text" fill="#00e5ff" font-family="'JetBrains Mono'" font-size="10" font-weight="700" x="580" y="89" class="transition-all duration-150">Corte t=12.5 (k=3)</text>
-
-                    <!-- Macro-Rama A (Rojo: Santa Cruz) -->
-                    <g class="dendro-branch-group cursor-pointer transition-all" data-branch="A">
-                        <path d="M 80,140 L 80,90 L 160,90 L 160,140" stroke="#ff3366" stroke-width="2.5"></path>
-                        <path d="M 120,90 L 120,45 L 280,45" stroke="#ff3366" stroke-width="2.5"></path>
-                    </g>
-
-                    <!-- Macro-Rama B (Ámbar: Cochabamba y Plan 3000) -->
-                    <g class="dendro-branch-group cursor-pointer transition-all" data-branch="B">
-                        <path d="M 240,140 L 240,110 L 320,110 L 320,140" stroke="#fbbf24" stroke-width="2"></path>
-                        <path d="M 280,110 L 280,45" stroke="#fbbf24" stroke-width="2.5"></path>
-                    </g>
-
-                    <!-- Macro-Rama C (Verde: Equipetrol, La Paz, Los Lotes, Pampa) -->
-                    <g class="dendro-branch-group cursor-pointer transition-all" data-branch="C">
-                        <path d="M 440,140 L 440,115 L 500,115 L 500,140" stroke="#34d399" stroke-width="2"></path>
-                        <path d="M 560,140 L 560,115 L 640,115 L 640,140" stroke="#34d399" stroke-width="2"></path>
-                        <path d="M 470,115 L 470,85 L 600,85 L 600,115" stroke="#34d399" stroke-width="2"></path>
-                        <path d="M 535,85 L 535,30 L 200,30" stroke="#34d399" stroke-width="2.5"></path>
-                    </g>
-
-                    <!-- Raíz Principal del Dendrograma -->
-                    <path d="M 200,45 L 200,30" stroke="#849396" stroke-width="2"></path>
-                </svg>
-
-                <!-- Etiquetas de Zonas de Bolivia en la Base del Dendrograma -->
-                <div class="flex justify-between px-8 text-[9px] font-data-code text-outline border-t border-outline-variant/30 pt-1">
-                    <span class="text-rose-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Santa Cruz">Santa Cruz Core</span>
-                    <span class="text-amber-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Cochabamba">Cochabamba</span>
-                    <span class="text-amber-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Plan 3000">Plan 3000</span>
-                    <span class="text-emerald-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Equipetrol">Equipetrol</span>
-                    <span class="text-emerald-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="La Paz">La Paz</span>
-                    <span class="text-emerald-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Los Lotes">Los Lotes</span>
-                    <span class="text-emerald-400 font-bold hover:underline cursor-pointer dendro-leaf" data-zone="Pampa">Pampa</span>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-    </div>
-
-    <!-- CONTENEDOR VISTA 2: MATRIZ CLUSTERMAP (HEATMAP ZONAS x DELITOS) -->
-    <div id="dendrogram-clustermap-view" class="w-full bg-surface-container-lowest rounded-lg border border-outline-variant/40 p-3 sm:p-4 overflow-x-auto custom-scrollbar hidden">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 mb-3 border-b border-outline-variant/30 gap-1 text-xs">
             <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm text-cyan-400">grid_view</span>
-                <span class="font-bold text-on-surface uppercase">Matriz Clustermap: Zonas Reordenadas &times; Tipologías Penales (%)</span>
-            </div>
-            <span class="text-[10px] text-outline">Filas ordenadas según la proximidad en el árbol dendrogramático</span>
-        </div>
-
-        <table class="w-full text-left font-data-code text-xs border-collapse min-w-[700px]">
-            <thead>
-                <tr class="border-b border-outline-variant/40 text-outline text-[10px] uppercase bg-surface-container-high/40">
-                    <th class="py-2 px-2.5">Zona / Distrito</th>
-                    <th class="py-2 px-2 text-center">Macro</th>
-                    {% for col in clustermap_data.columns %}
-                    <th class="py-2 px-2 text-center font-normal">{{ col }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-outline-variant/20">
-                {% for r in clustermap_data.rows %}
-                <tr class="hover:bg-surface-container-high/50 transition-colors">
-                    <td class="py-2 px-2.5 font-bold text-on-surface flex items-center gap-1.5 whitespace-nowrap">
-                        <span class="size-2 rounded-full shrink-0" style="background-color: {{ r.color }};"></span>
-                        <span>{{ r.name }}</span>
-                    </td>
-                    <td class="py-2 px-2 text-center">
-                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold" style="background-color: {{ r.color }}22; color: {{ r.color }}; border: 1px solid {{ r.color }}44;">
-                            {{ r.macro }}
-                        </span>
-                    </td>
-                    {% for val in r.vals %}
-                    <td class="py-2 px-2 text-center font-mono text-[11px]" 
-                        style="background-color: rgba(0, 229, 255, {{ (val / 100 * 0.45) | round(2) }}); color: {{ '#ffffff' if val > 30 else 'var(--text-muted)' }};">
-                        {{ val }}%
-                    </td>
-                    {% endfor %}
-                </tr>
+                {% for item in clustermap_data.silhouette_curve %}
+                <div class="flex-1 p-1.5 rounded bg-surface-container-high border text-center transition-all
+                    {{ 'border-primary-container bg-primary-container/10 font-bold text-primary-container' if item.k == clustermap_data.active_k else 'border-outline-variant/40 text-on-surface-variant' }}"
+                    title="Silhouette para k={{ item.k }}: {{ item.silhouette }}">
+                    <div class="text-[9px] text-outline uppercase font-mono">k={{ item.k }}</div>
+                    <div class="text-xs font-bold font-mono">{{ item.silhouette }}</div>
+                </div>
                 {% endfor %}
-            </tbody>
-        </table>
-        
-        <div class="mt-3 pt-2 border-t border-outline-variant/30 flex items-center justify-between text-[10px] text-outline">
-            <span>Intensidad de color proporcional a la concentración delictiva.</span>
-            <span>Permite explicar por qué se fusionan las ramas en el dendrograma.</span>
+            </div>
+            <p class="text-[10px] text-outline leading-tight">
+                El corte óptimo equilibra la silueta composicional con el mayor salto vertical (&Delta;h) entre fusiones.
+            </p>
         </div>
     </div>
+
+    <!-- VISTA INTEGRADA B2: DENDROGRAMA VECTORIAL + MATRIZ CLUSTERMAP CONTIGUA -->
+    <div class="space-y-4">
+        <!-- Encabezado de la vista unificada -->
+        <div class="flex items-center justify-between text-xs text-outline border-b border-outline-variant/30 pb-2">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container text-sm">visibility</span>
+                <span class="font-bold text-on-surface uppercase tracking-wider">
+                    Dendrograma SVG &amp; Clustermap contiguo (mismo orden de hojas)
+                </span>
+            </div>
+            <span class="text-[11px] text-outline">
+                Columnas agrupadas por correlación de tipologías penales
+            </span>
+        </div>
+
+        <!-- 1. Visualizador Vectorial del Dendrograma SVG -->
+        <div class="w-full bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-3 sm:p-4 overflow-x-auto custom-scrollbar">
+            <div class="min-w-[700px] sm:min-w-[780px] h-52 relative grid-matrix-bg p-2 flex flex-col justify-between">
+                <div class="flex justify-between items-center text-[10px] font-data-code text-outline border-b border-outline-variant/30 pb-1">
+                    <span>Distancia jerárquica de fusión ({{ clustermap_data.linkage.capitalize() }})</span>
+                    <span class="text-primary-container font-semibold">Hover en hojas para vincular con la matriz</span>
+                </div>
+
+                <!-- Árbol SVG Vectorial Calculado Matemáticamente -->
+                <svg id="svg-dendrogram-tactical" class="w-full h-36 overflow-visible" fill="none" viewBox="0 0 760 155">
+                    <!-- Línea de Umbral de Corte Horizontal Dinámica -->
+                    <line id="dendro-cut-line" stroke="#00e5ff" stroke-dasharray="4 4" stroke-width="1.8" x1="10" x2="750" y1="{{ clustermap_data.svg_tree.cut_y }}" y2="{{ clustermap_data.svg_tree.cut_y }}" class="transition-all duration-150"></line>
+                    <text id="dendro-cut-text" fill="#00e5ff" font-family="'JetBrains Mono'" font-size="10" font-weight="700" x="580" y="{{ clustermap_data.svg_tree.cut_y - 5 }}" class="transition-all duration-150">Corte t={{ clustermap_data.svg_tree.cut_t }} (k={{ clustermap_data.active_k }})</text>
+
+                    <!-- Enlaces Jerárquicos de Fusión (scipy.cluster.hierarchy.dendrogram) -->
+                    <g id="dendro-links-group">
+                        {% for link in clustermap_data.svg_tree.links %}
+                        <path d="{{ link.path }}" stroke="#64748b" stroke-width="1.8" class="transition-all hover:stroke-cyan-400"></path>
+                        {% endfor %}
+                    </g>
+
+                    <!-- Puntos Terminales de Hojas -->
+                    <g id="dendro-leaves-group">
+                        {% for leaf in clustermap_data.svg_tree.leaves %}
+                        <circle cx="{{ leaf.x }}" cy="{{ leaf.y }}" r="3.5" fill="{{ leaf.color }}" stroke="#ffffff" stroke-width="1"></circle>
+                        {% endfor %}
+                    </g>
+                </svg>
+
+                <!-- Etiquetas de Unidades en la Base del Dendrograma -->
+                <div class="flex justify-between px-2 text-[9px] font-data-code text-outline border-t border-outline-variant/30 pt-1" id="dendro-leaf-labels">
+                    {% for leaf in clustermap_data.svg_tree.leaves %}
+                    <span class="font-bold hover:underline cursor-pointer dendro-leaf" style="color: {{ leaf.color }};" data-unit="{{ leaf.name }}">
+                        {{ leaf.name }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Matriz Clustermap Contigua (filas en orden estricto de hojas del árbol) -->
+        <div class="w-full bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-3 sm:p-4 overflow-x-auto custom-scrollbar">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 mb-3 border-b border-outline-variant/30 gap-1 text-xs">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm text-cyan-400">grid_view</span>
+                    <span class="font-bold text-on-surface uppercase">
+                        Matriz de correlación penal (% delictivo normalizado por unidad)
+                    </span>
+                </div>
+                <span class="text-[10px] text-outline">
+                    {{ clustermap_data.rows | length }} unidades ordenadas por proximidad taxonómica
+                </span>
+            </div>
+
+            <table class="w-full text-left font-data-code text-xs border-collapse min-w-[760px]" id="clustermap-table">
+                <thead>
+                    <tr class="border-b border-outline-variant/40 text-outline text-[10px] uppercase bg-surface-container-high/40">
+                        <th class="py-2.5 px-3">Unidad territorial</th>
+                        <th class="py-2 px-2 text-center">Grupo</th>
+                        <th class="py-2 px-2 text-center">Estabilidad</th>
+                        {% for col in clustermap_data.columns %}
+                        <th class="py-2 px-2 text-center font-normal" title="{{ col }}">{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant/20" id="clustermap-tbody">
+                    {% for r in clustermap_data.rows %}
+                    <tr class="hover:bg-surface-container-high/60 transition-colors clustermap-unit-row" data-unit="{{ r.name }}">
+                        <td class="py-2.5 px-3 font-bold text-on-surface flex items-center gap-2 whitespace-nowrap">
+                            <span class="size-2.5 rounded-full shrink-0" style="background-color: {{ r.color }};"></span>
+                            <span>{{ r.name }}</span>
+                            <span class="text-[10px] text-outline font-normal">({{ r.total_events | string }} ev)</span>
+                        </td>
+                        <td class="py-2 px-2 text-center">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold" style="background-color: {{ r.color }}22; color: {{ r.color }}; border: 1px solid {{ r.color }}44;">
+                                {{ r.group_label }}
+                            </span>
+                        </td>
+                        <td class="py-2 px-2 text-center font-mono text-[11px]">
+                            <span class="px-1.5 py-0.5 rounded text-[10px] bg-surface-container-high text-on-surface-variant border border-outline-variant/30" title="Porcentaje de remuestreos en que conserva esta asignación">
+                                {{ r.stability_pct }}%
+                            </span>
+                        </td>
+                        {% for val in r.vals %}
+                        <td class="py-2 px-2 text-center font-mono text-[11px]" 
+                            style="background-color: rgba(124, 58, 237, {{ (val / 100 * 0.40) | round(2) }}); color: {{ '#ffffff' if val > 25 else 'inherit' }};">
+                            {{ val }}%
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <div class="mt-3 pt-2 border-t border-outline-variant/30 flex flex-col sm:flex-row items-center justify-between text-[10px] text-outline gap-1">
+                <span>Intensidad de color proporcional a la concentración delictiva intragrupo.</span>
+                <span>Permite contrastar por qué dos unidades se fusionan a baja altura dendrogramática.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TARJETAS DE PERFIL POR GRUPO TAXONÓMICO (B5) -->
+    <div class="space-y-3 pt-2 border-t border-outline-variant/40">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container text-base">category</span>
+                <h3 class="text-xs sm:text-sm font-bold font-data-code text-on-surface uppercase tracking-wider">
+                    Perfiles operacionales por macro-grupo taxonómico (k = {{ clustermap_data.active_k }})
+                </h3>
+            </div>
+            <span class="text-[11px] text-outline">
+                Denominación por factor de sobrerrepresentación (p_grupo / p_global)
+            </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="taxonomy-group-cards">
+            {% for g in clustermap_data.groups %}
+            <div class="rounded-xl border border-outline-variant/60 bg-surface-container p-4 shadow-sm flex flex-col justify-between space-y-3 transition-all"
+                 style="border-top: 4px solid {{ g.color }};">
+                <div>
+                    <!-- Encabezado de la tarjeta -->
+                    <div class="flex items-start justify-between gap-2 mb-1.5">
+                        <div class="flex items-center gap-2">
+                            <span class="size-3 rounded-full shrink-0" style="background-color: {{ g.color }};"></span>
+                            <span class="text-xs font-bold font-data-code text-on-surface">{{ g.group_label }}</span>
+                        </div>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider cursor-help"
+                            title="{{ g.alert_tooltip }}"
+                            {% if g.badge_color == 'rose' %}
+                            style="background-color: rgba(244, 63, 94, 0.15); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3);"
+                            {% elif g.badge_color == 'amber' %}
+                            style="background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);"
+                            {% elif g.badge_color == 'emerald' %}
+                            style="background-color: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);"
+                            {% else %}
+                            style="background-color: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3);"
+                            {% endif %}>
+                            {{ g.alert_status }}
+                        </span>
+                    </div>
+
+                    <h4 class="text-sm font-bold text-on-surface font-headline-md leading-snug">
+                        {{ g.name }}
+                    </h4>
+                    <p class="text-[11px] text-outline font-data-code mt-0.5 leading-relaxed">
+                        {{ g.rule }}
+                    </p>
+
+                    <!-- Advertencia para grupos con n <= 2 unidades -->
+                    {% if g.small_group_warning %}
+                    <div class="mt-2 p-2 rounded bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-[10px] flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-xs">warning</span>
+                        <span>{{ g.small_group_warning }}</span>
+                    </div>
+                    {% endif %}
+
+                    <!-- Gráfico de Radar SVG (Escala acotada [0, 2.5x]) -->
+                    <div class="mt-3 p-2.5 rounded-lg bg-surface-container-highest/40 border border-outline-variant/30 flex flex-col items-center">
+                        <div class="flex items-center justify-between w-full text-[10px] text-outline mb-1 font-semibold">
+                            <span>Perfil radial (ratios vs. media)</span>
+                            <span title="{{ g.scale_info }}" class="cursor-help font-mono text-[9px] text-primary-container">Escala 0–2.5× (?)</span>
+                        </div>
+                        <svg class="size-28 sm:size-32" viewBox="0 0 120 120" role="img" aria-label="Gráfico de radar del grupo {{ g.group_letter }}">
+                            <!-- Círculos concéntricos de referencia -->
+                            <circle cx="60" cy="60" r="18" fill="none" stroke="currentColor" stroke-dasharray="2,2" class="text-outline/40" stroke-width="0.8" />
+                            <circle cx="60" cy="60" r="45" fill="none" stroke="currentColor" class="text-outline/25" stroke-width="0.8" />
+                            <!-- Ejes radiales -->
+                            {% for ax in g.radar_details %}
+                            <line x1="60" y1="60" x2="{{ ax.axis_x }}" y2="{{ ax.axis_y }}" stroke="currentColor" class="text-outline/20" stroke-width="0.8" />
+                            {% endfor %}
+                            <!-- Polígono de referencia 1.0x (promedio global) -->
+                            <polygon points="{{ g.ref_polygon }}" fill="none" stroke="currentColor" stroke-dasharray="2,2" class="text-outline/60" stroke-width="1" />
+                            <!-- Polígono del grupo -->
+                            <polygon points="{{ g.radar_polygon }}" fill="{{ g.color }}" fill-opacity="0.25" stroke="{{ g.color }}" stroke-width="1.8" />
+                            <!-- Centro -->
+                            <circle cx="60" cy="60" r="2" fill="currentColor" class="text-outline/60" />
+                        </svg>
+                    </div>
+
+                    <!-- Desglose desplegable de proporciones y ratios -->
+                    <details class="mt-2 text-xs font-data-code group/radar">
+                        <summary class="cursor-pointer text-[10px] font-bold text-outline hover:text-on-surface flex items-center justify-between py-1 border-t border-outline-variant/30 select-none">
+                            <span>Ver desglose de proporciones y ratios</span>
+                            <span class="material-symbols-outlined text-xs transition-transform group-open/radar:rotate-180">expand_more</span>
+                        </summary>
+                        <div class="overflow-x-auto mt-1 custom-scrollbar">
+                            <table class="w-full text-left text-[10px] border-collapse font-data-code">
+                                <thead>
+                                    <tr class="text-outline border-b border-outline-variant/40">
+                                        <th class="py-1">Categoría</th>
+                                        <th class="py-1 text-right">% Grupo</th>
+                                        <th class="py-1 text-right">% Global</th>
+                                        <th class="py-1 text-right">Ratio</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant/20">
+                                    {% for ax in g.radar_details %}
+                                    <tr class="hover:bg-surface-container-high/40">
+                                        <td class="py-1 text-on-surface truncate max-w-[120px]" title="{{ ax.category }}">{{ ax.category }}</td>
+                                        <td class="py-1 text-right font-mono font-bold text-on-surface">{{ ax.pct }}%</td>
+                                        <td class="py-1 text-right font-mono text-outline">{{ ax.global_pct }}%</td>
+                                        <td class="py-1 text-right font-mono font-bold {{ 'text-primary-container' if ax.ratio >= 1.2 else 'text-outline' }}">&times;{{ ax.ratio }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Footer de la tarjeta con distritos/zonas y aviso de franja horaria -->
+                <div class="pt-2 border-t border-outline-variant/30 space-y-2 font-data-code text-[11px]">
+                    <div>
+                        <span class="text-outline block text-[10px] uppercase font-semibold">Unidades que integran el grupo ({{ g.units_count }}):</span>
+                        <div class="flex flex-wrap gap-1 mt-1">
+                            {% for u in g.units_list %}
+                            <span class="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant/40 text-on-surface text-[10px] font-semibold">
+                                {{ u }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-[10px] text-outline pt-1">
+                        <span>Total hechos: <strong>{{ g.total_events | string }}</strong></span>
+                        <span class="italic text-right max-w-[200px] truncate" title="{{ g.franja_info }}">{{ g.franja_info }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- NOTA DE UNIDADES EXCLUIDAS Y AUDITORÍA DE PROCEDENCIA -->
+    {% if clustermap_data.excluded_units %}
+    <div class="p-3 rounded-lg bg-surface-container-high/60 border border-outline-variant/40 text-xs font-data-code text-outline space-y-1">
+        <strong class="text-on-surface block text-[11px]">Unidades excluidas del análisis de agrupación:</strong>
+        <ul class="list-disc list-inside space-y-0.5 text-[11px]">
+            {% for u_name, u_reason in clustermap_data.excluded_units.items() %}
+            <li><strong>{{ u_name }}:</strong> {{ u_reason }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
 </section>
