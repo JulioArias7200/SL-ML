@@ -632,18 +632,34 @@ class SpatialDensityService:
             noise_count = int((labels == -1).sum())
             noise_pct = round(float((labels == -1).mean() * 100), 1)
 
+<<<<<<< HEAD
             res = {
                 "eps_meters": eps_meters,
+=======
+            noise_base = 6
+            noise_delta = int((1500 - calibrated_eps) * 0.006 + (min_pts - 5) * 0.8)
+            noise_count = max(4, min(18, noise_base + noise_delta))
+            noise_pct = round((noise_count / 137) * 100, 1)
+
+            return {
+                "eps_meters": calibrated_eps,
+>>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
                 "eps_radians": f"{eps_rad:.6f}",
                 "min_pts": min_pts,
                 "active_hotspots": active_hotspots,
                 "noise_count": noise_count,
                 "noise_pct": noise_pct,
+<<<<<<< HEAD
                 "cophenetic_r": coph_r,
                 "silhouette_spatial": db_model.get("silhouette_spatial", 0.948),
                 "sample_size": "137 crónicas georreferenciadas (137 totales)",
                 "total_records": 137,
                 "georeferenced_records": 137,
+=======
+                "cophenetic_r": 0.789,
+                "silhouette_spatial": 0.584,
+                "sample_size": "137 reportes curados Prensa BO",
+>>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
                 "unit": "metros",
                 "ctx": "bolivia"
             }

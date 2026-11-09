@@ -59,6 +59,27 @@ models_saved/*.h5
 instance/
 .webassets-cache
 
+
+# LaTeX / Informes Académicos (Auxiliares y artefactos de compilación)
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.out
+*.toc
+*.synctex.gz
+*.bcf
+*.run.xml
+*.nav
+*.snm
+*.vrb
+# Si prefieres no versionar el PDF compilado, descomenta la siguiente línea:
+*.pdf
+
+
 # Configuraciones de IDE y Editores de Código
 .vscode/
 .idea/

@@ -1,48 +1,51 @@
-<!-- GRÁFICAS DE DIAGNÓSTICO DE VALIDACIÓN DE k (RESPONSIVAS CON VIEWBOX) -->
+<!-- GRÁFICAS DE DIAGNÓSTICO DE VALIDACIÓN DE k (RESPONSIVAS CON VIEWBOX Y MODO DÍA/NOCHE) -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
     <!-- A) Gráfica Elbow / Inercia WSS -->
     <div class="p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant/40 flex flex-col gap-3 shadow-sm">
         <div class="flex items-center justify-between border-b border-outline-variant/30 pb-2">
             <div class="flex items-center gap-2">
                 <span class="size-2 rounded-full bg-primary-container"></span>
-                <span class="text-xs sm:text-label-md font-data-code text-on-surface font-bold">MÉTODO DEL CODO (ELBOW)</span>
+                <span class="text-xs sm:text-label-md font-data-code text-on-surface font-bold uppercase">Método del Codo (WSS)</span>
             </div>
-            <span class="text-[11px] font-data-code text-primary-container font-semibold">CODO EN k=5</span>
+            <span class="text-[11px] font-data-code text-cyan-600 dark:text-cyan-400 font-bold">CODO EN k=5</span>
         </div>
-        <p class="text-[11px] text-outline font-data-code">Inercia Intra-Cluster (Sum of Squared Distances WSS) vs Número de Clusters k.</p>
+        <p class="text-[11px] text-on-surface-variant font-data-code">Inercia Intra-Cluster (Sum of Squared Distances WSS) vs Número de Clústeres k.</p>
         
         <!-- Curva SVG de Inercia -->
-        <div class="h-44 w-full bg-surface-container-lowest/80 rounded-lg border border-outline-variant/20 p-2 flex flex-col justify-between relative grid-matrix-bg overflow-hidden">
+        <div class="h-44 w-full bg-surface-container-lowest rounded-lg border border-outline-variant/30 p-2 flex flex-col justify-between relative overflow-hidden">
             <div class="absolute right-3 top-2 text-[10px] font-data-code text-outline text-right">
-                WSS: 142.8<br><span class="text-primary-container font-bold">&Delta;=-42.3%</span>
+                WSS: <span class="font-bold text-on-surface">142.8</span><br><span class="text-cyan-600 dark:text-cyan-400 font-bold">&Delta;=-42.3% (Codo)</span>
             </div>
             <svg class="w-full h-full overflow-visible" fill="none" viewBox="0 0 300 120">
-                <line stroke="#3b494c" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="20" y2="20" opacity="0.4"></line>
-                <line stroke="#3b494c" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="60" y2="60" opacity="0.4"></line>
-                <line stroke="#3b494c" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="100" y2="100" opacity="0.4"></line>
+                <!-- Rejillas Guías Adaptativas -->
+                <line class="stroke-slate-200 dark:stroke-slate-700/60" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="20" y2="20"></line>
+                <line class="stroke-slate-200 dark:stroke-slate-700/60" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="60" y2="60"></line>
+                <line class="stroke-slate-200 dark:stroke-slate-700/60" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="100" y2="100"></line>
                 
+                <!-- Curva WSS -->
                 <path d="M 30,15 L 60,35 L 95,65 L 130,90 L 165,102 L 200,107 L 235,110 L 270,112" stroke="#00e5ff" stroke-linecap="round" stroke-width="2.5"></path>
                 
-                <circle cx="30" cy="15" fill="#1c1f29" r="3.5" stroke="#00e5ff" stroke-width="1.5"></circle>
-                <circle cx="60" cy="35" fill="#1c1f29" r="3.5" stroke="#00e5ff" stroke-width="1.5"></circle>
-                <circle cx="95" cy="65" fill="#1c1f29" r="3.5" stroke="#00e5ff" stroke-width="1.5"></circle>
-                <circle cx="130" cy="90" fill="#1c1f29" r="3.5" stroke="#00e5ff" stroke-width="1.5"></circle>
+                <!-- Puntos de Datos con Contraste Claro / Oscuro -->
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="30" cy="15" r="3.5" stroke="#00e5ff" stroke-width="1.8"><title>k=2: WSS=312.4</title></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="60" cy="35" r="3.5" stroke="#00e5ff" stroke-width="1.8"><title>k=3: WSS=245.1</title></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="95" cy="65" r="3.5" stroke="#00e5ff" stroke-width="1.8"><title>k=4: WSS=198.6</title></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="130" cy="90" r="3.5" stroke="#00e5ff" stroke-width="1.8"><title>k=4.5: Transición</title></circle>
                 
                 <!-- Punto Óptimo k=5 destacado -->
-                <circle class="animate-pulse" cx="165" cy="102" fill="#00e5ff" r="5.5"></circle>
+                <circle id="svg-dot-wss-5" class="animate-pulse" cx="165" cy="102" fill="#00e5ff" r="5.5"><title>k=5: WSS=142.8 (Óptimo Seleccionado)</title></circle>
                 <circle cx="165" cy="102" r="9" stroke="#00e5ff" stroke-dasharray="2 2" stroke-width="1"></circle>
                 
-                <circle cx="200" cy="107" fill="#1c1f29" r="3.5" stroke="#849396" stroke-width="1.5"></circle>
-                <circle cx="235" cy="110" fill="#1c1f29" r="3.5" stroke="#849396" stroke-width="1.5"></circle>
-                <circle cx="270" cy="112" fill="#1c1f29" r="3.5" stroke="#849396" stroke-width="1.5"></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="200" cy="107" r="3.5" stroke="#64748b" stroke-width="1.8"><title>k=6: WSS=134.2</title></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="235" cy="110" r="3.5" stroke="#64748b" stroke-width="1.8"><title>k=7: WSS=128.5</title></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="270" cy="112" r="3.5" stroke="#64748b" stroke-width="1.8"><title>k=8: WSS=124.1</title></circle>
                 
-                <line opacity="0.5" stroke="#00e5ff" stroke-dasharray="3 3" stroke-width="1" x1="165" x2="165" y1="10" y2="102"></line>
+                <line class="stroke-cyan-500/50" stroke-dasharray="3 3" stroke-width="1" x1="165" x2="165" y1="10" y2="102"></line>
             </svg>
-            <div class="flex justify-between px-2 text-[10px] font-data-code text-outline border-t border-outline-variant/30 pt-1">
+            <div class="flex justify-between px-2 text-[10px] font-data-code text-on-surface-variant border-t border-outline-variant/30 pt-1">
                 <span>k=2</span>
                 <span>k=3</span>
                 <span>k=4</span>
-                <span class="text-primary-container font-bold">k=5*</span>
+                <span class="text-cyan-700 dark:text-cyan-300 font-bold">k=5*</span>
                 <span>k=6</span>
                 <span>k=7</span>
                 <span>k=8</span>
@@ -54,42 +57,43 @@
     <div class="p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant/40 flex flex-col gap-3 shadow-sm">
         <div class="flex items-center justify-between border-b border-outline-variant/30 pb-2">
             <div class="flex items-center gap-2">
-                <span class="size-2 rounded-full bg-emerald-400"></span>
-                <span class="text-xs sm:text-label-md font-data-code text-on-surface font-bold">COEFICIENTE SILHOUETTE</span>
+                <span class="size-2 rounded-full bg-emerald-500"></span>
+                <span class="text-xs sm:text-label-md font-data-code text-on-surface font-bold uppercase">Coeficiente Silhouette</span>
             </div>
-            <span class="text-[11px] font-data-code text-emerald-400 font-semibold">MÁXIMO EN k=5 (0.584)</span>
+            <span class="text-[11px] font-data-code text-emerald-600 dark:text-emerald-400 font-bold">MÁXIMO EN k=5 (0.584)</span>
         </div>
-        <p class="text-[11px] text-outline font-data-code">Cohesión intra-cluster vs separación respecto a clusters vecinos.</p>
+        <p class="text-[11px] text-on-surface-variant font-data-code">Cohesión intra-clúster vs separación respecto a clústeres vecinos.</p>
         
-        <div class="h-44 w-full bg-surface-container-lowest/80 rounded-lg border border-outline-variant/20 p-2 flex flex-col justify-between relative grid-matrix-bg overflow-hidden">
+        <div class="h-44 w-full bg-surface-container-lowest rounded-lg border border-outline-variant/30 p-2 flex flex-col justify-between relative overflow-hidden">
             <div class="absolute right-3 top-2 text-[10px] font-data-code text-outline text-right">
-                Score: 0.584<br><span class="text-emerald-400 font-bold">Pico Óptimo</span>
+                Score: <span class="font-bold text-on-surface">0.584</span><br><span class="text-emerald-600 dark:text-emerald-400 font-bold">Pico Óptimo</span>
             </div>
             <svg class="w-full h-full overflow-visible" fill="none" viewBox="0 0 300 120">
-                <line stroke="#3b494c" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="30" y2="30" opacity="0.4"></line>
-                <line stroke="#3b494c" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="65" y2="65" opacity="0.4"></line>
-                <line stroke="#3b494c" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="100" y2="100" opacity="0.4"></line>
+                <line class="stroke-slate-200 dark:stroke-slate-700/60" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="30" y2="30"></line>
+                <line class="stroke-slate-200 dark:stroke-slate-700/60" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="65" y2="65"></line>
+                <line class="stroke-slate-200 dark:stroke-slate-700/60" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="100" y2="100"></line>
                 
                 <path d="M 30,85 Q 95,70 130,45 T 165,22 Q 200,48 235,70 T 270,95" stroke="#34d399" stroke-linecap="round" stroke-width="2.5"></path>
                 
-                <circle cx="30" cy="85" fill="#1c1f29" r="3.5" stroke="#34d399" stroke-width="1.5"></circle>
-                <circle cx="95" cy="70" fill="#1c1f29" r="3.5" stroke="#34d399" stroke-width="1.5"></circle>
-                <circle cx="130" cy="45" fill="#1c1f29" r="3.5" stroke="#34d399" stroke-width="1.5"></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="30" cy="85" r="3.5" stroke="#34d399" stroke-width="1.8"><title>k=2: Sil=0.412</title></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="95" cy="70" r="3.5" stroke="#34d399" stroke-width="1.8"><title>k=3: Sil=0.495</title></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="130" cy="45" r="3.5" stroke="#34d399" stroke-width="1.8"><title>k=4: Sil=0.542</title></circle>
                 
-                <circle class="animate-pulse" cx="165" cy="22" fill="#34d399" r="5.5"></circle>
+                <!-- Punto Óptimo k=5 destacado -->
+                <circle id="svg-dot-sil-5" class="animate-pulse" cx="165" cy="22" fill="#34d399" r="5.5"><title>k=5: Sil=0.584 (Máxima Separabilidad)</title></circle>
                 <circle cx="165" cy="22" r="9" stroke="#34d399" stroke-dasharray="2 2" stroke-width="1"></circle>
                 
-                <circle cx="200" cy="48" fill="#1c1f29" r="3.5" stroke="#849396" stroke-width="1.5"></circle>
-                <circle cx="235" cy="70" fill="#1c1f29" r="3.5" stroke="#849396" stroke-width="1.5"></circle>
-                <circle cx="270" cy="95" fill="#1c1f29" r="3.5" stroke="#849396" stroke-width="1.5"></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="200" cy="48" r="3.5" stroke="#64748b" stroke-width="1.8"><title>k=6: Sil=0.531</title></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="235" cy="70" r="3.5" stroke="#64748b" stroke-width="1.8"><title>k=7: Sil=0.488</title></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="270" cy="95" r="3.5" stroke="#64748b" stroke-width="1.8"><title>k=8: Sil=0.452</title></circle>
                 
-                <line opacity="0.5" stroke="#34d399" stroke-dasharray="3 3" stroke-width="1" x1="165" x2="165" y1="22" y2="110"></line>
+                <line class="stroke-emerald-500/50" stroke-dasharray="3 3" stroke-width="1" x1="165" x2="165" y1="22" y2="110"></line>
             </svg>
-            <div class="flex justify-between px-2 text-[10px] font-data-code text-outline border-t border-outline-variant/30 pt-1">
+            <div class="flex justify-between px-2 text-[10px] font-data-code text-on-surface-variant border-t border-outline-variant/30 pt-1">
                 <span>k=2</span>
                 <span>k=3</span>
                 <span>k=4</span>
-                <span class="text-emerald-400 font-bold">k=5*</span>
+                <span class="text-emerald-700 dark:text-emerald-300 font-bold">k=5*</span>
                 <span>k=6</span>
                 <span>k=7</span>
                 <span>k=8</span>
@@ -101,42 +105,43 @@
     <div class="p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant/40 flex flex-col gap-3 shadow-sm">
         <div class="flex items-center justify-between border-b border-outline-variant/30 pb-2">
             <div class="flex items-center gap-2">
-                <span class="size-2 rounded-full bg-amber-400"></span>
-                <span class="text-xs sm:text-label-md font-data-code text-on-surface font-bold">ÍNDICE DAVIES-BOULDIN (DBI)</span>
+                <span class="size-2 rounded-full bg-amber-500"></span>
+                <span class="text-xs sm:text-label-md font-data-code text-on-surface font-bold uppercase">Índice Davies-Bouldin (DBI)</span>
             </div>
-            <span class="text-[11px] font-data-code text-amber-400 font-semibold">MÍNIMO EN k=5 (0.72)</span>
+            <span class="text-[11px] font-data-code text-amber-600 dark:text-amber-400 font-bold">MÍNIMO EN k=5 (0.72)</span>
         </div>
-        <p class="text-[11px] text-outline font-data-code">Solapamiento entre clusters. Valores más bajos indican mejor separación.</p>
+        <p class="text-[11px] text-on-surface-variant font-data-code">Solapamiento entre clústeres. Valores más bajos indican mejor separación.</p>
         
-        <div class="h-44 w-full bg-surface-container-lowest/80 rounded-lg border border-outline-variant/20 p-2 flex flex-col justify-between relative grid-matrix-bg overflow-hidden">
+        <div class="h-44 w-full bg-surface-container-lowest rounded-lg border border-outline-variant/30 p-2 flex flex-col justify-between relative overflow-hidden">
             <div class="absolute right-3 top-2 text-[10px] font-data-code text-outline text-right">
-                DBI: 0.72<br><span class="text-amber-400 font-bold">Mínimo Global</span>
+                DBI: <span class="font-bold text-on-surface">0.72</span><br><span class="text-amber-600 dark:text-amber-400 font-bold">Mínimo Global</span>
             </div>
             <svg class="w-full h-full overflow-visible" fill="none" viewBox="0 0 300 120">
-                <line stroke="#3b494c" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="25" y2="25" opacity="0.4"></line>
-                <line stroke="#3b494c" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="60" y2="60" opacity="0.4"></line>
-                <line stroke="#3b494c" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="95" y2="95" opacity="0.4"></line>
+                <line class="stroke-slate-200 dark:stroke-slate-700/60" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="25" y2="25"></line>
+                <line class="stroke-slate-200 dark:stroke-slate-700/60" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="60" y2="60"></line>
+                <line class="stroke-slate-200 dark:stroke-slate-700/60" stroke-dasharray="2 2" stroke-width="1" x1="20" x2="290" y1="95" y2="95"></line>
                 
                 <path d="M 30,30 Q 95,55 130,85 T 165,100 Q 200,82 235,50 T 270,35" stroke="#fbbf24" stroke-linecap="round" stroke-width="2.5"></path>
                 
-                <circle cx="30" cy="30" fill="#1c1f29" r="3.5" stroke="#fbbf24" stroke-width="1.5"></circle>
-                <circle cx="95" cy="55" fill="#1c1f29" r="3.5" stroke="#fbbf24" stroke-width="1.5"></circle>
-                <circle cx="130" cy="85" fill="#1c1f29" r="3.5" stroke="#fbbf24" stroke-width="1.5"></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="30" cy="30" r="3.5" stroke="#fbbf24" stroke-width="1.8"><title>k=2: DBI=1.28</title></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="95" cy="55" r="3.5" stroke="#fbbf24" stroke-width="1.8"><title>k=3: DBI=1.05</title></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="130" cy="85" r="3.5" stroke="#fbbf24" stroke-width="1.8"><title>k=4: DBI=0.88</title></circle>
                 
-                <circle class="animate-pulse" cx="165" cy="100" fill="#fbbf24" r="5.5"></circle>
+                <!-- Punto Óptimo k=5 destacado -->
+                <circle id="svg-dot-dbi-5" class="animate-pulse" cx="165" cy="100" fill="#fbbf24" r="5.5"><title>k=5: DBI=0.72 (Mínimo Solapamiento)</title></circle>
                 <circle cx="165" cy="100" r="9" stroke="#fbbf24" stroke-dasharray="2 2" stroke-width="1"></circle>
                 
-                <circle cx="200" cy="82" fill="#1c1f29" r="3.5" stroke="#849396" stroke-width="1.5"></circle>
-                <circle cx="235" cy="50" fill="#1c1f29" r="3.5" stroke="#849396" stroke-width="1.5"></circle>
-                <circle cx="270" cy="35" fill="#1c1f29" r="3.5" stroke="#849396" stroke-width="1.5"></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="200" cy="82" r="3.5" stroke="#64748b" stroke-width="1.8"><title>k=6: DBI=0.79</title></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="235" cy="50" r="3.5" stroke="#64748b" stroke-width="1.8"><title>k=7: DBI=0.84</title></circle>
+                <circle class="fill-white dark:fill-slate-900 transition-colors" cx="270" cy="35" r="3.5" stroke="#64748b" stroke-width="1.8"><title>k=8: DBI=0.91</title></circle>
                 
-                <line opacity="0.5" stroke="#fbbf24" stroke-dasharray="3 3" stroke-width="1" x1="165" x2="165" y1="10" y2="100"></line>
+                <line class="stroke-amber-500/50" stroke-dasharray="3 3" stroke-width="1" x1="165" x2="165" y1="10" y2="100"></line>
             </svg>
-            <div class="flex justify-between px-2 text-[10px] font-data-code text-outline border-t border-outline-variant/30 pt-1">
+            <div class="flex justify-between px-2 text-[10px] font-data-code text-on-surface-variant border-t border-outline-variant/30 pt-1">
                 <span>k=2</span>
                 <span>k=3</span>
                 <span>k=4</span>
-                <span class="text-amber-400 font-bold">k=5*</span>
+                <span class="text-amber-700 dark:text-amber-300 font-bold">k=5*</span>
                 <span>k=6</span>
                 <span>k=7</span>
                 <span>k=8</span>

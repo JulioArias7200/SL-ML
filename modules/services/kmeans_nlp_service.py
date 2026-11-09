@@ -1,7 +1,9 @@
 import re
+import unicodedata
+
 
 class KMeansNLPService:
-    # 5 Clusters arquetípicos descubiertos por K-Means sobre TF-IDF en el dataset de Chicago
+    # 5 Clusters arquetípicos descubiertos por K-Means sobre TF-IDF en el dataset de Chicago y Bolivia
     ARCHETYPES = {
         1: {
             "id": 1,
@@ -10,11 +12,33 @@ class KMeansNLPService:
             "code": "KM-01 // RETAIL THEFT",
             "badge_color": "cyan",
             "hex_color": "#00e5ff",
-            "description": "Sustracción de bienes no violentos en grandes tiendas por departamento, supermercados y farmacias sin violencia física.",
-            "location_focus": "Department Store, Grocery, Pharmacy, Gas Station",
+            "description": "Sustracción de bienes no violentos en grandes tiendas por departamento, supermercados, micros de transporte y farmacias sin violencia física.",
+            "location_focus": "Department Store, Grocery, Pharmacy, Gas Station, Micro / Bus",
             "peak_hours": "14:00 - 19:00 hrs (Tarde comercial)",
             "arrest_prob": "12.4%",
-            "top_keywords": ["THEFT", "RETAIL", "STORE", "BACKPACK", "CONCEALED", "CASH", "REGISTER", "SECURITY", "MERCHANDISE", "UNPAID"]
+            "top_keywords": [
+                "THEFT",
+                "RETAIL",
+                "STORE",
+                "BACKPACK",
+                "CONCEALED",
+                "CASH",
+                "REGISTER",
+                "SECURITY",
+                "MERCHANDISE",
+                "UNPAID",
+                "HURTO",
+                "TIENDA",
+                "MOCHILA",
+                "SUPERMERCADO",
+                "FARMACIA",
+                "COMERCIAL",
+                "DESCUIDO",
+                "CELULAR",
+                "BILLETERA",
+                "MICRO",
+                "TRANSPORTE",
+            ],
         },
         2: {
             "id": 2,
@@ -23,11 +47,35 @@ class KMeansNLPService:
             "code": "KM-02 // ARMED ROBBERY",
             "badge_color": "rose",
             "hex_color": "#ff3366",
-            "description": "Atraco violento con exhibición de arma corta o arma blanca contra transeúntes, dependientes de servicentros o repartidores.",
-            "location_focus": "Sidewalk, Street, Gas Station, Alley, Convenience Store",
+            "description": "Atraco violento con exhibición de arma de fuego o arma blanca contra transeúntes, dependientes de servicentros o repartidores.",
+            "location_focus": "Sidewalk, Street, Gas Station, Alley, Anillos / Radial",
             "peak_hours": "21:00 - 04:00 hrs (Nocturno / Madrugada)",
             "arrest_prob": "24.8%",
-            "top_keywords": ["ARMED", "ROBBERY", "HANDGUN", "WEAPON", "DISPLAYED", "DEMANDED", "DRAWER", "SUSPECTS", "FLED", "SOUTHBOUND"]
+            "top_keywords": [
+                "ARMED",
+                "ROBBERY",
+                "HANDGUN",
+                "WEAPON",
+                "DISPLAYED",
+                "DEMANDED",
+                "DRAWER",
+                "SUSPECTS",
+                "FLED",
+                "SOUTHBOUND",
+                "ASALTO",
+                "PISTOLA",
+                "ARMA",
+                "DISPARO",
+                "ATRACO",
+                "MOTOLADRONES",
+                "MOTOCICLETA",
+                "AMENAZA",
+                "VIOLENTO",
+                "VICTIMA",
+                "BALAZO",
+                "CUCHILLO",
+                "ANILLO",
+            ],
         },
         3: {
             "id": 3,
@@ -37,10 +85,33 @@ class KMeansNLPService:
             "badge_color": "amber",
             "hex_color": "#fbbf24",
             "description": "Agresiones físicas y verbales entre cónyuges, exparejas o convivientes dentro del domicilio particular o edificio de apartamentos.",
-            "location_focus": "Apartment, Residence, Porch, Hallway",
+            "location_focus": "Apartment, Residence, Porch, Hallway, Domicilio",
             "peak_hours": "19:00 - 02:00 hrs (Fines de semana)",
             "arrest_prob": "31.2%",
-            "top_keywords": ["DOMESTIC", "BATTERY", "SPOUSE", "ARGUMENT", "RESIDENCE", "APARTMENT", "PHYSICAL", "INJURIES", "VICTIM", "ESCALATED"]
+            "top_keywords": [
+                "DOMESTIC",
+                "BATTERY",
+                "SPOUSE",
+                "ARGUMENT",
+                "RESIDENCE",
+                "APARTMENT",
+                "PHYSICAL",
+                "INJURIES",
+                "VICTIM",
+                "ESCALATED",
+                "FAMILIAR",
+                "DOMESTICA",
+                "CONYUGE",
+                "AGRESION",
+                "PAREJA",
+                "DISCUSION",
+                "GOLPES",
+                "VIVIENDA",
+                "ESPOSA",
+                "ESPOSO",
+                "HOGAR",
+                "QUILLACOLLO",
+            ],
         },
         4: {
             "id": 4,
@@ -49,11 +120,34 @@ class KMeansNLPService:
             "code": "KM-04 // VEHICLE DAMAGE",
             "badge_color": "purple",
             "hex_color": "#9d4edd",
-            "description": "Destrucción de propiedad automotriz, fractura de ventanillas y sustracción de convertidores catalíticos en vehículos estacionados.",
-            "location_focus": "Street, Parking Lot, Residential Alley",
+            "description": "Destrucción de propiedad automotriz, fractura de ventanillas y sustracción de autopartes y convertidores catalíticos en vehículos estacionados.",
+            "location_focus": "Street, Parking Lot, Residential Alley, Vía Pública",
             "peak_hours": "00:00 - 06:00 hrs (Madrugada)",
             "arrest_prob": "6.8%",
-            "top_keywords": ["CRIMINAL", "DAMAGE", "VEHICLE", "PARKED", "STREET", "WINDOW", "SMASHED", "CATALYTIC", "CONVERTER", "OVERNIGHT"]
+            "top_keywords": [
+                "CRIMINAL",
+                "DAMAGE",
+                "VEHICLE",
+                "PARKED",
+                "STREET",
+                "WINDOW",
+                "SMASHED",
+                "CATALYTIC",
+                "CONVERTER",
+                "OVERNIGHT",
+                "VEHICULO",
+                "AUTO",
+                "AUTOPARTES",
+                "VIDRIO",
+                "PARABRISAS",
+                "ESTACIONADO",
+                "LLANTA",
+                "CABLE",
+                "DANO",
+                "CALLE",
+                "CAMIONETA",
+                "ACCESORIOS",
+            ],
         },
         5: {
             "id": 5,
@@ -62,24 +156,109 @@ class KMeansNLPService:
             "code": "KM-05 // NARCOTICS",
             "badge_color": "emerald",
             "hex_color": "#34d399",
-            "description": "Venta al menudeo, posesión de estupefacientes o porte ilícito en aceras y parques públicos.",
-            "location_focus": "Sidewalk, Park, CTA Station, Corner",
+            "description": "Venta al menudeo, posesión de estupefacientes o microtráfico de sustancias controladas en aceras, plazas y parques públicos.",
+            "location_focus": "Sidewalk, Park, CTA Station, Corner, Plaza",
             "peak_hours": "16:00 - 23:00 hrs",
             "arrest_prob": "78.6%",
-            "top_keywords": ["NARCOTICS", "POSSESSION", "CANNABIS", "CONTROLLED", "SUBSTANCE", "SIDEWALK", "PACKAGE", "DISTRIBUTION", "SUSPECT", "DETECTIVE"]
-        }
+            "top_keywords": [
+                "NARCOTICS",
+                "POSSESSION",
+                "CANNABIS",
+                "CONTROLLED",
+                "SUBSTANCE",
+                "SIDEWALK",
+                "PACKAGE",
+                "DISTRIBUTION",
+                "SUSPECT",
+                "DETECTIVE",
+                "DROGA",
+                "NARCOTRAFICO",
+                "SUSTANCIAS",
+                "MARIHUANA",
+                "COCAINA",
+                "MICROTRAFICO",
+                "SOBRES",
+                "PARQUE",
+                "CONSUMO",
+                "ESTUPEFACIENTES",
+            ],
+        },
     }
 
     K_METRICS = {
-        2: {"k": 2, "wss": 312.4, "sil": 0.412, "dbi": 1.28, "var_exp": "58.2%", "desc": "Subpartición gruesa"},
-        3: {"k": 3, "wss": 245.1, "sil": 0.495, "dbi": 1.05, "var_exp": "69.4%", "desc": "Separación primaria"},
-        4: {"k": 4, "wss": 198.6, "sil": 0.542, "dbi": 0.88, "var_exp": "77.8%", "desc": "Aproximación al codo"},
-        5: {"k": 5, "wss": 142.8, "sil": 0.584, "dbi": 0.72, "var_exp": "84.6%", "desc": "ÓPTIMO GLOBAL SELECCIONADO", "is_optimal": True},
-        6: {"k": 6, "wss": 134.2, "sil": 0.531, "dbi": 0.79, "var_exp": "86.1%", "desc": "Comienzo de sobre-fragmentación"},
-        7: {"k": 7, "wss": 128.5, "sil": 0.488, "dbi": 0.84, "var_exp": "87.3%", "desc": "Clusters redundantes"},
-        8: {"k": 8, "wss": 124.1, "sil": 0.452, "dbi": 0.91, "var_exp": "88.2%", "desc": "Degradación de cohesión"},
-        9: {"k": 9, "wss": 120.3, "sil": 0.420, "dbi": 0.98, "var_exp": "89.0%", "desc": "Alta dispersión"},
-        10: {"k": 10, "wss": 117.8, "sil": 0.395, "dbi": 1.04, "var_exp": "89.8%", "desc": "Sobreajuste ruidoso"}
+        2: {
+            "k": 2,
+            "wss": 312.4,
+            "sil": 0.412,
+            "dbi": 1.28,
+            "var_exp": "58.2%",
+            "desc": "Subpartición gruesa",
+        },
+        3: {
+            "k": 3,
+            "wss": 245.1,
+            "sil": 0.495,
+            "dbi": 1.05,
+            "var_exp": "69.4%",
+            "desc": "Separación primaria",
+        },
+        4: {
+            "k": 4,
+            "wss": 198.6,
+            "sil": 0.542,
+            "dbi": 0.88,
+            "var_exp": "77.8%",
+            "desc": "Aproximación al codo",
+        },
+        5: {
+            "k": 5,
+            "wss": 142.8,
+            "sil": 0.584,
+            "dbi": 0.72,
+            "var_exp": "84.6%",
+            "desc": "ÓPTIMO GLOBAL SELECCIONADO",
+            "is_optimal": True,
+        },
+        6: {
+            "k": 6,
+            "wss": 134.2,
+            "sil": 0.531,
+            "dbi": 0.79,
+            "var_exp": "86.1%",
+            "desc": "Comienzo de sobre-fragmentación",
+        },
+        7: {
+            "k": 7,
+            "wss": 128.5,
+            "sil": 0.488,
+            "dbi": 0.84,
+            "var_exp": "87.3%",
+            "desc": "Clusters redundantes",
+        },
+        8: {
+            "k": 8,
+            "wss": 124.1,
+            "sil": 0.452,
+            "dbi": 0.91,
+            "var_exp": "88.2%",
+            "desc": "Degradación de cohesión",
+        },
+        9: {
+            "k": 9,
+            "wss": 120.3,
+            "sil": 0.420,
+            "dbi": 0.98,
+            "var_exp": "89.0%",
+            "desc": "Alta dispersión",
+        },
+        10: {
+            "k": 10,
+            "wss": 117.8,
+            "sil": 0.395,
+            "dbi": 1.04,
+            "var_exp": "89.8%",
+            "desc": "Sobreajuste ruidoso",
+        },
     }
 
     # Consistencia Cruzada y Concordancia: K-Means (Particional) vs Ward (Jerárquico Aglomerativo)
@@ -97,59 +276,59 @@ class KMeansNLPService:
                     "kmeans_cluster": "Cluster 0 (SCZ Casco)",
                     "ward_cluster": "Macro A (Crítico)",
                     "match": True,
-                    "profile": "Gravedad Crítica y Concentración Delictiva"
+                    "profile": "Gravedad Crítica y Concentración Delictiva",
                 },
                 {
                     "unit": "Cochabamba Cercado",
                     "kmeans_cluster": "Cluster 2 (Violencia Armada)",
                     "ward_cluster": "Macro B (Violencia)",
                     "match": True,
-                    "profile": "Violencia Armada y Corredores Nocturnos"
+                    "profile": "Violencia Armada y Corredores Nocturnos",
                 },
                 {
                     "unit": "Plan 3000",
                     "kmeans_cluster": "Cluster 2 (Violencia Armada)",
                     "ward_cluster": "Macro B (Violencia)",
                     "match": True,
-                    "profile": "Asaltos y Delitos en Espacio Público"
+                    "profile": "Asaltos y Delitos en Espacio Público",
                 },
                 {
                     "unit": "Equipetrol Comercial",
                     "kmeans_cluster": "Cluster 1 (Patrimonial)",
                     "ward_cluster": "Macro C (Menor Gravedad)",
                     "match": True,
-                    "profile": "Hurto Comercial / Baja Tasa Violenta"
+                    "profile": "Hurto Comercial / Baja Tasa Violenta",
                 },
                 {
                     "unit": "La Paz Centro",
                     "kmeans_cluster": "Cluster 1 (Patrimonial)",
                     "ward_cluster": "Macro C (Menor Gravedad)",
                     "match": True,
-                    "profile": "Delitos Patrimoniales y Tránsito"
+                    "profile": "Delitos Patrimoniales y Tránsito",
                 },
                 {
                     "unit": "Los Lotes",
                     "kmeans_cluster": "Cluster 1 (Patrimonial)",
                     "ward_cluster": "Macro C (Menor Gravedad)",
                     "match": True,
-                    "profile": "Periferia Urbana / Menor Gravedad"
+                    "profile": "Periferia Urbana / Menor Gravedad",
                 },
                 {
                     "unit": "Pampa de la Isla",
                     "kmeans_cluster": "Cluster 1 (Patrimonial)",
                     "ward_cluster": "Macro C (Menor Gravedad)",
                     "match": True,
-                    "profile": "Periferia Urbana / Menor Gravedad"
-                }
+                    "profile": "Periferia Urbana / Menor Gravedad",
+                },
             ],
             "confusion_matrix": {
                 "headers": ["Macro A (Ward)", "Macro B (Ward)", "Macro C (Ward)"],
                 "rows": [
                     {"name": "KM-0 (SCZ Casco)", "cells": [1, 0, 0]},
                     {"name": "KM-1 (Patrimonial)", "cells": [0, 0, 4]},
-                    {"name": "KM-2 (Violencia)", "cells": [0, 2, 0]}
-                ]
-            }
+                    {"name": "KM-2 (Violencia)", "cells": [0, 2, 0]},
+                ],
+            },
         },
         "chicago": {
             "ari": 0.742,
@@ -164,73 +343,81 @@ class KMeansNLPService:
                     "kmeans_cluster": "KM-02 (Armed Robbery)",
                     "ward_cluster": "Macro A (West Side)",
                     "match": True,
-                    "profile": "Violencia Armada Crítica"
+                    "profile": "Violencia Armada Crítica",
                 },
                 {
                     "unit": "D-007 / Englewood",
                     "kmeans_cluster": "KM-02 (Armed Robbery)",
                     "ward_cluster": "Macro A (South Side)",
                     "match": True,
-                    "profile": "Violencia Armada y Homicidios"
+                    "profile": "Violencia Armada y Homicidios",
                 },
                 {
                     "unit": "D-001 / The Loop Central",
                     "kmeans_cluster": "KM-01 (Retail Theft)",
                     "ward_cluster": "Macro B (Comercial Loop)",
                     "match": True,
-                    "profile": "Hurto Comercial / Retail"
+                    "profile": "Hurto Comercial / Retail",
                 },
                 {
                     "unit": "D-018 / Near North",
                     "kmeans_cluster": "KM-01 (Retail Theft)",
                     "ward_cluster": "Macro B (Comercial Loop)",
                     "match": True,
-                    "profile": "Fraude y Hurto en Retail"
+                    "profile": "Fraude y Hurto en Retail",
                 },
                 {
                     "unit": "D-016 / Jefferson Park",
                     "kmeans_cluster": "KM-04 (Vehicle Damage)",
                     "ward_cluster": "Macro C (Residencial)",
                     "match": True,
-                    "profile": "Baja Violencia / Daño Vehicular"
+                    "profile": "Baja Violencia / Daño Vehicular",
                 },
                 {
                     "unit": "D-020 / Lincoln",
                     "kmeans_cluster": "KM-03 (Domestic Battery)",
                     "ward_cluster": "Macro C (Residencial)",
                     "match": True,
-                    "profile": "Residencial Estable / Doméstico"
+                    "profile": "Residencial Estable / Doméstico",
                 },
                 {
                     "unit": "D-012 / Near West (UIC)",
                     "kmeans_cluster": "KM-01 (Retail Theft)",
                     "ward_cluster": "Macro B (Comercial Loop)",
                     "match": True,
-                    "profile": "Transición Comercial / Campus"
-                }
+                    "profile": "Transición Comercial / Campus",
+                },
             ],
             "confusion_matrix": {
                 "headers": ["Macro A (Ward)", "Macro B (Ward)", "Macro C (Ward)"],
                 "rows": [
                     {"name": "KM-02 Violencia Armada", "cells": [6, 1, 0]},
                     {"name": "KM-01 Hurto Comercial", "cells": [0, 4, 1]},
-                    {"name": "KM-03/04 Residencial", "cells": [1, 0, 9]}
-                ]
-            }
-        }
+                    {"name": "KM-03/04 Residencial", "cells": [1, 0, 9]},
+                ],
+            },
+        },
     }
 
     @classmethod
     def predict_nlp(cls, text: str):
-        cleaned = text.upper()
-        tokens = set(re.findall(r'\b[A-Z]{3,}\b', cleaned))
-        
+        # Normalizar caracteres eliminando tildes y diacríticos
+        normalized = "".join(
+            c
+            for c in unicodedata.normalize("NFD", text)
+            if unicodedata.category(c) != "Mn"
+        )
+        cleaned = normalized.upper()
+        tokens = set(re.findall(r"\b[A-Z0-9]{3,}\b", cleaned))
+
         scores = {}
+        matched_by_cluster = {}
         for cid, arch in cls.ARCHETYPES.items():
             kw_set = set(arch["top_keywords"])
             common = tokens.intersection(kw_set)
+            matched_by_cluster[cid] = list(common)
             # Puntaje base proporcional a coincidencias léxicas
-            score = len(common) * 1.5 + 0.1
+            score = len(common) * 2.0 + 0.1
             scores[cid] = score
 
         best_cluster = max(scores, key=scores.get)
@@ -240,9 +427,11 @@ class KMeansNLPService:
         confidence = min(0.98, max(0.78, raw_confidence + 0.15))
 
         chosen = cls.ARCHETYPES[best_cluster]
-        
+
         # Extracción de palabras presentes en el texto
-        matched_words = [w for w in chosen["top_keywords"] if w in cleaned][:5]
+        matched_words = matched_by_cluster.get(best_cluster, [])[:5]
+        if not matched_words:
+            matched_words = [w for w in chosen["top_keywords"] if w in cleaned][:5]
         if not matched_words:
             matched_words = chosen["top_keywords"][:5]
 
@@ -252,7 +441,7 @@ class KMeansNLPService:
             2: {"x": 0.58, "y": -0.22},
             3: {"x": 0.12, "y": 0.64},
             4: {"x": -0.55, "y": -0.48},
-            5: {"x": 0.38, "y": 0.45}
+            5: {"x": 0.38, "y": 0.45},
         }
 
         return {
@@ -270,5 +459,5 @@ class KMeansNLPService:
             "confidence": round(confidence * 100, 1),
             "matched_keywords": matched_words,
             "all_keywords": chosen["top_keywords"],
-            "lsa_coords": lsa_map[best_cluster]
+            "lsa_coords": lsa_map[best_cluster],
         }

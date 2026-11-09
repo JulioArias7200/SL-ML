@@ -13,12 +13,14 @@ def view():
     telemetry = DataService.get_dashboard_summary()["hardware_telemetry"]
     k_metrics = KMeansNLPService.K_METRICS
     archetypes = KMeansNLPService.ARCHETYPES
+    cross_concordance = KMeansNLPService.CROSS_CONCORDANCE.get(ctx, {})
 
     return render_template(
         'views/kmeans_nlp.html',
         telemetry=telemetry,
         k_metrics=k_metrics,
         archetypes=archetypes,
+        cross_concordance=cross_concordance,
         current_context=ctx,
         active_page='kmeans-nlp'
     )

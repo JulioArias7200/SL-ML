@@ -1,20 +1,35 @@
 /**
  * CPD ANALYTICS CORE // INFERENCE PLAYGROUND NLP
  * Clasificador semántico interactivo de reportes policiales con AJAX a Flask API.
+ * Soporta bicontexto: Bolivia (Prensa Nacional) y Chicago (RMS CPD).
  */
 
-const EXAMPLES = {
+const EXAMPLES_CHICAGO = {
     1: "RETAIL THEFT AT TARGET DEPARTMENT STORE. INDIVIDUAL CONCEALED COSMETICS AND ELECTRONIC ACCESSORIES IN BACKPACK, PASSED ALL CASH REGISTERS WITHOUT PAYMENT.",
     2: "ARMED ROBBERY AT GAS STATION CONVENIENCE STORE. TWO SUSPECTS WITH HANDGUN DISPLAYED, DEMANDED CASH DRAWER, FLED ON FOOT SOUTHBOUND.",
     3: "DOMESTIC BATTERY REPORTED AT MULTI-UNIT APARTMENT RESIDENCE. VERBAL ARGUMENT BETWEEN SPOUSES ESCALATED INTO PHYSICAL ALTERCATION WITH MINOR INJURIES.",
     4: "CRIMINAL DAMAGE TO VEHICLE ON PUBLIC STREET OVERNIGHT. CATALYTIC CONVERTER SAWED OFF PARKED HONDA CRV, DRIVER SIDE WINDOW SMASHED."
 };
 
+const EXAMPLES_BOLIVIA = {
+    1: "HURTO DE CELULAR Y BILLETERA EN MICRO DE TRANSPORTE PUBLICO EN AVENIDA GRIGOTA CASCO CENTRAL SANTA CRUZ POR SUJETO EN DESCUIDO SIN VIOLENCIA.",
+    2: "ASALTO A MANO ARMADA EN EL SEXTO ANILLO DE LA DOBLE VIA A LA GUARDIA. DOS SUJETOS EN MOTOCICLETA CON ARMA DE FUEGO AMENAZARON A VICTIMA, DISPARARON Y SUSTRAJERON BILLETERA Y CELULAR.",
+    3: "ALTERCADO FAMILIAR Y VIOLENCIA DOMESTICA EN VIVIENDA PARTICULAR DE QUILLACOLLO TRAS DISCUSION DE FIN DE SEMANA CON AGRESION FISICA.",
+    4: "DANO CRIMINAL Y ROBO DE AUTOPARTES A VEHICULO ESTACIONADO EN VIA PUBLICA EN CALACOTO LA PAZ ROTURA DE VIDRIOS Y ACCESORIOS."
+};
+
+function getActiveExamples() {
+    const container = document.getElementById('nlp-playground-container');
+    const ctx = container ? container.getAttribute('data-context') : 'bolivia';
+    return ctx === 'chicago' ? EXAMPLES_CHICAGO : EXAMPLES_BOLIVIA;
+}
+
 function loadExample(id) {
     const textarea = document.getElementById('incident-input');
     const counter = document.getElementById('char-counter');
-    if (textarea && EXAMPLES[id]) {
-        textarea.value = EXAMPLES[id];
+    const examples = getActiveExamples();
+    if (textarea && examples[id]) {
+        textarea.value = examples[id];
         if (counter) counter.textContent = `${textarea.value.length} caracteres`;
         analyzeIncidentText(textarea.value);
     }
@@ -37,14 +52,14 @@ async function analyzeIncidentText(text) {
     const btnText = document.getElementById('analyze-btn-text');
     if (analyzeBtn) {
         analyzeBtn.disabled = true;
-        if (btnText) btnText.textContent = "PROCESANDO INFERENCIA...";
+        if (btnText) btnText.textContent = "PROCESANDO INFERENCIA NLP...";
     }
 
     try {
         const response = await fetch('/api/v1/predict_nlp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text })
+            body: JSON.stringify({ text, algo: 'kmeans' })
         });
 
         const data = await response.json();
@@ -56,7 +71,7 @@ async function analyzeIncidentText(text) {
     } finally {
         if (analyzeBtn) {
             analyzeBtn.disabled = false;
-            if (btnText) btnText.textContent = "EJECUTAR INFERENCIA NLP";
+            if (btnText) btnText.textContent = "EJECUTAR INFERENCIA NLP EN TIEMPO REAL";
         }
     }
 }
