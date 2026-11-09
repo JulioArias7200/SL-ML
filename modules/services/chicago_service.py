@@ -311,3 +311,77 @@ class ChicagoService:
             except Exception as e:
                 print(f"[ERROR ChicagoService.get_nlp_data] {e}")
         return []
+
+    CHICAGO_DISTRICT_COORDS = {
+        1: (41.8818, -87.6231),   # Loop
+        2: (41.8170, -87.6180),   # Wentworth
+        3: (41.7610, -87.6040),   # Grand Crossing
+        4: (41.7330, -87.5550),   # South Chicago
+        5: (41.6920, -87.6190),   # Calumet
+        6: (41.7450, -87.6470),   # Gresham
+        7: (41.7750, -87.6400),   # Englewood
+        8: (41.7780, -87.7080),   # Chicago Lawn
+        9: (41.8370, -87.6540),   # Deering
+        10: (41.8540, -87.7120),  # Ogden
+        11: (41.8750, -87.7200),  # Harrison
+        12: (41.8650, -87.6580),  # Near West
+        14: (41.9210, -87.6970),  # Shakespeare
+        15: (41.8850, -87.7650),  # Austin
+        16: (41.9700, -87.7700),  # Jefferson Park
+        17: (41.9670, -87.7280),  # Albany Park
+        18: (41.9020, -87.6360),  # Near North
+        19: (41.9470, -87.6530),  # Town Hall
+        20: (41.9800, -87.6830),  # Lincoln
+        22: (41.7080, -87.6710),  # Morgan Park
+        24: (42.0100, -87.6730),  # Rogers Park
+        25: (41.9240, -87.7680)   # Grand Central
+    }
+
+    @classmethod
+    def get_anomalies_analysis(cls):
+        """
+        Retorna el análisis de anomalías detectadas por el Autoencoder neuronal
+        en el benchmark de Chicago CPD RMS (250 incidentes curados).
+        """
+        raw_points = cls.get_nlp_data()
+        if not raw_points:
+            return {"anomalias": [], "estadisticas": {}}
+
+        errors = [float(p.get('reconstruction_error', 0.0)) for p in raw_points]
+        umbral = round(float(np.percentile(errors, 90)), 6) if errors else 0.007365
+
+        anomalias_list = []
+        for p in raw_points:
+            err = float(p.get('reconstruction_error', 0.0))
+            if p.get('is_anomaly') or err >= umbral:
+                dist_id = int(p.get('district_id', 1))
+                dist_str = f"Distrito {dist_id:02d} // {p.get('zone', 'Chicago')}"
+                anom_id = int(p.get('id', len(anomalias_list)))
+                coord = cls.CHICAGO_DISTRICT_COORDS.get(dist_id, (41.8818, -87.6231))
+                jitter_lat = ((anom_id % 7) - 3) * 0.0022
+                jitter_lon = ((anom_id % 5) - 2) * 0.0022
+                anomalias_list.append({
+                    "id": anom_id,
+                    "titulo": str(p.get('title', 'INCIDENT REPORT')),
+                    "delito": str(p.get('category', 'OFFENSE')),
+                    "ciudad": dist_str,
+                    "district_id": dist_id,
+                    "error": round(err, 6),
+                    "lat": round(coord[0] + jitter_lat, 4),
+                    "lon": round(coord[1] + jitter_lon, 4),
+                    "url": "https://home.chicagopolice.org/statistics-data/data-portal/",
+                    "motivo": "Incidente atípico con reconstrucción irregular fuera de la variedad latente RMS."
+                })
+
+        # Ordenar por error descendente
+        anomalias_list.sort(key=lambda x: x["error"], reverse=True)
+
+        return {
+            "total_analizados": len(raw_points),
+            "total_anomalias": len(anomalias_list),
+            "umbral_corte": umbral,
+            "error_medio": round(float(np.mean(errors)), 6) if errors else 0.0,
+            "error_max": round(float(np.max(errors)), 6) if errors else 0.0,
+            "error_min": round(float(np.min(errors)), 6) if errors else 0.0,
+            "anomalias": anomalias_list
+        }

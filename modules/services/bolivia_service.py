@@ -173,17 +173,30 @@ class BoliviaService:
         if df_nlp.empty:
             return {"anomalias": [], "estadisticas": {}}
 
-        umbral = 0.00115  # Umbral de corte del autoencoder
+        # Umbral dinámico: percentil 90 del error de reconstrucción del autoencoder
+        if 'error_autoencoder' in df_nlp:
+            umbral = round(float(np.percentile(df_nlp['error_autoencoder'].dropna(), 90)), 6)
+        else:
+            umbral = 0.006085
+
         anomalias_df = df_nlp[df_nlp['es_anomalia'] == True].copy()
         
         anomalias_list = []
         for row in anomalias_df.itertuples():
+            idx = int(row.Index)
+            base_lat = float(getattr(row, 'lat', -17.7833))
+            base_lon = float(getattr(row, 'lon', -63.1821))
+            # Micro-dispersión táctica para visibilidad de puntos coincidentes
+            jitter_lat = ((idx % 7) - 3) * 0.0025
+            jitter_lon = ((idx % 5) - 2) * 0.0025
             anomalias_list.append({
-                "id": int(row.Index),
+                "id": idx,
                 "titulo": str(row.titulo),
                 "delito": str(row.delito_principal),
                 "ciudad": str(row.ciudad),
                 "error": round(float(row.error_autoencoder), 6),
+                "lat": round(base_lat + jitter_lat, 4),
+                "lon": round(base_lon + jitter_lon, 4),
                 "url": str(row.url),
                 "motivo": "Redacción atípica o patrón de delito infrecuente respecto al corpus nacional."
             })

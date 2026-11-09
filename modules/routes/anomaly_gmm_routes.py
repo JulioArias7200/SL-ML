@@ -10,8 +10,12 @@ def view():
     if ctx != 'chicago':
         ctx = 'bolivia'
 
-    anomalies_data = BoliviaService.get_anomalies_analysis()
-    gmm_components = BoliviaService.get_gmm_components() if ctx == 'bolivia' else ChicagoService.get_gmm_components()
+    if ctx == 'chicago':
+        anomalies_data = ChicagoService.get_anomalies_analysis()
+        gmm_components = ChicagoService.get_gmm_components()
+    else:
+        anomalies_data = BoliviaService.get_anomalies_analysis()
+        gmm_components = BoliviaService.get_gmm_components()
 
     return render_template(
         'views/anomalias_autoencoder_gmm.html',
