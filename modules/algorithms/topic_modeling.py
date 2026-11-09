@@ -13,7 +13,7 @@ def train_lda_topics(corpus_textos, n_topics=5, max_features=250, random_state=4
     vec = CountVectorizer(max_features=max_features, max_df=0.85, min_df=2)
     X = vec.fit_transform(corpus_textos)
 
-    lda = LatentDirichletAllocation(n_components=n_topics, random_state=random_state, max_iter=20)
+    lda = LatentDirichletAllocation(n_components=n_topics, random_state=random_state, max_iter=10, learning_method='online')
     topic_matrix = lda.fit_transform(X)
 
     vocab = vec.get_feature_names_out()
