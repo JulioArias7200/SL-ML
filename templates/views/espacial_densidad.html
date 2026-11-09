@@ -4,6 +4,11 @@
 {{ 'Bolivia Urban Intelligence' if current_context != 'chicago' else 'CPD Urban Intelligence' }} // Módulo #03: Geoespacial &amp; Densidad (OPTICS &amp; DBSCAN)
 {% endblock %}
 
+{% block extra_head %}
+<!-- MapLibre GL JS v4.7.1 CSS (WebGL 3D Engine Ultraligero ~250KB) -->
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+{% endblock %}
+
 {% block content %}
 <div id="spatial-root" data-context="{{ current_context }}" class="flex flex-col min-w-0 bg-surface">
     <!-- 1. ENCABEZADO TÁCTICO DEL MÓDULO GEOESPACIAL -->
@@ -575,5 +580,7 @@
 {% endblock %}
 
 {% block extra_scripts %}
+<!-- MapLibre GL JS v4.7.1 Script (Motor WebGL 3D Ultraligero ~250KB) -->
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="{{ url_for('static', filename='js/spatial_controls.js') }}"></script>
 {% endblock %}

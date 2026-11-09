@@ -45,7 +45,7 @@
                     <td class="py-2.5 px-3">
                         <span class="px-2 py-0.5 rounded text-[10px] font-bold border 
                             {% if d.macro == 'A' %}bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/30
-                            {% elif d.macro == 'B' %}bg-cyan-100 text-cyan-800 border-cyan-300 dark:bg-cyan-500/15 dark:text-cyan-300 dark:border-cyan-500/30
+                            {% elif d.macro == 'B' %}bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30
                             {% else %}bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/30{% endif %}">
                             Cluster {{ d.macro }}
                         </span>
@@ -57,7 +57,7 @@
                         {{ "{:,}".format(d.total_5y) }}
                     </td>
                     <td class="py-2.5 px-3 font-semibold text-right
-                        {% if d.macro == 'A' %}text-rose-700 dark:text-rose-400{% elif d.macro == 'B' %}text-cyan-700 dark:text-cyan-400{% else %}text-emerald-700 dark:text-emerald-400{% endif %}">
+                        {% if d.macro == 'A' %}text-rose-700 dark:text-rose-400{% elif d.macro == 'B' %}text-amber-700 dark:text-amber-400{% else %}text-emerald-700 dark:text-emerald-400{% endif %}">
                         {{ d.density_km2 }}
                     </td>
                     <td class="py-2.5 px-3 text-center text-outline text-[11px]">

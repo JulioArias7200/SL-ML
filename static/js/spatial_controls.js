@@ -379,7 +379,6 @@ document.addEventListener('DOMContentLoaded', () => {
         tacticalViewport.addEventListener('mousedown', (e) => {
             // Ignorar clic si es sobre botones o sliders del HUD o leyendas flotantes
             if (e.target.closest('#spatial-hud-box') || 
-                e.target.closest('#tactical-inspector-card') || 
                 e.target.closest('#tactical-zoom-dock') ||
                 e.target.closest('#tactical-legend-dock') ||
                 e.target.closest('button') ||
@@ -431,7 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Acercar / Achicar con la rueda del ratón (Mouse Wheel)
         tacticalViewport.addEventListener('wheel', (e) => {
-            if (e.target.closest('#spatial-hud-box') || e.target.closest('#tactical-inspector-card')) return;
+            if (e.target.closest('#spatial-hud-box')) return;
             e.preventDefault();
             const zoomDelta = e.deltaY < 0 ? 0.15 : -0.15;
             const newZoom = Math.max(0.6, Math.min(4.0, Number((tacticalZoom + zoomDelta).toFixed(2))));
@@ -454,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let touchStartY = 0;
 
         tacticalViewport.addEventListener('touchstart', (e) => {
-            if (e.target.closest('#spatial-hud-box') || e.target.closest('#tactical-inspector-card') || e.target.closest('#tactical-zoom-dock')) return;
+            if (e.target.closest('#spatial-hud-box') || e.target.closest('#tactical-zoom-dock')) return;
 
             if (e.touches.length === 1) {
                 isTacticalPanning = true;
@@ -540,20 +539,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 b.style.filter = 'none';
             }
         });
-
-        // Actualizar Inspector Card
-        const inspectorCard = document.getElementById('tactical-inspector-card');
-        const inspectorTitle = document.getElementById('inspector-title');
-        const inspectorBadge = document.getElementById('inspector-badge');
-        if (inspectorTitle && inspectorCard) {
-            inspectorTitle.textContent = `VALLE OPTICS #${valleyId}`;
-            if (inspectorBadge) {
-                inspectorBadge.textContent = 'CUENCA ENFOCADA';
-            }
-        }
     }
 
-    function updateSideInspector(row, clusterId, zoneName) {
+    function updateSideInspector(row, clusterId, zoneName, featureProps) {
         const sideZone = document.getElementById('side-inspector-zone');
         const sideBadge = document.getElementById('side-inspector-badge');
         const sideMacro = document.getElementById('side-inspector-macro');
@@ -566,6 +554,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const sideHdbscan = document.getElementById('side-inspector-hdbscan');
 
         if (!sideZone) return;
+
+        if (featureProps) {
+            const zTitle = featureProps.zone || featureProps.city || zoneName || 'PUNTO GEOESPACIAL';
+            sideZone.textContent = zTitle.toUpperCase();
+            if (sideBadge) {
+                const isCrit = featureProps.ward === 'A' || featureProps.dbscan === 0 || featureProps.dbscan === 2;
+                sideBadge.textContent = isCrit ? 'ALERTA ROJA' : (featureProps.ward === 'B' ? 'PATRULLAJE DINÁMICO' : 'VIGILANCIA ALTA');
+                sideBadge.className = isCrit 
+                    ? 'px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/40'
+                    : 'px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40';
+            }
+            if (sideMacro) sideMacro.textContent = featureProps.ward_label || `Macro-Cluster ${featureProps.ward || 'A'}`;
+            if (sideVol) sideVol.textContent = featureProps.date ? `${featureProps.date} (${featureProps.source || 'Prensa'})` : '1 reporte directo';
+            if (sideDensity) sideDensity.textContent = featureProps.hdbscan_persistence ? `λ=${featureProps.hdbscan_persistence}` : (featureProps.dbscan !== -1 ? 'Núcleo Denso' : 'Ruido (-1)');
+            if (sideDelito) {
+                const del = featureProps.category || featureProps.title || 'Incidente Reportado';
+                sideDelito.textContent = del;
+                sideDelito.title = del;
+            }
+            if (sideNocturno) sideNocturno.textContent = featureProps.date || 'N/D';
+            if (sideDbscan) sideDbscan.textContent = featureProps.dbscan_label || (featureProps.dbscan !== undefined ? `DBSCAN #${featureProps.dbscan}` : `Cluster #${clusterId}`);
+            if (sideOptics) sideOptics.textContent = featureProps.reach_depth_m ? `Valle ${featureProps.reach_depth_m}m` : `OPTICS ξ`;
+            if (sideHdbscan) sideHdbscan.textContent = featureProps.hdbscan_label || (featureProps.hdbscan !== undefined ? `HDB #${featureProps.hdbscan}` : 'Estable');
+            return;
+        }
 
         if (row) {
             const cells = row.querySelectorAll('td');
@@ -588,7 +601,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/40';
                     } else if (status.includes('VIGILANCIA')) {
                         sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-cyan-100 text-cyan-800 border-cyan-300 dark:bg-cyan-500/20 dark:text-cyan-300 dark:border-cyan-500/40';
-                    } else if (status.includes('DINÁMICO')) {
+                    } else if (status.includes('DINÁMICO') || status.includes('ALERTA')) {
                         sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40';
                     } else {
                         sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40';
@@ -634,16 +647,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Actualizar el Inspector Táctico Lateral
         updateSideInspector(matchedRow, clusterId, zoneName);
-
-        // Feedback en el Inspector Card Táctico Flotante
-        const inspectorTitle = document.getElementById('inspector-title');
-        const inspectorVol = document.getElementById('inspector-vol');
-        if (inspectorTitle) {
-            inspectorTitle.textContent = zoneName ? zoneName.toUpperCase() : `CLUSTER #${clusterId}`;
-        }
-        if (inspectorVol) {
-            inspectorVol.textContent = `Valle #${clusterId} (OPTICS &xi;)`;
-        }
     }
 
     // Eventos de Clic en Filas de Taxonomía y Valles
@@ -849,4 +852,321 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
+
+    // =========================================================================
+    // 17. CONMUTADOR DUAL-MODE (2D TÁCTICO SVG <-> GLOBO 3D WEBGIS MAPLIBRE GL)
+    // =========================================================================
+    const btnView2D = document.getElementById('btn-view-2d');
+    const btnView3D = document.getElementById('btn-view-3d');
+    const viewport2D = document.getElementById('tactical-map-viewport');
+    const viewport3D = document.getElementById('tactical-map-viewport-3d');
+    const layersBar2D = document.getElementById('tactical-2d-layers-bar');
+
+    let map3dInstance = null;
+    let isGlobe3DInitialized = false;
+    let currentGlobeMode = 'dbscan';
+
+    function setDualView(mode) {
+        if (mode === '3d') {
+            if (btnView3D) {
+                btnView3D.classList.add('bg-primary-container', 'text-on-primary', 'shadow-xs', 'active');
+                btnView3D.classList.remove('text-on-surface-variant');
+            }
+            if (btnView2D) {
+                btnView2D.classList.remove('bg-primary-container', 'text-on-primary', 'shadow-xs', 'active');
+                btnView2D.classList.add('text-on-surface-variant');
+            }
+            if (viewport2D) viewport2D.classList.add('hidden');
+            if (viewport3D) viewport3D.classList.remove('hidden');
+            if (layersBar2D) layersBar2D.classList.add('opacity-40', 'pointer-events-none');
+
+            initOrResizeGlobe3D();
+        } else {
+            if (btnView2D) {
+                btnView2D.classList.add('bg-primary-container', 'text-on-primary', 'shadow-xs', 'active');
+                btnView2D.classList.remove('text-on-surface-variant');
+            }
+            if (btnView3D) {
+                btnView3D.classList.remove('bg-primary-container', 'text-on-primary', 'shadow-xs', 'active');
+                btnView3D.classList.add('text-on-surface-variant');
+            }
+            if (viewport2D) viewport2D.classList.remove('hidden');
+            if (viewport3D) viewport3D.classList.add('hidden');
+            if (layersBar2D) layersBar2D.classList.remove('opacity-40', 'pointer-events-none');
+        }
+    }
+
+    if (btnView2D) btnView2D.addEventListener('click', () => setDualView('2d'));
+    if (btnView3D) btnView3D.addEventListener('click', () => setDualView('3d'));
+
+    // =========================================================================
+    // 18. MOTOR GLOBO 3D WEBGIS // MAPLIBRE GL JS v4 ULTRALIGERO
+    // =========================================================================
+    function getGlobeColorExpression(mode) {
+        if (mode === 'ward') {
+            return ['coalesce', ['get', 'ward_color'], '#ff3366'];
+        }
+        if (mode === 'optics') {
+            return ['coalesce', ['get', 'optics_color'], '#38bdf8'];
+        }
+        if (mode === 'hdbscan') {
+            return ['coalesce', ['get', 'hdbscan_color'], '#34d399'];
+        }
+        // DBSCAN por defecto
+        return ['coalesce', ['get', 'dbscan_color'], '#00e5ff'];
+    }
+
+    function initOrResizeGlobe3D() {
+        if (typeof maplibregl === 'undefined') {
+            console.warn('[WebGIS 3D] MapLibre GL no está disponible en la página.');
+            return;
+        }
+
+        if (isGlobe3DInitialized && map3dInstance) {
+            setTimeout(() => {
+                map3dInstance.resize();
+            }, 60);
+            return;
+        }
+
+        const isChicago = (currentCtx === 'chicago');
+        const initialCenter = isChicago ? [-87.6298, 41.8781] : [-64.2, -17.2];
+        const initialZoom = isChicago ? 10.5 : 5.4;
+
+        try {
+            map3dInstance = new maplibregl.Map({
+                container: 'maplibre-3d-canvas',
+                style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+                center: initialCenter,
+                zoom: initialZoom,
+                pitch: 42,
+                bearing: isChicago ? -10 : -8,
+                scrollZoom: false, // Prevención estricta de atrapamiento de rueda
+                cooperativeGestures: true // Requiere Ctrl + Scroll para zoom si se usa la rueda
+            });
+
+            isGlobe3DInitialized = true;
+
+            map3dInstance.on('load', () => {
+                // Configurar proyección esférica si está soportada en v4+
+                if (typeof map3dInstance.setProjection === 'function') {
+                    try {
+                        map3dInstance.setProjection({ type: 'globe' });
+                    } catch (e) {
+                        console.log('[WebGIS 3D] Proyección esférica fallback');
+                    }
+                }
+
+                // Cargar datos GeoJSON desde la API Flask
+                const geojsonUrl = `/api/v1/webgis/geojson?ctx=${encodeURIComponent(currentCtx)}`;
+
+                fetch(geojsonUrl)
+                    .then(res => res.json())
+                    .then(data => {
+                        const countEl = document.getElementById('globe-3d-stat-points');
+                        if (countEl && data.total) {
+                            countEl.textContent = `${data.total} hechos`;
+                        }
+
+                        // 1. Fuente con clustering para halos
+                        map3dInstance.addSource('webgis-3d-events', {
+                            type: 'geojson',
+                            data: data,
+                            cluster: true,
+                            clusterMaxZoom: 12,
+                            clusterRadius: 35
+                        });
+
+                        // 2. Fuente continua sin clustering para garantizar puntos siempre visibles a todo zoom
+                        map3dInstance.addSource('webgis-3d-raw', {
+                            type: 'geojson',
+                            data: data,
+                            cluster: false
+                        });
+
+                        // Halos de Clústeres (translúcidos)
+                        map3dInstance.addLayer({
+                            id: 'clusters-halo-3d',
+                            type: 'circle',
+                            source: 'webgis-3d-events',
+                            filter: ['has', 'point_count'],
+                            paint: {
+                                'circle-color': [
+                                    'step',
+                                    ['get', 'point_count'],
+                                    'rgba(0, 229, 255, 0.35)',
+                                    5, 'rgba(251, 191, 36, 0.35)',
+                                    15, 'rgba(255, 51, 102, 0.40)'
+                                ],
+                                'circle-radius': [
+                                    'step',
+                                    ['get', 'point_count'],
+                                    22,
+                                    5, 30,
+                                    15, 42
+                                ],
+                                'circle-blur': 0.2
+                            }
+                        });
+
+                        // Núcleo sólido de clústeres
+                        map3dInstance.addLayer({
+                            id: 'clusters-core-3d',
+                            type: 'circle',
+                            source: 'webgis-3d-events',
+                            filter: ['has', 'point_count'],
+                            paint: {
+                                'circle-color': [
+                                    'step',
+                                    ['get', 'point_count'],
+                                    '#00e5ff',
+                                    5, '#fbbf24',
+                                    15, '#ff3366'
+                                ],
+                                'circle-radius': [
+                                    'step',
+                                    ['get', 'point_count'],
+                                    14,
+                                    5, 18,
+                                    15, 24
+                                ],
+                                'circle-stroke-width': 2,
+                                'circle-stroke-color': '#0f172a'
+                            }
+                        });
+
+                        // Conteo numérico de clústeres (sin text-font rígido para máxima compatibilidad)
+                        map3dInstance.addLayer({
+                            id: 'cluster-count-3d',
+                            type: 'symbol',
+                            source: 'webgis-3d-events',
+                            filter: ['has', 'point_count'],
+                            layout: {
+                                'text-field': '{point_count_abbreviated}',
+                                'text-size': 12
+                            },
+                            paint: {
+                                'text-color': '#ffffff'
+                            }
+                        });
+
+                        // Puntos individuales continuos: SIEMPRE VISIBLES a cualquier nivel de zoom
+                        map3dInstance.addLayer({
+                            id: 'raw-points-3d',
+                            type: 'circle',
+                            source: 'webgis-3d-raw',
+                            paint: {
+                                'circle-color': getGlobeColorExpression(currentGlobeMode),
+                                'circle-radius': [
+                                    'interpolate', ['linear'], ['zoom'],
+                                    2, 5.5,
+                                    5, 8.0,
+                                    10, 10.5,
+                                    14, 13.0
+                                ],
+                                'circle-stroke-width': 2.2,
+                                'circle-stroke-color': '#ffffff',
+                                'circle-opacity': 0.95
+                            }
+                        });
+
+                        // Clic en clúster: zoom in suave
+                        map3dInstance.on('click', 'clusters-core-3d', (e) => {
+                            const features = map3dInstance.queryRenderedFeatures(e.point, { layers: ['clusters-core-3d'] });
+                            if (!features || !features.length) return;
+                            const clusterId = features[0].properties.cluster_id;
+                            map3dInstance.getSource('webgis-3d-events').getClusterExpansionZoom(clusterId, (err, zoom) => {
+                                if (err) return;
+                                map3dInstance.easeTo({
+                                    center: features[0].geometry.coordinates,
+                                    zoom: zoom + 0.8
+                                });
+                            });
+                        });
+
+                        // Clic en punto individual continuo: sincronizar Inspector Lateral
+                        map3dInstance.on('click', 'raw-points-3d', (e) => {
+                            if (!e.features || !e.features[0]) return;
+                            const feat = e.features[0];
+                            const props = feat.properties;
+
+                            // Actualizar Inspector Lateral
+                            updateSideInspector(null, props.dbscan !== undefined ? props.dbscan : props.cluster, props.city || props.zone || props.category, props);
+
+                            // Efecto de pulso en Inspector
+                            const panel = document.getElementById('spatial-inspector-panel');
+                            if (panel) {
+                                panel.classList.add('ring-2', 'ring-cyan-400');
+                                setTimeout(() => panel.classList.remove('ring-2', 'ring-cyan-400'), 1200);
+                            }
+                        });
+
+                        // Cambiar cursor al pasar sobre elementos interactivos
+                        map3dInstance.on('mouseenter', 'raw-points-3d', () => {
+                            map3dInstance.getCanvas().style.cursor = 'pointer';
+                        });
+                        map3dInstance.on('mouseleave', 'raw-points-3d', () => {
+                            map3dInstance.getCanvas().style.cursor = '';
+                        });
+                        map3dInstance.on('mouseenter', 'clusters-core-3d', () => {
+                            map3dInstance.getCanvas().style.cursor = 'pointer';
+                        });
+                        map3dInstance.on('mouseleave', 'clusters-core-3d', () => {
+                            map3dInstance.getCanvas().style.cursor = '';
+                        });
+                    })
+                    .catch(err => console.error('[WebGIS 3D] Error cargando GeoJSON:', err));
+            });
+
+            // Controles de navegación 3D
+            const btnZoomIn = document.getElementById('btn-globe-zoom-in');
+            const btnZoomOut = document.getElementById('btn-globe-zoom-out');
+            const btnReset = document.getElementById('btn-globe-reset');
+            const btnPitch = document.getElementById('btn-globe-pitch');
+
+            if (btnZoomIn) btnZoomIn.addEventListener('click', () => map3dInstance.zoomIn());
+            if (btnZoomOut) btnZoomOut.addEventListener('click', () => map3dInstance.zoomOut());
+            if (btnReset) btnReset.addEventListener('click', () => {
+                map3dInstance.flyTo({
+                    center: initialCenter,
+                    zoom: initialZoom,
+                    pitch: 42,
+                    bearing: isChicago ? -10 : -8,
+                    speed: 1.2
+                });
+            });
+
+            let currentPitch = 42;
+            if (btnPitch) btnPitch.addEventListener('click', () => {
+                currentPitch = currentPitch === 42 ? 65 : (currentPitch === 65 ? 0 : 42);
+                map3dInstance.easeTo({ pitch: currentPitch, duration: 600 });
+            });
+
+            // Botones de modo algorítmico 3D
+            document.querySelectorAll('.globe-mode-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.globe-mode-btn').forEach(b => {
+                        b.classList.remove('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/40', 'font-bold', 'active');
+                        b.classList.add('bg-surface-container', 'text-slate-300', 'border-outline-variant');
+                    });
+                    btn.classList.add('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/40', 'font-bold', 'active');
+                    btn.classList.remove('bg-surface-container', 'text-slate-300', 'border-outline-variant');
+
+                    const mode = btn.getAttribute('data-globe-mode');
+                    currentGlobeMode = mode;
+
+                    if (map3dInstance && map3dInstance.getLayer('raw-points-3d')) {
+                        map3dInstance.setPaintProperty(
+                            'raw-points-3d',
+                            'circle-color',
+                            getGlobeColorExpression(mode)
+                        );
+                    }
+                });
+            });
+
+        } catch (e) {
+            console.error('[WebGIS 3D] Error inicializando MapLibre GL:', e);
+        }
+    }
 });

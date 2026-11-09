@@ -174,6 +174,47 @@ def test_kmeans_nlp_math_cross_concordance_and_api(client):
     assert data_en['confidence'] >= 75.0
     assert any(k in ["THEFT", "RETAIL", "STORE", "CASH", "REGISTER"] for k in data_en['matched_keywords'])
 
+def test_spatial_density_dual_mode_3d_and_macro_b(client):
+    """Verifica que la vista jerárquica y de densidad espacial cuente con el modo dual 2D/3D, sin cards flotantes redundantes y con Macro B unificado en ámbar."""
+    resp = client.get('/jerarquico-densidad?ctx=bolivia')
+    assert resp.status_code == 200
+    html = resp.get_data(as_text=True)
+
+    # 1. Switcher Dual-Mode presente en la barra del mapa
+    assert 'id="btn-view-2d"' in html, "Debe existir el botón para alternar a 2D Táctico"
+    assert 'id="btn-view-3d"' in html, "Debe existir el botón para alternar a Globo 3D WebGIS"
+    assert 'id="tactical-map-viewport-3d"' in html, "Debe existir el contenedor del visor 3D"
+    assert 'id="maplibre-3d-canvas"' in html, "Debe existir el canvas de MapLibre GL"
+
+    # 2. El card flotante interior redundante debe haber sido eliminado
+    assert 'id="tactical-inspector-card"' not in html, "El card flotante redundante táctico debe haber sido retirado"
+
+    # 3. La tabla de distritos debe codificar el Macro-Cluster B en color ámbar
+    assert 'bg-amber-100 text-amber-800' in html, "El Macro-Cluster B debe tener estilos ámbar en la tabla"
+    assert 'text-amber-700 dark:text-amber-400' in html, "La densidad del Macro-Cluster B debe ser ámbar"
+
+    # 4. Los 7 valles de OPTICS deben estar representados en la capa SVG de Bolivia
+    assert '&xi;-Valle #0' in html
+    assert '&xi;-Valle #1' in html
+    assert '&xi;-Valle #2' in html
+    assert '&xi;-Valle #3' in html
+    assert '&xi;-Valle #5' in html
+    assert '&xi;-Valle #6' in html
+    assert '&xi;-Valle #7' in html
+
+    # 5. API GeoJSON responde para alimentar el Globo 3D en ambos contextos
+    resp_geo_bo = client.get('/api/v1/webgis/geojson?ctx=bolivia')
+    assert resp_geo_bo.status_code == 200
+    data_bo = resp_geo_bo.get_json()
+    assert data_bo['type'] == 'FeatureCollection'
+    assert len(data_bo['features']) > 0
+
+    resp_geo_chi = client.get('/api/v1/webgis/geojson?ctx=chicago')
+    assert resp_geo_chi.status_code == 200
+    data_chi = resp_geo_chi.get_json()
+    assert data_chi['type'] == 'FeatureCollection'
+    assert len(data_chi['features']) > 0
+
 
 
 
