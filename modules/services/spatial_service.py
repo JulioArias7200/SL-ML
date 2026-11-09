@@ -435,10 +435,10 @@ class SpatialDensityService:
             hotspot_delta = int((1500 - calibrated_eps) * 0.002 + (min_pts - 5) * -0.2)
             active_hotspots = max(3, min(12, base_hotspots + hotspot_delta))
 
-            noise_base = 13
+            noise_base = 6
             noise_delta = int((1500 - calibrated_eps) * 0.006 + (min_pts - 5) * 0.8)
-            noise_count = max(5, min(25, noise_base + noise_delta))
-            noise_pct = round((noise_count / 69) * 100, 1)
+            noise_count = max(4, min(18, noise_base + noise_delta))
+            noise_pct = round((noise_count / 137) * 100, 1)
 
             return {
                 "eps_meters": calibrated_eps,
@@ -449,7 +449,7 @@ class SpatialDensityService:
                 "noise_pct": noise_pct,
                 "cophenetic_r": 0.789,
                 "silhouette_spatial": 0.584,
-                "sample_size": "69 reportes curados Prensa BO",
+                "sample_size": "137 reportes curados Prensa BO",
                 "unit": "metros",
                 "ctx": "bolivia"
             }

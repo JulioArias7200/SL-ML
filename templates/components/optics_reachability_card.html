@@ -72,7 +72,7 @@
             <div class="flex gap-1.5">
                 <button type="button" 
                         id="btn-optics-method-xi" 
-                        class="flex-1 py-1 px-2.5 rounded bg-amber-400/20 border border-amber-400/50 text-amber-300 text-[11px] font-bold text-center transition-colors">
+                        class="flex-1 py-1 px-2.5 rounded bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40 text-[11px] font-bold text-center transition-colors border">
                     Algoritmo &xi; (Jerárquico)
                 </button>
                 <button type="button" 
@@ -290,7 +290,7 @@
                     Cuencas detectadas por gradiente de corte &xi; // Descenso y ascenso de densidad
                 </span>
             </div>
-            <span class="text-[11px] font-data-code text-cyan-300 bg-cyan-950/40 border border-cyan-800/50 px-2.5 py-1 rounded self-start sm:self-auto">
+            <span class="text-[11px] font-data-code text-cyan-800 bg-cyan-100 border border-cyan-300 dark:bg-cyan-950/40 dark:text-cyan-300 dark:border-cyan-800/50 px-2.5 py-1 rounded self-start sm:self-auto font-bold">
                 Algoritmo &xi; Activo
             </span>
         </div>
@@ -332,9 +332,9 @@
                         </td>
                         <td class="py-2.5 px-3">
                             <span class="px-2 py-0.5 rounded text-[10px] font-bold border
-                                {% if 'ROJA' in v.status %}bg-rose-500/15 text-rose-300 border-rose-500/30
-                                {% elif 'VIGILANCIA' in v.status %}bg-cyan-500/15 text-cyan-300 border-cyan-500/30
-                                {% else %}bg-emerald-500/15 text-emerald-300 border-emerald-500/30{% endif %}">
+                                {% if 'ROJA' in v.status %}bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/30
+                                {% elif 'VIGILANCIA' in v.status %}bg-cyan-100 text-cyan-800 border-cyan-300 dark:bg-cyan-500/15 dark:text-cyan-300 dark:border-cyan-500/30
+                                {% else %}bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/30{% endif %}">
                                 {{ v.status }}
                             </span>
                         </td>

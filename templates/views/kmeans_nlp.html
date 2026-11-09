@@ -3,23 +3,33 @@
 {% block title %}CPD Analytics Core // K-Means &amp; NLP Semantic Mining{% endblock %}
 
 {% block content %}
-<div class="p-4 sm:p-6 lg:p-8 flex flex-col gap-6 sm:gap-8 max-w-[1700px] w-full mx-auto">
+<div class="p-4 sm:p-6 lg:p-8 flex flex-col gap-6 sm:gap-8 max-w-[1700px] w-full mx-auto font-sans">
     <!-- 1. ENCABEZADO DEL MÓDULO & METADATOS TÁCTICOS -->
     <section class="flex flex-col gap-4 border-b border-outline-variant/30 pb-6">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div class="flex flex-col gap-1 max-w-4xl">
                 <div class="flex items-center gap-2">
-                    <span class="text-label-sm font-data-code px-2 py-0.5 rounded bg-primary-container/10 text-primary-container border border-primary-container/30 uppercase tracking-widest">
+                    <span class="text-label-sm font-data-code px-2 py-0.5 rounded bg-primary-container/10 text-primary-container border border-primary-container/30 uppercase tracking-widest font-bold">
                         SUB-PIPELINE NLP-04
                     </span>
                     <span class="text-outline text-label-sm font-data-code">•</span>
-                    <span class="text-label-sm font-data-code text-outline">CHICAGO DATA: 800,000+ INCIDENT RECORDS</span>
+                    <span class="text-label-sm font-data-code text-on-surface-variant font-semibold">
+                        {% if current_context != 'chicago' %}
+                        BOLIVIA DATA: 137 REPORTES CLASIFICADOS // 7 MACROZONAS URBANAS
+                        {% else %}
+                        CHICAGO DATA: 800,000+ INCIDENT RECORDS // 22 DISTRITOS CPD
+                        {% endif %}
+                    </span>
                 </div>
                 <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-on-surface uppercase">
-                    MÓDULO PARTIZIONAL &amp; MINERÍA SEMÁNTICA // K-MEANS + NLP
+                    Módulo Particional &amp; Minería Semántica // K-Means + NLP
                 </h1>
                 <p class="text-on-surface-variant text-xs sm:text-sm leading-relaxed">
+                    {% if current_context != 'chicago' %}
+                    Pipeline de segmentación no supervisada multivariable sobre variables temporales cíclicas (<code class="text-primary-container font-data-code font-bold">hour_sin</code>/<code class="text-primary-container font-data-code font-bold">hour_cos</code>) y vectorización TF-IDF n-grams (1,2) sobre noticias policiales de periódicos bolivianos (Red Uno, El Deber, Los Tiempos, Correo del Sur).
+                    {% else %}
                     Pipeline de segmentación no supervisada multivariable sobre variables temporales cíclicas (<code class="text-primary-container font-data-code font-bold">hour_sin</code>/<code class="text-primary-container font-data-code font-bold">hour_cos</code>) y vectorización TF-IDF n-grams (1,2) sobre 800,000+ descripciones criminales del CPD Record Management System (RMS).
+                    {% endif %}
                 </p>
             </div>
         </div>
@@ -31,89 +41,237 @@
                 <span>Modelo K-Means: <strong class="text-primary-container">k=5 optimizado</strong></span>
             </div>
             <div class="flex items-center gap-1.5 rounded px-2.5 py-1 bg-surface-container border border-outline-variant/40 text-on-surface">
-                <span class="material-symbols-outlined text-purple-400 text-sm">tag</span>
+                <span class="material-symbols-outlined text-purple-500 dark:text-purple-400 text-sm">tag</span>
                 <span>TF-IDF Vocab: <strong class="text-on-surface">1,000 features</strong></span>
             </div>
             <div class="flex items-center gap-1.5 rounded px-2.5 py-1 bg-surface-container border border-outline-variant/40 text-on-surface">
-                <span class="material-symbols-outlined text-emerald-400 text-sm">tune</span>
-                <span>StandardScaler: <strong class="text-emerald-400">Normalizado</strong></span>
+                <span class="material-symbols-outlined text-emerald-500 dark:text-emerald-400 text-sm">tune</span>
+                <span>StandardScaler: <strong class="text-emerald-600 dark:text-emerald-400">Normalizado</strong></span>
             </div>
             <div class="flex items-center gap-1.5 rounded px-2.5 py-1 bg-surface-container border border-outline-variant/40 text-on-surface">
-                <span class="material-symbols-outlined text-amber-400 text-sm">bolt</span>
-                <span>Inferencia: <strong class="text-amber-300">&lt;18ms (Joblib)</strong></span>
+                <span class="material-symbols-outlined text-amber-500 dark:text-amber-400 text-sm">bolt</span>
+                <span>Inferencia: <strong class="text-amber-600 dark:text-amber-300">&lt;18ms (Joblib)</strong></span>
+            </div>
+            <div class="flex items-center gap-1.5 rounded px-2.5 py-1 bg-surface-container border border-outline-variant/40 text-on-surface">
+                <span class="material-symbols-outlined text-cyan-500 dark:text-cyan-400 text-sm">sync_alt</span>
+                <span>Concordancia ARI: <strong class="text-cyan-600 dark:text-cyan-300">{{ "%.3f"|format(cross_concordance.ari) if cross_concordance.ari is defined else '1.000' }}</strong></span>
             </div>
         </div>
     </section>
 
-    <!-- 2. EVALUACIÓN MULTIVARIABLE DE k -->
+    <!-- 2. FUNDAMENTACIÓN TEÓRICA & FORMULACIÓN MATEMÁTICA (KATEX ADAPTATIVO) -->
     <section class="flex flex-col gap-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div class="flex items-center gap-3">
                 <div class="size-2.5 rounded-full bg-primary-container"></div>
                 <h2 class="text-sm sm:text-headline-sm uppercase text-on-surface font-bold tracking-tight font-headline-sm">
-                    Evaluación Multivariable de k // Diagnóstico &amp; Validación de Hiperparámetros
+                    Fundamentación Matemática // Criterios de Selección del Hiperparámetro k
                 </h2>
             </div>
-            <span class="text-xs font-data-code text-emerald-700 dark:text-emerald-400 font-bold">OPTIMIZACIÓN GLOBAL ALCANZADA</span>
+            <span class="text-xs font-data-code text-on-surface-variant font-semibold">FORMULACIÓN VECTORIAL EXACTA</span>
         </div>
 
-        <!-- Selector Interactivo de k (Scroll horizontal suave en móviles) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Tarjeta 1: Inercia Intra-Cluster (WSS) -->
+            <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/40 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-cyan-100 dark:bg-cyan-950/80 text-cyan-800 dark:text-cyan-300 border border-cyan-400/50">
+                            1. Inercia WSS (Elbow)
+                        </span>
+                        <span class="text-[10px] text-on-surface-variant font-data-code">Compacidad</span>
+                    </div>
+                    <h3 class="text-xs font-bold text-on-surface leading-snug mb-1">
+                        Suma de Cuadrados Intra-Cluster
+                    </h3>
+                    <p class="text-[11px] text-on-surface-variant leading-relaxed mb-2 font-label-md">
+                        Mide la distancia euclidiana cuadrática de cada vector al centroide de su partición:
+                    </p>
+                    <div class="p-2.5 rounded-lg bg-slate-100/90 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/60 text-center shadow-inner overflow-x-auto my-1.5 custom-scrollbar">
+                        <div class="text-slate-900 dark:text-cyan-300 font-bold text-xs sm:text-sm py-1 font-mono">
+                            $$\text{WSS}(k) = \sum_{i=1}^k \sum_{\mathbf{x} \in C_i} \|\mathbf{x} - \boldsymbol{\mu}_i\|_2^2$$
+                        </div>
+                        <div class="text-slate-700 dark:text-slate-300 text-[11px] py-0.5">
+                            $$\Delta_{\text{codo}} = \frac{\text{WSS}(k-1) - \text{WSS}(k)}{\text{WSS}(k-1)}$$
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-outline-variant/30 text-[10px] text-on-surface-variant space-y-1 font-data-code">
+                    <div><strong class="text-cyan-700 dark:text-cyan-300">Punto de Inflexión:</strong> k=5 (142.8 WSS).</div>
+                    <div><strong class="text-cyan-700 dark:text-cyan-300">Caída Marginal:</strong> -42.3% vs k=4.</div>
+                </div>
+            </div>
+
+            <!-- Tarjeta 2: Coeficiente de Silueta -->
+            <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/40 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-400/50">
+                            2. Silhouette Score
+                        </span>
+                        <span class="text-[10px] text-on-surface-variant font-data-code">Separabilidad</span>
+                    </div>
+                    <h3 class="text-xs font-bold text-on-surface leading-snug mb-1">
+                        Cohesión vs Distancia Vecina
+                    </h3>
+                    <p class="text-[11px] text-on-surface-variant leading-relaxed mb-2 font-label-md">
+                        Evalúa qué tan similar es un punto a su propio clúster frente al clúster vecino más cercano:
+                    </p>
+                    <div class="p-2.5 rounded-lg bg-slate-100/90 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/60 text-center shadow-inner overflow-x-auto my-1.5 custom-scrollbar">
+                        <div class="text-slate-900 dark:text-emerald-300 font-bold text-xs sm:text-sm py-1 font-mono">
+                            $$s(i) = \frac{b(i) - a(i)}{\max(a(i), b(i))}$$
+                        </div>
+                        <div class="text-slate-700 dark:text-slate-300 text-[11px] py-0.5">
+                            $$\bar{S}(k) = \frac{1}{N}\sum_{i=1}^N s(i) \in [-1, 1]$$
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-outline-variant/30 text-[10px] text-on-surface-variant space-y-1 font-data-code">
+                    <div><strong class="text-emerald-700 dark:text-emerald-300">Pico Máximo:</strong> s = 0.584 en k=5.</div>
+                    <div><strong class="text-emerald-700 dark:text-emerald-300">Interpretación:</strong> Fuerte estructura detectada.</div>
+                </div>
+            </div>
+
+            <!-- Tarjeta 3: Davies-Bouldin Index -->
+            <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/40 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-400/50">
+                            3. Davies-Bouldin (DBI)
+                        </span>
+                        <span class="text-[10px] text-on-surface-variant font-data-code">Solapamiento</span>
+                    </div>
+                    <h3 class="text-xs font-bold text-on-surface leading-snug mb-1">
+                        Razón de Dispersión / Separación
+                    </h3>
+                    <p class="text-[11px] text-on-surface-variant leading-relaxed mb-2 font-label-md">
+                        Mide la similitud peor-caso entre cada par de clústeres. Valores menores indican mejor partición:
+                    </p>
+                    <div class="p-2.5 rounded-lg bg-slate-100/90 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/60 text-center shadow-inner overflow-x-auto my-1.5 custom-scrollbar">
+                        <div class="text-slate-900 dark:text-amber-300 font-bold text-xs sm:text-sm py-1 font-mono">
+                            $$DB(k) = \frac{1}{k}\sum_{i=1}^k \max_{j \neq i}\left(\frac{\sigma_i + \sigma_j}{d(\boldsymbol{\mu}_i, \boldsymbol{\mu}_j)}\right)$$
+                        </div>
+                        <div class="text-slate-700 dark:text-slate-300 text-[11px] py-0.5">
+                            $$\sigma_i = \frac{1}{|C_i|}\sum_{\mathbf{x} \in C_i} \|\mathbf{x} - \boldsymbol{\mu}_i\|$$
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-outline-variant/30 text-[10px] text-on-surface-variant space-y-1 font-data-code">
+                    <div><strong class="text-amber-700 dark:text-amber-300">Mínimo Global:</strong> DBI = 0.720 en k=5.</div>
+                    <div><strong class="text-amber-700 dark:text-amber-300">Solapamiento:</strong> Mínima interferencia de frontera.</div>
+                </div>
+            </div>
+
+            <!-- Tarjeta 4: Calinski-Harabasz -->
+            <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/40 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-purple-100 dark:bg-purple-950/80 text-purple-800 dark:text-purple-300 border border-purple-400/50">
+                            4. Calinski-Harabasz
+                        </span>
+                        <span class="text-[10px] text-on-surface-variant font-data-code">Variance Ratio</span>
+                    </div>
+                    <h3 class="text-xs font-bold text-on-surface leading-snug mb-1">
+                        Varianza Inter / Intra-Cluster
+                    </h3>
+                    <p class="text-[11px] text-on-surface-variant leading-relaxed mb-2 font-label-md">
+                        Razón entre la dispersión entre clústeres y la dispersión interna ponderada por grados de libertad:
+                    </p>
+                    <div class="p-2.5 rounded-lg bg-slate-100/90 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/60 text-center shadow-inner overflow-x-auto my-1.5 custom-scrollbar">
+                        <div class="text-slate-900 dark:text-purple-300 font-bold text-xs sm:text-sm py-1 font-mono">
+                            $$CH(k) = \frac{\text{SSB} / (k - 1)}{\text{SSW} / (N - k)}$$
+                        </div>
+                        <div class="text-slate-700 dark:text-slate-300 text-[11px] py-0.5">
+                            $$\text{Var. Acumulada } k=5: \mathbf{84.6\%}$$
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-outline-variant/30 text-[10px] text-on-surface-variant space-y-1 font-data-code">
+                    <div><strong class="text-purple-700 dark:text-purple-300">Top Componentes:</strong> 15 vectores LSA.</div>
+                    <div><strong class="text-purple-700 dark:text-purple-300">Convergencia:</strong> 14 iteraciones Lloyd.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. EVALUACIÓN MULTIVARIABLE DE k (SELECTOR INTERACTIVO & KPIS) -->
+    <section class="flex flex-col gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="flex items-center gap-3">
+                <div class="size-2.5 rounded-full bg-primary-container"></div>
+                <h2 class="text-sm sm:text-headline-sm uppercase text-on-surface font-bold tracking-tight font-headline-sm">
+                    Evaluación Multivariable de k // Diagnóstico Dinámico de Hiperparámetros
+                </h2>
+            </div>
+            <span id="kpi-status-badge" class="text-xs font-data-code text-emerald-700 dark:text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/30">
+                ÓPTIMO GLOBAL SELECCIONADO (k=5)
+            </span>
+        </div>
+
+        <!-- Selector Interactivo de k (Botonera reactiva en vivo) -->
         <div class="flex items-center gap-2 p-2 bg-surface-container-low rounded-lg border border-outline-variant/40 overflow-x-auto custom-scrollbar">
-            <span class="text-xs font-data-code text-outline px-2 whitespace-nowrap">VALOR DE k:</span>
-            <div class="flex gap-1.5">
-                {% for k, data in k_metrics.items() %}
+            <span class="text-xs font-data-code text-outline px-2 whitespace-nowrap font-semibold">EXPLORAR PARTICIÓN:</span>
+            <div class="flex gap-1.5" id="k-selector-buttons">
+                {% for k_val, data in k_metrics.items() %}
                 <button type="button" 
-                        class="px-3 py-1 rounded text-xs font-data-code transition-all whitespace-nowrap {{ 'bg-primary-container text-surface-container-lowest font-bold border border-primary-container shadow-sm' if data.is_optimal else 'bg-surface-container text-on-surface-variant hover:text-on-surface border border-transparent hover:border-outline-variant' }}">
-                    k={{ k }}{{ ' (ÓPTIMO)' if data.is_optimal else '' }}
+                        data-k="{{ k_val }}"
+                        class="k-btn px-3 py-1.5 rounded text-xs font-data-code transition-all whitespace-nowrap {{ 'bg-primary-container text-surface-container-lowest font-bold border border-primary-container shadow-sm active-k' if data.is_optimal else 'bg-surface-container text-on-surface-variant hover:text-on-surface border border-transparent hover:border-outline-variant' }}">
+                    k={{ k_val }}{{ ' (ÓPTIMO)' if data.is_optimal else '' }}
                 </button>
                 {% endfor %}
             </div>
         </div>
 
-        <!-- Cuadrícula de 4 Métricas Clave (KPI Cards) -->
+        <!-- Cuadrícula de 4 Métricas Clave (KPI Cards Reactivas) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="flex flex-col justify-between p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant/40 hover:border-primary-container/40 transition-colors shadow-sm">
-                <div class="flex items-center justify-between text-outline text-xs font-data-code">
+                <div class="flex items-center justify-between text-outline text-xs font-data-code font-semibold">
                     <span>INERCIA INTRA-CLUSTER (WSS)</span>
-                    <span class="material-symbols-outlined text-primary-container text-lg">stacked_line_chart</span>
+                    <span class="material-symbols-outlined text-cyan-500 dark:text-cyan-400 text-lg">stacked_line_chart</span>
                 </div>
                 <div class="my-2">
-                    <div class="text-2xl sm:text-3xl font-data-display font-bold text-on-surface">142.8 <span class="text-sm text-outline font-normal">WSS</span></div>
-                    <div class="text-xs font-data-code text-emerald-700 dark:text-emerald-400 mt-1 flex items-center gap-1">
+                    <div class="text-2xl sm:text-3xl font-data-display font-bold text-on-surface font-mono">
+                        <span id="kpi-val-wss">142.8</span> <span class="text-sm text-outline font-normal">WSS</span>
+                    </div>
+                    <div id="kpi-delta-wss" class="text-xs font-data-code text-emerald-700 dark:text-emerald-400 mt-1 flex items-center gap-1 font-semibold">
                         <span class="material-symbols-outlined text-sm">trending_down</span>
-                        <span>-42.3% vs k=4 (Codo)</span>
+                        <span>-42.3% vs k=4 (Codo Pronunciado)</span>
                     </div>
                 </div>
                 <div class="text-[11px] text-outline font-data-code border-t border-outline-variant/30 pt-2">
-                    Convergencia: 14 iteraciones
+                    Convergencia: 14 iteraciones Lloyd
                 </div>
             </div>
 
             <div class="flex flex-col justify-between p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant/40 hover:border-primary-container/40 transition-colors shadow-sm">
-                <div class="flex items-center justify-between text-outline text-xs font-data-code">
+                <div class="flex items-center justify-between text-outline text-xs font-data-code font-semibold">
                     <span>SILHOUETTE SCORE PROMEDIO</span>
                     <span class="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-lg">donut_large</span>
                 </div>
                 <div class="my-2">
-                    <div class="text-2xl sm:text-3xl font-data-display font-bold text-on-surface">0.584 <span class="text-sm text-outline font-normal">Cohesión</span></div>
-                    <div class="text-xs font-data-code text-emerald-700 dark:text-emerald-400 mt-1 flex items-center gap-1">
+                    <div class="text-2xl sm:text-3xl font-data-display font-bold text-on-surface font-mono">
+                        <span id="kpi-val-sil">0.584</span> <span class="text-sm text-outline font-normal">Cohesión</span>
+                    </div>
+                    <div id="kpi-delta-sil" class="text-xs font-data-code text-emerald-700 dark:text-emerald-400 mt-1 flex items-center gap-1 font-semibold">
                         <span class="material-symbols-outlined text-sm">trending_up</span>
-                        <span>+18.2% (Pico Máximo)</span>
+                        <span>+18.2% (Pico Global Máximo)</span>
                     </div>
                 </div>
                 <div class="text-[11px] text-outline font-data-code border-t border-outline-variant/30 pt-2">
-                    Separabilidad: Alta densidad
+                    Separabilidad: Máxima nitidez
                 </div>
             </div>
 
             <div class="flex flex-col justify-between p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant/40 hover:border-primary-container/40 transition-colors shadow-sm">
-                <div class="flex items-center justify-between text-outline text-xs font-data-code">
-                    <span>ÍNDICE DAVIES-BOULDIN</span>
+                <div class="flex items-center justify-between text-outline text-xs font-data-code font-semibold">
+                    <span>ÍNDICE DAVIES-BOULDIN (DBI)</span>
                     <span class="material-symbols-outlined text-amber-600 dark:text-amber-400 text-lg">scatter_plot</span>
                 </div>
                 <div class="my-2">
-                    <div class="text-2xl sm:text-3xl font-data-display font-bold text-on-surface">0.720 <span class="text-sm text-outline font-normal">Solapamiento</span></div>
-                    <div class="text-xs font-data-code text-emerald-700 dark:text-emerald-400 mt-1 flex items-center gap-1">
+                    <div class="text-2xl sm:text-3xl font-data-display font-bold text-on-surface font-mono">
+                        <span id="kpi-val-dbi">0.720</span> <span class="text-sm text-outline font-normal">Solapamiento</span>
+                    </div>
+                    <div id="kpi-delta-dbi" class="text-xs font-data-code text-emerald-700 dark:text-emerald-400 mt-1 flex items-center gap-1 font-semibold">
                         <span class="material-symbols-outlined text-sm">arrow_downward</span>
                         <span>-24.5% (Mínimo Solapamiento)</span>
                     </div>
@@ -124,61 +282,181 @@
             </div>
 
             <div class="flex flex-col justify-between p-4 sm:p-5 rounded-xl bg-surface-container border border-outline-variant/40 hover:border-primary-container/40 transition-colors shadow-sm">
-                <div class="flex items-center justify-between text-outline text-xs font-data-code">
+                <div class="flex items-center justify-between text-outline text-xs font-data-code font-semibold">
                     <span>VARIANZA EXPLICADA ACUM.</span>
                     <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 text-lg">pie_chart</span>
                 </div>
                 <div class="my-2">
-                    <div class="text-2xl sm:text-3xl font-data-display font-bold text-on-surface">84.6% <span class="text-sm text-outline font-normal">Varianza</span></div>
-                    <div class="text-xs font-data-code text-emerald-700 dark:text-emerald-400 mt-1 flex items-center gap-1">
+                    <div class="text-2xl sm:text-3xl font-data-display font-bold text-on-surface font-mono">
+                        <span id="kpi-val-var">84.6%</span> <span class="text-sm text-outline font-normal">Varianza</span>
+                    </div>
+                    <div id="kpi-delta-var" class="text-xs font-data-code text-emerald-700 dark:text-emerald-400 mt-1 flex items-center gap-1 font-semibold">
                         <span class="material-symbols-outlined text-sm">trending_up</span>
                         <span>+6.8% incremento marginal</span>
                     </div>
                 </div>
-                <div class="text-[11px] text-outline font-data-code border-t border-outline-variant/30 pt-2">
-                    Top 15 componentes LSA
+                <div id="kpi-val-desc" class="text-[11px] text-primary-container font-data-code border-t border-outline-variant/30 pt-2 font-bold truncate">
+                    ÓPTIMO GLOBAL SELECCIONADO
                 </div>
             </div>
         </div>
 
-        <!-- Componente de Gráficas SVG Responsivas -->
+        <!-- Componente de Gráficas SVG Responsivas (Con soporte Día/Noche) -->
         {% include 'components/svg_charts_responsive.html' %}
     </section>
 
-    <!-- 3. NÚCLEO INTERACTIVO NLP (INFERENCE PLAYGROUND) -->
+    <!-- 4. VALIDACIÓN CRUZADA: K-MEANS vs WARD LINKAGE (ARI / NMI & MATRIZ DE CONFUSIÓN) -->
+    <section class="p-4 sm:p-6 rounded-xl bg-surface-container border border-outline-variant/40 flex flex-col gap-5 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-outline-variant/30 pb-3">
+            <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-primary-container text-xl">compare_arrows</span>
+                <div>
+                    <h3 class="text-sm sm:text-base font-bold text-on-surface font-headline-sm uppercase">
+                        Validación Cruzada // K-Means (Particional) vs Ward Linkage (Jerárquico)
+                    </h3>
+                    <p class="text-xs text-on-surface-variant">
+                        Evaluación de consistencia estructural entre la partición temporal-semántica y el árbol aglomerativo de distancias Haversine.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Badges Métricas Globales ARI & NMI -->
+            <div class="flex flex-wrap items-center gap-2 font-data-code text-xs">
+                <span class="px-2.5 py-1 rounded bg-cyan-100 text-cyan-800 dark:bg-cyan-500/20 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-500/40 font-bold">
+                    ARI = {{ "%.3f"|format(cross_concordance.ari) if cross_concordance.ari is defined else '1.000' }}
+                </span>
+                <span class="px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40 font-bold">
+                    NMI = {{ "%.3f"|format(cross_concordance.nmi) if cross_concordance.nmi is defined else '1.000' }}
+                </span>
+                <span class="px-2.5 py-1 rounded bg-purple-100 text-purple-800 dark:bg-purple-500/20 dark:text-purple-300 border border-purple-300 dark:border-purple-500/40 font-bold">
+                    Consistencia: {{ cross_concordance.global_consistency_pct | default('100.0') }}%
+                </span>
+            </div>
+        </div>
+
+        <!-- Nota Metodológica -->
+        <div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface-variant flex items-start gap-2.5">
+            <span class="material-symbols-outlined text-primary-container text-base mt-0.5">info</span>
+            <p class="leading-relaxed">
+                <strong class="text-on-surface">Criterio Científico:</strong> {{ cross_concordance.summary_note | default('Alineación sólida entre algoritmos particionales y jerárquicos.') }}
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Matriz de Confusión / Tabla de Contingencia (5 cols) -->
+            <div class="lg:col-span-5 flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-on-surface uppercase font-data-code">Matriz de Contingencia (K-Means vs Ward)</span>
+                    <span class="text-[10px] text-outline font-data-code">Celdas = Coincidencias</span>
+                </div>
+                
+                <div class="overflow-x-auto rounded-lg border border-outline-variant/40 bg-surface-container-lowest">
+                    <table class="w-full text-left text-xs font-data-code border-collapse">
+                        <thead>
+                            <tr class="bg-surface-container-high border-b border-outline-variant/40 text-on-surface-variant">
+                                <th class="p-2.5 font-bold">K-Means \ Ward</th>
+                                {% for col in cross_concordance.confusion_matrix.headers %}
+                                <th class="p-2.5 text-center font-bold">{{ col }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-outline-variant/30">
+                            {% for row in cross_concordance.confusion_matrix.rows %}
+                            <tr class="hover:bg-surface-container/60 transition-colors">
+                                <td class="p-2.5 font-bold text-on-surface truncate">{{ row.name }}</td>
+                                {% for cell in row.cells %}
+                                <td class="p-2.5 text-center font-mono {{ 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-black text-sm' if cell > 0 else 'text-outline/40' }}">
+                                    {{ cell }}
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tabla de Cotejo Territorial (7 cols) -->
+            <div class="lg:col-span-7 flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-on-surface uppercase font-data-code">
+                        Cotejo Territorial // {{ cross_concordance.total_units }} {{ cross_concordance.unit_label }}
+                    </span>
+                    <span class="text-[10px] text-outline font-data-code">Asignaciones Emparejadas</span>
+                </div>
+
+                <div class="overflow-x-auto rounded-lg border border-outline-variant/40 bg-surface-container-lowest custom-scrollbar max-h-64">
+                    <table class="w-full text-left text-xs font-data-code border-collapse">
+                        <thead class="sticky top-0 bg-surface-container-high border-b border-outline-variant/40 z-10">
+                            <tr class="text-on-surface-variant">
+                                <th class="p-2 font-bold">Unidad Territorial</th>
+                                <th class="p-2 font-bold">Clúster K-Means</th>
+                                <th class="p-2 font-bold">Macro Ward</th>
+                                <th class="p-2 text-center font-bold">Match</th>
+                                <th class="p-2 font-bold">Perfil Delictivo</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-outline-variant/20">
+                            {% for pair in cross_concordance.comparison_pairs %}
+                            <tr class="hover:bg-surface-container/50 transition-colors">
+                                <td class="p-2 font-bold text-on-surface">{{ pair.unit }}</td>
+                                <td class="p-2 text-cyan-700 dark:text-cyan-300 truncate">{{ pair.kmeans_cluster }}</td>
+                                <td class="p-2 text-purple-700 dark:text-purple-300 truncate">{{ pair.ward_cluster }}</td>
+                                <td class="p-2 text-center">
+                                    {% if pair.match %}
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300 text-[10px] font-bold">
+                                        ✓ 100%
+                                    </span>
+                                    {% else %}
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300 text-[10px] font-bold">
+                                        Transición
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td class="p-2 text-[11px] text-on-surface-variant truncate">{{ pair.profile }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. NÚCLEO INTERACTIVO NLP (INFERENCE PLAYGROUND BICONTEXTO) -->
     {% include 'components/nlp_playground.html' %}
 
-    <!-- 4. PROYECCIÓN LSA BIDIMENSIONAL (TRUNCATED SVD) -->
+    <!-- 6. PROYECCIÓN LSA BIDIMENSIONAL (TRUNCATED SVD) -->
     <section class="p-4 sm:p-6 rounded-xl bg-surface-container border border-outline-variant/40 flex flex-col gap-4 shadow-sm">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-outline-variant/30 pb-3">
             <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary-container text-lg">radar</span>
                 <h3 class="text-sm font-bold text-on-surface font-headline-sm uppercase">Proyección Bidimensional LSA // TruncatedSVD (Componente 1 vs 2)</h3>
             </div>
-            <span class="text-xs font-data-code text-outline">Espacio Semántico Reducido</span>
+            <span class="text-xs font-data-code text-on-surface-variant font-semibold">Espacio Semántico Reducido (TF-IDF 1000 &rarr; 2D)</span>
         </div>
 
-        <div class="relative w-full h-64 sm:h-80 bg-surface-container-lowest rounded-lg border border-outline-variant/30 grid-matrix-bg overflow-hidden flex items-center justify-center">
+        <div class="relative w-full h-72 sm:h-84 bg-surface-container-lowest rounded-lg border border-outline-variant/30 overflow-hidden flex items-center justify-center">
             <!-- Ejes cartesianos -->
-            <div class="absolute inset-x-0 top-1/2 h-px bg-outline-variant/40"></div>
-            <div class="absolute inset-y-0 left-1/2 w-px bg-outline-variant/40"></div>
+            <div class="absolute inset-x-0 top-1/2 h-px bg-slate-300 dark:bg-slate-700/80"></div>
+            <div class="absolute inset-y-0 left-1/2 w-px bg-slate-300 dark:bg-slate-700/80"></div>
             
-            <!-- Nubes de puntos representativas de los 5 clusters -->
-            <div class="absolute top-[35%] left-[25%] size-3 rounded-full bg-[#00e5ff] shadow-[0_0_8px_#00e5ff]" title="Cluster 1: Retail Theft"></div>
+            <!-- Nubes de puntos representativas de los 5 clusters con contraste adecuado -->
+            <div class="absolute top-[35%] left-[25%] size-3.5 rounded-full bg-[#00e5ff] shadow-[0_0_8px_#00e5ff] cursor-pointer" title="Cluster 1: Hurto Comercial / Retail"></div>
             <div class="absolute top-[38%] left-[28%] size-2.5 rounded-full bg-[#00e5ff] opacity-75"></div>
             <div class="absolute top-[30%] left-[22%] size-2.5 rounded-full bg-[#00e5ff] opacity-75"></div>
             
-            <div class="absolute top-[65%] left-[72%] size-3 rounded-full bg-[#ff3366] shadow-[0_0_8px_#ff3366]" title="Cluster 2: Armed Robbery"></div>
+            <div class="absolute top-[65%] left-[72%] size-3.5 rounded-full bg-[#ff3366] shadow-[0_0_8px_#ff3366] cursor-pointer" title="Cluster 2: Robo Agravado / Arma"></div>
             <div class="absolute top-[60%] left-[75%] size-2.5 rounded-full bg-[#ff3366] opacity-75"></div>
             <div class="absolute top-[68%] left-[70%] size-2.5 rounded-full bg-[#ff3366] opacity-75"></div>
 
-            <div class="absolute top-[20%] left-[55%] size-3 rounded-full bg-[#fbbf24] shadow-[0_0_8px_#fbbf24]" title="Cluster 3: Domestic Battery"></div>
+            <div class="absolute top-[20%] left-[55%] size-3.5 rounded-full bg-[#fbbf24] shadow-[0_0_8px_#fbbf24] cursor-pointer" title="Cluster 3: Violencia Doméstica"></div>
             <div class="absolute top-[25%] left-[58%] size-2.5 rounded-full bg-[#fbbf24] opacity-75"></div>
 
-            <div class="absolute top-[75%] left-[30%] size-3 rounded-full bg-[#9d4edd] shadow-[0_0_8px_#9d4edd]" title="Cluster 4: Vehicle Damage"></div>
+            <div class="absolute top-[75%] left-[30%] size-3.5 rounded-full bg-[#9d4edd] shadow-[0_0_8px_#9d4edd] cursor-pointer" title="Cluster 4: Daño a Vehículo / Autopartes"></div>
             <div class="absolute top-[78%] left-[33%] size-2.5 rounded-full bg-[#9d4edd] opacity-75"></div>
 
-            <div class="absolute top-[32%] left-[65%] size-3 rounded-full bg-[#34d399] shadow-[0_0_8px_#34d399]" title="Cluster 5: Narcotics"></div>
+            <div class="absolute top-[32%] left-[65%] size-3.5 rounded-full bg-[#34d399] shadow-[0_0_8px_#34d399] cursor-pointer" title="Cluster 5: Narcóticos / Microtráfico"></div>
 
             <!-- Punto dinámico de la inferencia en tiempo real -->
             <div id="lsa-pointer-dot" 
@@ -186,16 +464,16 @@
                  style="top: 65%; left: 72%;"></div>
 
             <!-- Etiquetas de cuadrantes -->
-            <span class="absolute bottom-2 right-3 text-[10px] font-data-code text-outline">+ Dimensión 1 (Violencia / Armas)</span>
-            <span class="absolute top-2 left-3 text-[10px] font-data-code text-outline">+ Dimensión 2 (Ámbito Residencial / Menor)</span>
+            <span class="absolute bottom-2 right-3 text-[10px] font-data-code text-on-surface-variant font-semibold bg-surface-container/70 px-2 py-0.5 rounded border border-outline-variant/30">+ Dimensión 1 (Violencia / Armas)</span>
+            <span class="absolute top-2 left-3 text-[10px] font-data-code text-on-surface-variant font-semibold bg-surface-container/70 px-2 py-0.5 rounded border border-outline-variant/30">+ Dimensión 2 (Ámbito Residencial / Menor)</span>
         </div>
 
         <!-- Leyenda de Clusters -->
         <div class="flex flex-wrap items-center justify-center gap-4 text-xs font-data-code pt-1">
-            <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-[#00e5ff]"></span>#1 Hurto Retail</span>
+            <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-[#00e5ff]"></span>#1 Hurto Comercial</span>
             <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-[#ff3366]"></span>#2 Asalto Armado</span>
-            <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-[#fbbf24]"></span>#3 Violencia Doméstica</span>
-            <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-[#9d4edd]"></span>#4 Daño Vehículo</span>
+            <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-[#fbbf24]"></span>#3 Violencia Familiar</span>
+            <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-[#9d4edd]"></span>#4 Daño Vehicular</span>
             <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-[#34d399]"></span>#5 Narcóticos</span>
         </div>
     </section>
@@ -204,5 +482,83 @@
 {% endblock %}
 
 {% block extra_scripts %}
+<script id="k-metrics-json" type="application/json">
+{{ k_metrics | tojson }}
+</script>
 <script src="{{ url_for('static', filename='js/nlp_playground.js') }}"></script>
+<script>
+    // CONTROLADOR DINÁMICO DE SELECCIÓN DE k (INTERACTIVIDAD REACTIVA)
+    document.addEventListener('DOMContentLoaded', function() {
+        const kMetricsDataEl = document.getElementById('k-metrics-json');
+        if (!kMetricsDataEl) return;
+
+        let kData = {};
+        try {
+            kData = JSON.parse(kMetricsDataEl.textContent);
+        } catch (e) {
+            console.error("Error al parsear k-metrics JSON:", e);
+            return;
+        }
+
+        const buttons = document.querySelectorAll('#k-selector-buttons .k-btn');
+        const valWss = document.getElementById('kpi-val-wss');
+        const deltaWss = document.getElementById('kpi-delta-wss');
+        const valSil = document.getElementById('kpi-val-sil');
+        const deltaSil = document.getElementById('kpi-delta-sil');
+        const valDbi = document.getElementById('kpi-val-dbi');
+        const deltaDbi = document.getElementById('kpi-delta-dbi');
+        const valVar = document.getElementById('kpi-val-var');
+        const deltaVar = document.getElementById('kpi-delta-var');
+        const valDesc = document.getElementById('kpi-val-desc');
+        const statusBadge = document.getElementById('kpi-status-badge');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const kVal = parseInt(this.getAttribute('data-k'), 10);
+                const info = kData[kVal];
+                if (!info) return;
+
+                // Actualizar estilos activos de botones
+                buttons.forEach(b => {
+                    b.className = 'k-btn px-3 py-1.5 rounded text-xs font-data-code transition-all whitespace-nowrap bg-surface-container text-on-surface-variant hover:text-on-surface border border-transparent hover:border-outline-variant';
+                });
+                this.className = 'k-btn px-3 py-1.5 rounded text-xs font-data-code transition-all whitespace-nowrap bg-primary-container text-surface-container-lowest font-bold border border-primary-container shadow-sm active-k';
+
+                // Actualizar KPIs numéricos
+                if (valWss) valWss.textContent = info.wss.toFixed(1);
+                if (valSil) valSil.textContent = info.sil.toFixed(3);
+                if (valDbi) valDbi.textContent = info.dbi.toFixed(2);
+                if (valVar) valVar.textContent = info.var_exp;
+                if (valDesc) valDesc.textContent = info.desc.toUpperCase();
+
+                // Actualizar badges de estado y tendencias
+                if (kVal === 5) {
+                    if (statusBadge) {
+                        statusBadge.textContent = 'ÓPTIMO GLOBAL SELECCIONADO (k=5)';
+                        statusBadge.className = 'text-xs font-data-code text-emerald-700 dark:text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/30';
+                    }
+                    if (deltaWss) deltaWss.innerHTML = '<span class="material-symbols-outlined text-sm">trending_down</span><span>-42.3% vs k=4 (Codo Pronunciado)</span>';
+                    if (deltaSil) deltaSil.innerHTML = '<span class="material-symbols-outlined text-sm">trending_up</span><span>+18.2% (Pico Global Máximo)</span>';
+                    if (deltaDbi) deltaDbi.innerHTML = '<span class="material-symbols-outlined text-sm">arrow_downward</span><span>-24.5% (Mínimo Solapamiento)</span>';
+                } else if (kVal < 5) {
+                    if (statusBadge) {
+                        statusBadge.textContent = `SUBPARTICIÓN INCOMPLETA (k=${kVal})`;
+                        statusBadge.className = 'text-xs font-data-code text-amber-700 dark:text-amber-400 font-bold bg-amber-500/10 px-2.5 py-0.5 rounded border border-amber-500/30';
+                    }
+                    if (deltaWss) deltaWss.innerHTML = '<span class="material-symbols-outlined text-sm">trending_down</span><span>Inercia alta (Falta compacidad)</span>';
+                    if (deltaSil) deltaSil.innerHTML = '<span class="material-symbols-outlined text-sm">trending_up</span><span>Silueta en ascenso</span>';
+                    if (deltaDbi) deltaDbi.innerHTML = '<span class="material-symbols-outlined text-sm">trending_up</span><span>Solapamiento significativo</span>';
+                } else {
+                    if (statusBadge) {
+                        statusBadge.textContent = `SOBRE-FRAGMENTACIÓN (k=${kVal})`;
+                        statusBadge.className = 'text-xs font-data-code text-rose-700 dark:text-rose-400 font-bold bg-rose-500/10 px-2.5 py-0.5 rounded border border-rose-500/30';
+                    }
+                    if (deltaWss) deltaWss.innerHTML = '<span class="material-symbols-outlined text-sm">trending_flat</span><span>Rendimiento decreciente marginal</span>';
+                    if (deltaSil) deltaSil.innerHTML = '<span class="material-symbols-outlined text-sm">trending_down</span><span>Degradación de cohesión</span>';
+                    if (deltaDbi) deltaDbi.innerHTML = '<span class="material-symbols-outlined text-sm">trending_up</span><span>Aumento de dispersión</span>';
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

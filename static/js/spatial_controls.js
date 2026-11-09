@@ -553,20 +553,89 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function updateSideInspector(row, clusterId, zoneName) {
+        const sideZone = document.getElementById('side-inspector-zone');
+        const sideBadge = document.getElementById('side-inspector-badge');
+        const sideMacro = document.getElementById('side-inspector-macro');
+        const sideVol = document.getElementById('side-inspector-vol');
+        const sideDensity = document.getElementById('side-inspector-density');
+        const sideDelito = document.getElementById('side-inspector-delito');
+        const sideNocturno = document.getElementById('side-inspector-nocturno');
+        const sideDbscan = document.getElementById('side-inspector-dbscan');
+        const sideOptics = document.getElementById('side-inspector-optics');
+        const sideHdbscan = document.getElementById('side-inspector-hdbscan');
+
+        if (!sideZone) return;
+
+        if (row) {
+            const cells = row.querySelectorAll('td');
+            if (cells.length >= 10) {
+                const code = cells[0].textContent.trim();
+                const name = cells[1].textContent.trim();
+                const macro = cells[2].textContent.trim();
+                const delito = cells[3].textContent.trim();
+                const vol = cells[4].textContent.trim();
+                const density = cells[5].textContent.trim();
+                const nocturno = cells[6].textContent.trim();
+                const dbscan = cells[7].textContent.trim();
+                const optics = cells[8].textContent.trim().replace(/\s+/g, ' ');
+                const status = cells[9].textContent.trim();
+
+                sideZone.textContent = `${code}: ${name}`;
+                if (sideBadge) {
+                    sideBadge.textContent = status;
+                    if (status.includes('ROJA')) {
+                        sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/40';
+                    } else if (status.includes('VIGILANCIA')) {
+                        sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-cyan-100 text-cyan-800 border-cyan-300 dark:bg-cyan-500/20 dark:text-cyan-300 dark:border-cyan-500/40';
+                    } else if (status.includes('DINÁMICO')) {
+                        sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40';
+                    } else {
+                        sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40';
+                    }
+                }
+                if (sideMacro) sideMacro.textContent = macro;
+                if (sideVol) sideVol.textContent = vol;
+                if (sideDensity) sideDensity.textContent = density;
+                if (sideDelito) {
+                    sideDelito.textContent = delito;
+                    sideDelito.title = delito;
+                }
+                if (sideNocturno) sideNocturno.textContent = nocturno;
+                if (sideDbscan) sideDbscan.textContent = dbscan;
+                if (sideOptics) sideOptics.textContent = optics;
+                if (sideHdbscan) sideHdbscan.textContent = `Estable // ${macro}`;
+                return;
+            }
+        }
+
+        if (zoneName) {
+            sideZone.textContent = zoneName.toUpperCase();
+            if (sideDbscan) sideDbscan.textContent = `Hotspot #${clusterId}`;
+            if (sideOptics) sideOptics.textContent = `Valle #${clusterId} (OPTICS ξ)`;
+        }
+    }
+
     function highlightZoneInUI(clusterId, zoneName) {
         // Resaltar fila en la tabla de taxonomía
         const zoneRows = document.querySelectorAll('.zone-row');
+        let matchedRow = null;
         zoneRows.forEach(r => {
             const rText = r.textContent.toLowerCase();
-            if (zoneName && rText.includes(zoneName.toLowerCase().split(' ')[0])) {
+            const zName = zoneName ? zoneName.toLowerCase().split(' ')[0] : '';
+            if (zName && rText.includes(zName)) {
                 r.classList.add('bg-primary-container/20', 'border-l-4', 'border-primary-container');
                 r.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                matchedRow = r;
             } else {
                 r.classList.remove('bg-primary-container/20', 'border-l-4', 'border-primary-container');
             }
         });
 
-        // Feedback en el Inspector Card Táctico
+        // Actualizar el Inspector Táctico Lateral
+        updateSideInspector(matchedRow, clusterId, zoneName);
+
+        // Feedback en el Inspector Card Táctico Flotante
         const inspectorTitle = document.getElementById('inspector-title');
         const inspectorVol = document.getElementById('inspector-vol');
         if (inspectorTitle) {
@@ -576,6 +645,26 @@ document.addEventListener('DOMContentLoaded', () => {
             inspectorVol.textContent = `Valle #${clusterId} (OPTICS &xi;)`;
         }
     }
+
+    // Eventos de Clic en Filas de Taxonomía y Valles
+    document.querySelectorAll('.zone-row').forEach(row => {
+        row.addEventListener('click', () => {
+            const cluster = row.getAttribute('data-cluster') || '0';
+            const nameCell = row.querySelectorAll('td')[1];
+            const name = nameCell ? nameCell.textContent.trim() : '';
+            highlightZoneInUI(cluster, name);
+        });
+    });
+
+    document.querySelectorAll('.valley-row').forEach(row => {
+        row.addEventListener('click', () => {
+            const valleyId = row.getAttribute('data-valley-id');
+            if (valleyId) highlightValleyBars(valleyId);
+            const nameCell = row.querySelectorAll('td')[1];
+            const name = nameCell ? nameCell.textContent.trim() : '';
+            highlightZoneInUI(valleyId, name);
+        });
+    });
 
     // 12. Conmutador Interactivo de Tarjetas Analíticas (DBSCAN / HDBSCAN / OPTICS)
     const algoCards = document.querySelectorAll('[data-algo-card]');
