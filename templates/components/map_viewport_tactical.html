@@ -13,7 +13,6 @@
             </span>
         </div>
 
-<<<<<<< HEAD
         <!-- Indicador visual de muestreo estratificado -->
         <div id="map-sampling-indicator" class="flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded bg-surface-container border border-outline-variant/60 text-on-surface-variant">
             <span class="material-symbols-outlined text-sm text-primary-container">info</span>
@@ -24,79 +23,8 @@
                 Mostrando 137 de 137 crónicas georreferenciadas
                 {% endif %}
             </span>
-=======
-        <div class="flex flex-wrap items-center gap-2">
-            <!-- Conmutador Dual-Mode: 2D Táctico SVG vs 3D Globo WebGIS -->
-            <div class="inline-flex rounded-lg p-0.5 bg-surface-container border border-outline-variant text-[11px] font-bold shrink-0">
-                <button type="button" 
-                        id="btn-view-2d" 
-                        class="px-2.5 py-1 rounded-md bg-primary-container text-on-primary shadow-xs transition-colors flex items-center gap-1.5 active"
-                        title="Vista vectorial táctica 2D de alta velocidad">
-                    <span class="material-symbols-outlined text-[14px]">map</span>
-                    <span>2D Táctico</span>
-                </button>
-                <button type="button" 
-                        id="btn-view-3d" 
-                        class="px-2.5 py-1 rounded-md text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1.5"
-                        title="Globo 3D WebGIS ultraligero con MapLibre GL v4">
-                    <span class="material-symbols-outlined text-[14px]">public</span>
-                    <span>Globo 3D WebGIS</span>
-                </button>
-            </div>
-
-            <!-- Capas Tácticas conmutables -->
-            <div id="tactical-2d-layers-bar" class="flex items-center gap-1.5 text-xs font-data-code overflow-x-auto custom-scrollbar w-full sm:w-auto pb-1 sm:pb-0">
-            <!-- Capa DBSCAN -->
-            <button type="button" 
-                    data-layer-toggle="dbscan"
-                    class="active-layer px-2.5 py-1 rounded bg-primary-container text-on-primary font-bold flex items-center gap-1 text-[11px] shadow-sm whitespace-nowrap transition-colors">
-                <span class="material-symbols-outlined text-[14px]">check_box</span>
-                <span>DBSCAN Hotspots</span>
-            </button>
-
-            <!-- Capa HDBSCAN -->
-            <button type="button" 
-                    data-layer-toggle="hdbscan"
-                    class="active-layer px-2.5 py-1 rounded bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 font-bold flex items-center gap-1 text-[11px] shadow-sm whitespace-nowrap transition-colors">
-                <span class="material-symbols-outlined text-[14px]">check_box</span>
-                <span>HDBSCAN Estabilidad</span>
-            </button>
-
-            <!-- Capa OPTICS Multiescala -->
-            <button type="button" 
-                    data-layer-toggle="optics"
-                    class="active-layer px-2.5 py-1 rounded bg-amber-500/20 border border-amber-500/50 text-amber-300 font-bold flex items-center gap-1 text-[11px] shadow-sm whitespace-nowrap transition-colors">
-                <span class="material-symbols-outlined text-[14px]">check_box</span>
-                <span>OPTICS Multiescala</span>
-            </button>
-
-            <!-- Capa Ruido (-1) -->
-            <button type="button" 
-                    data-layer-toggle="noise"
-                    class="active-layer px-2.5 py-1 rounded bg-surface-container border border-outline-variant text-on-surface-variant flex items-center gap-1 text-[11px] whitespace-nowrap transition-colors">
-                <span class="material-symbols-outlined text-[14px]">check_box</span>
-                <span>Ruido / Picos (-1)</span>
-            </button>
-
-            <!-- Capa HeatMap KDE -->
-            <button type="button" 
-                    data-layer-toggle="kde"
-                    class="px-2.5 py-1 rounded bg-surface-container border border-outline-variant text-on-surface-variant flex items-center gap-1 text-[11px] whitespace-nowrap transition-colors">
-                <span class="material-symbols-outlined text-[14px]">check_box_outline_blank</span>
-                <span>HeatMap KDE</span>
-            </button>
-            
-            <!-- Botón para abrir HUD en Móvil y Tabletas (< 1024px) -->
-            <button type="button" 
-                    id="btn-mobile-hud-toggle"
-                    class="lg:hidden px-2.5 py-1 rounded bg-surface-container-high border border-primary-container/50 text-primary-container font-bold flex items-center gap-1 text-[11px] whitespace-nowrap shadow-sm">
-                <span class="material-symbols-outlined text-[14px]">tune</span>
-                <span>Parámetros</span>
-            </button>
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
         </div>
     </div>
-</div>
 
     <!-- 2. Contenedor principal: Mapa a ancho protagonista + Panel lateral a la derecha (en móvil apilados) -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-0 border-b border-outline-variant/60">
@@ -129,7 +57,6 @@
                         <stop offset="100%" stop-color="#a855f7" stop-opacity="0"></stop>
                     </radialGradient>
 
-<<<<<<< HEAD
                     <!-- Halos para Bolivia -->
                     <radialGradient cx="50%" cy="50%" id="hotspotSCZ" r="50%">
                         <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.95"></stop>
@@ -194,55 +121,6 @@
                 <!-- Masa de agua Lago Michigan -->
                 <path d="M 680 0 L 1000 0 L 1000 600 L 760 600 Q 740 520 720 440 Q 690 350 670 260 Q 650 170 660 100 Z" fill="#06121e" stroke="#16384c" stroke-width="1.5"></path>
                 <text fill="#24516e" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="700" letter-spacing="4" x="820" y="320">LAKE MICHIGAN</text>
-=======
-            <!-- Polígonos de Distritos Policiales Clave -->
-            <!-- D-016 Jefferson Park -->
-            <polygon fill="#0d1b2a" fill-opacity="0.35" points="120,60 300,50 330,130 180,160 110,110" stroke="#224254" stroke-width="1"></polygon>
-            <text fill="#588296" font-family="'JetBrains Mono'" font-size="9" x="210" y="105">D-016 JEFFERSON</text>
-            
-            <!-- D-017 Albany Park -->
-            <polygon fill="#0d1b2a" fill-opacity="0.35" points="300,50 480,40 500,120 330,130" stroke="#224254" stroke-width="1"></polygon>
-            <text fill="#588296" font-family="'JetBrains Mono'" font-size="9" x="370" y="90">D-017 ALBANY</text>
-            
-            <!-- D-001 The Loop (Central) -->
-            <polygon class="pointer-events-auto cursor-pointer" data-map-node="Loop" data-cluster="1" data-name="Central (The Loop)" fill="#0c3247" fill-opacity="0.6" points="570,240 670,240 680,310 575,310" stroke="#00e5ff" stroke-width="1.8"></polygon>
-            <text fill="#00e5ff" font-family="'JetBrains Mono'" font-size="10" font-weight="700" x="590" y="275" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">D-001 CENTRAL</text>
-            
-            <!-- D-011 Harrison (Garfield Park) - CRÍTICO -->
-            <polygon class="pointer-events-auto cursor-pointer" data-map-node="Harrison" data-cluster="2" data-name="Harrison (Garfield Park)" fill="#380d19" fill-opacity="0.65" points="320,190 470,195 460,290 320,280" stroke="#ff3366" stroke-width="2"></polygon>
-            <text fill="#ff4d6d" font-family="'JetBrains Mono'" font-size="10" font-weight="700" x="360" y="240" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">D-011 HARRISON</text>
-            
-            <!-- D-007 Englewood -->
-            <polygon class="pointer-events-auto cursor-pointer" data-map-node="Englewood" data-cluster="3" data-name="Englewood" fill="#361a05" fill-opacity="0.6" points="430,375 560,370 550,470 410,460" stroke="#ffaa00" stroke-width="1.8"></polygon>
-            <text fill="#ffb703" font-family="'JetBrains Mono'" font-size="10" font-weight="700" x="450" y="420" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">D-007 ENGLEWOOD</text>
-
-            <!-- CAPA OPTICS MULTIESCALA: CUENCAS Y HALOS ANIDADOS -->
-            <g id="layer-optics-chicago" class="optics-multiscale-layer transition-opacity duration-300">
-                <!-- Valle #1 Loop: Núcleo denso + Sub-anillo Mag Mile -->
-                <ellipse cx="625" cy="275" rx="55" ry="38" fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-dasharray="4 2" opacity="0.85"></ellipse>
-                <ellipse cx="630" cy="260" rx="30" ry="20" fill="none" stroke="#38bdf8" stroke-width="1.8" opacity="0.95"></ellipse>
-                <text fill="#00e5ff" font-family="'JetBrains Mono'" font-size="8.5" font-weight="700" x="610" y="235" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">&xi;-Valle #1 [88m]</text>
-
-                <!-- Valle #2 Harrison: Cuenca amplia + Sub-valle Garfield (98m) -->
-                <ellipse cx="395" cy="235" rx="65" ry="48" fill="none" stroke="#ff3366" stroke-width="1.5" stroke-dasharray="4 2" opacity="0.85"></ellipse>
-                <ellipse cx="380" cy="225" rx="35" ry="25" fill="none" stroke="#ff4d6d" stroke-width="2" opacity="0.95"></ellipse>
-                <text fill="#ff4d6d" font-family="'JetBrains Mono'" font-size="8.5" font-weight="700" x="350" y="195" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">&xi;-Valle #2 [125m]</text>
-
-                <!-- Valle #3 Englewood: Sub-cuenca Gresham -->
-                <ellipse cx="480" cy="420" rx="58" ry="42" fill="none" stroke="#ffaa00" stroke-width="1.5" stroke-dasharray="4 2" opacity="0.85"></ellipse>
-                <ellipse cx="475" cy="445" rx="30" ry="22" fill="none" stroke="#fcd34d" stroke-width="1.8" opacity="0.95"></ellipse>
-                <text fill="#ffb703" font-family="'JetBrains Mono'" font-size="8.5" font-weight="700" x="445" y="390" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">&xi;-Valle #3 [145m]</text>
-
-                <!-- Valle #4 Near West / UIC -->
-                <ellipse cx="530" cy="285" rx="36" ry="28" fill="none" stroke="#a855f7" stroke-width="1.4" stroke-dasharray="3 2" opacity="0.8"></ellipse>
-                <text fill="#c084fc" font-family="'JetBrains Mono'" font-size="8.5" font-weight="700" x="510" y="265" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">&xi;-Valle #4</text>
-            </g>
-
-            <!-- CAPA DBSCAN HOTSPOTS (CHICAGO) -->
-            <g id="layer-dbscan-chicago">
-                <circle cx="620" cy="270" fill="url(#hotspotLoop)" r="45"></circle>
-                <circle cx="620" cy="270" fill="#ffffff" r="3"></circle>
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
                 
                 <!-- Río Chicago -->
                 <path d="M 450 100 Q 520 180 580 230 L 670 240 M 580 230 L 520 380 Q 480 440 430 540" fill="none" stroke="#11364d" stroke-dasharray="2,2" stroke-width="3"></path>
@@ -266,23 +144,11 @@
                 <polygon class="pointer-events-auto cursor-pointer" data-map-node="Englewood" data-cluster="3" data-name="Englewood" fill="#361a05" fill-opacity="0.6" points="430,375 560,370 550,470 410,460" stroke="#ffaa00" stroke-width="1.8"></polygon>
                 <text fill="#ffb703" font-family="'JetBrains Mono'" font-size="10" font-weight="700" x="450" y="420">D-007 ENGLEWOOD</text>
 
-<<<<<<< HEAD
                 <!-- CAPA OPTICS MULTIESCALA: CUENCAS Y HALOS ANIDADOS -->
                 <g id="layer-optics-chicago" class="optics-multiscale-layer transition-opacity duration-300">
                     <ellipse cx="625" cy="275" rx="55" ry="38" fill="none" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4 2" opacity="0.85"></ellipse>
                     <ellipse cx="630" cy="260" rx="30" ry="20" fill="none" stroke="#fbbf24" stroke-width="1.8" opacity="0.95"></ellipse>
                     <text fill="#fbbf24" font-family="'JetBrains Mono'" font-size="8" font-weight="700" x="610" y="235">&xi;-Valle #1 [88m]</text>
-=======
-            <!-- CAPA HDBSCAN ESTABILIDAD PERSISTENTE (CHICAGO) -->
-            <g id="layer-hdbscan-chicago" class="transition-opacity duration-300">
-                <circle cx="620" cy="270" r="32" fill="#00e5ff" fill-opacity="0.22" stroke="#00e5ff" stroke-width="1.8" stroke-dasharray="3 1.5"></circle>
-                <circle cx="395" cy="235" r="40" fill="#ff3366" fill-opacity="0.22" stroke="#ff3366" stroke-width="1.8" stroke-dasharray="3 1.5"></circle>
-                <circle cx="480" cy="420" r="35" fill="#ffaa00" fill-opacity="0.22" stroke="#ffaa00" stroke-width="1.8" stroke-dasharray="3 1.5"></circle>
-                <circle cx="530" cy="285" r="26" fill="#a855f7" fill-opacity="0.22" stroke="#a855f7" stroke-width="1.8" stroke-dasharray="3 1.5"></circle>
-                <text fill="#34d399" font-family="'JetBrains Mono'" font-size="8" font-weight="700" x="595" y="318" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">&lambda;=7.42 (Core)</text>
-                <text fill="#34d399" font-family="'JetBrains Mono'" font-size="8" font-weight="700" x="370" y="290" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">&lambda;=6.15 (Core)</text>
-            </g>
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
 
                     <ellipse cx="395" cy="235" rx="65" ry="48" fill="none" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4 2" opacity="0.85"></ellipse>
                     <ellipse cx="380" cy="225" rx="35" ry="25" fill="none" stroke="#fbbf24" stroke-width="2" opacity="0.95"></ellipse>
@@ -296,7 +162,6 @@
                     <text fill="#fbbf24" font-family="'JetBrains Mono'" font-size="8" font-weight="700" x="510" y="265">&xi;-Valle #4</text>
                 </g>
 
-<<<<<<< HEAD
                 <!-- CAPA DBSCAN HOTSPOTS (CHICAGO) -->
                 <g id="layer-dbscan-chicago">
                     <circle cx="620" cy="270" fill="url(#hotspotLoop)" r="45"></circle>
@@ -307,154 +172,6 @@
                     
                     <circle cx="480" cy="420" fill="url(#hotspotSouth)" r="48"></circle>
                     <circle cx="480" cy="420" fill="#ffffff" r="3"></circle>
-=======
-                <!-- Anillos de Isodensidad Tácticos KDE -->
-                <ellipse cx="625" cy="270" rx="90" ry="65" fill="none" stroke="#00e5ff" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.75"></ellipse>
-                <text fill="#00e5ff" font-family="'JetBrains Mono'" font-size="8" font-weight="700" x="650" y="200">KDE Iso-Core (Loop)</text>
-
-                <ellipse cx="395" cy="235" rx="100" ry="75" fill="none" stroke="#ff3366" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.75"></ellipse>
-                <text fill="#ff3366" font-family="'JetBrains Mono'" font-size="8" font-weight="700" x="320" y="155">KDE Iso-Crítico (Harrison)</text>
-
-                <ellipse cx="480" cy="420" rx="90" ry="70" fill="none" stroke="#ffaa00" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.75"></ellipse>
-                <text fill="#ffaa00" font-family="'JetBrains Mono'" font-size="8" font-weight="700" x="420" y="345">KDE Iso-Armado (Englewood)</text>
-            </g>
-
-            {% else %}
-            <!-- MAPA DE BOLIVIA (EJE METROPOLITANO NACIONAL & SANTA CRUZ) -->
-            <!-- Límites esquemáticos / Relieve de Bolivia -->
-            <path d="M 120 180 L 250 80 L 480 90 L 720 130 L 890 280 L 860 480 L 640 560 L 380 540 L 160 410 Z" fill="#08101a" stroke="#162e42" stroke-width="1.8"></path>
-            
-            <!-- Red Vial Troncal (Ruta 4 y Ruta 1: Picos de Salto OPTICS) -->
-            <path d="M 230 250 L 430 330 L 680 340" fill="none" stroke="#2563eb" stroke-dasharray="3,3" stroke-width="2.5"></path>
-            <text fill="#93c5fd" font-family="'JetBrains Mono'" font-size="9" font-weight="700" x="310" y="280" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">RUTA 1 // ALTIPLANO</text>
-            <text fill="#93c5fd" font-family="'JetBrains Mono'" font-size="9" font-weight="700" x="520" y="325" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">RUTA 4 // VALLES - ORIENTE</text>
-
-            <!-- NODO OCCIDENTE: LA PAZ / EL ALTO -->
-            <polygon class="pointer-events-auto cursor-pointer" data-map-node="LPZ" data-cluster="5" data-name="La Paz (El Prado / Miraflores)" fill="#1a1c38" fill-opacity="0.6" points="190,210 270,210 280,280 190,280" stroke="#818cf8" stroke-width="1.5"></polygon>
-            <text fill="#c7d2fe" font-family="'JetBrains Mono'" font-size="10" font-weight="700" x="200" y="245" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">LPZ // LA PAZ</text>
-            
-            <!-- NODO CENTRO: COCHABAMBA -->
-            <polygon class="pointer-events-auto cursor-pointer" data-map-node="CBB" data-cluster="7" data-name="Cochabamba (Cercado &amp; La Cancha)" fill="#0d2822" fill-opacity="0.6" points="400,295 490,295 500,365 400,365" stroke="#34d399" stroke-width="1.5"></polygon>
-            <text fill="#a7f3d0" font-family="'JetBrains Mono'" font-size="10" font-weight="700" x="410" y="330" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">CBB // CERCADO</text>
-
-            <!-- NODO ORIENTE: SANTA CRUZ DE LA SIERRA (ENFOQUE ALTA RESOLUCIÓN) -->
-            <!-- Anillos de Santa Cruz -->
-            <circle cx="710" cy="340" r="110" fill="#072230" fill-opacity="0.4" stroke="#1d4860" stroke-width="1" stroke-dasharray="2,2"></circle>
-            <circle class="pointer-events-auto cursor-pointer" data-map-node="SCZ" data-cluster="0" data-name="Santa Cruz (Casco Central &amp; Anillos)" cx="710" cy="340" r="70" fill="#0c3247" fill-opacity="0.5" stroke="#00e5ff" stroke-width="1.2"></circle>
-            <circle cx="710" cy="340" r="35" fill="#00e5ff" fill-opacity="0.25" stroke="#00e5ff" stroke-width="1.6"></circle>
-            <text fill="#38bdf8" font-family="'JetBrains Mono'" font-size="11" font-weight="700" x="660" y="315" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">SANTA CRUZ // CORE</text>
-
-            <!-- Sub-zonas Santa Cruz -->
-            <!-- Equipetrol (Noroeste) -->
-            <circle class="pointer-events-auto cursor-pointer" data-map-node="Equipetrol" data-cluster="1" data-name="Equipetrol (Comercial / Empresarial)" cx="675" cy="315" r="14" fill="#00e5ff" fill-opacity="0.5" stroke="#38bdf8" stroke-width="1.5"></circle>
-            <text fill="#7dd3fc" font-family="'JetBrains Mono'" font-size="8.5" font-weight="700" x="625" y="300" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">Equipetrol</text>
-
-            <!-- Plan 3000 (Sureste Crítico) -->
-            <polygon class="pointer-events-auto cursor-pointer" data-map-node="Plan 3000" data-cluster="2" data-name="Plan 3000 (Ciudadela Andrés Ibáñez)" fill="#380d19" fill-opacity="0.75" points="740,380 810,380 820,440 740,440" stroke="#ff3366" stroke-width="1.8"></polygon>
-            <text fill="#fda4af" font-family="'JetBrains Mono'" font-size="9.5" font-weight="700" x="745" y="410" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">PLAN 3000</text>
-
-            <!-- Los Lotes (Sur) -->
-            <polygon class="pointer-events-auto cursor-pointer" data-map-node="Los Lotes" data-cluster="3" data-name="Los Lotes (Ciudadela Sur)" fill="#2b0e1a" fill-opacity="0.65" points="685,410 745,410 740,460 680,460" stroke="#f43f5e" stroke-width="1.4"></polygon>
-            <text fill="#fca5a5" font-family="'JetBrains Mono'" font-size="8.5" font-weight="700" x="685" y="435" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">Los Lotes</text>
-
-            <!-- Pampa de la Isla (Noreste) -->
-            <circle class="pointer-events-auto cursor-pointer" data-map-node="Pampa" data-cluster="6" data-name="Pampa de la Isla (Noreste)" cx="770" cy="305" r="16" fill="#064e3b" fill-opacity="0.6" stroke="#34d399" stroke-width="1.2"></circle>
-            <text fill="#6ee7b7" font-family="'JetBrains Mono'" font-size="8.5" font-weight="700" x="760" y="295" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">Pampa</text>
-
-            <!-- CAPA OPTICS MULTIESCALA: CUENCAS Y HALOS ANIDADOS (BOLIVIA) -->
-            <g id="layer-optics-bolivia" class="optics-multiscale-layer transition-opacity duration-300">
-                <!-- Valle #0 Santa Cruz: Cuenca principal con sub-anillos concéntricos -->
-                <ellipse cx="710" cy="340" rx="90" ry="75" fill="none" stroke="#00e5ff" stroke-width="1.8" stroke-dasharray="4 2" opacity="0.85"></ellipse>
-                <ellipse cx="675" cy="315" rx="22" ry="18" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.95"></ellipse>
-                <text fill="#38bdf8" font-family="'JetBrains Mono'" font-size="8.5" font-weight="700" x="690" y="255" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">&xi;-Valle #0 [295m]</text>
-
-                <!-- Valle #1 Equipetrol: Sub-cuenca comercial (alcance 240m) -->
-                <ellipse cx="660" cy="300" rx="28" ry="20" fill="none" stroke="#38bdf8" stroke-width="1.6" stroke-dasharray="3 2" opacity="0.9"></ellipse>
-                <text fill="#38bdf8" font-family="'JetBrains Mono'" font-size="8" font-weight="700" x="625" y="290" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">&xi;-Valle #1 [240m]</text>
-
-                <!-- Valle #2 Plan 3000: Cuenca independiente -->
-                <ellipse cx="775" cy="410" rx="42" ry="32" fill="none" stroke="#ff3366" stroke-width="1.8" stroke-dasharray="3 2" opacity="0.9"></ellipse>
-                <text fill="#fb7185" font-family="'JetBrains Mono'" font-size="8.5" font-weight="700" x="785" y="445" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">&xi;-Valle #2 [340m]</text>
-
-                <!-- Valle #3 Los Lotes: Cuenca periferia sur (alcance 360m) -->
-                <ellipse cx="715" cy="435" rx="32" ry="24" fill="none" stroke="#f43f5e" stroke-width="1.6" stroke-dasharray="3 2" opacity="0.85"></ellipse>
-                <text fill="#fca5a5" font-family="'JetBrains Mono'" font-size="8" font-weight="700" x="670" y="465" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">&xi;-Valle #3 [360m]</text>
-
-                <!-- Valle #6 Pampa de la Isla: Cuenca noreste (alcance 330m) -->
-                <ellipse cx="770" cy="305" rx="28" ry="20" fill="none" stroke="#34d399" stroke-width="1.6" stroke-dasharray="3 2" opacity="0.85"></ellipse>
-                <text fill="#6ee7b7" font-family="'JetBrains Mono'" font-size="8" font-weight="700" x="750" y="270" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">&xi;-Valle #6 [330m]</text>
-
-                <!-- Valle #7 Cochabamba: Sub-cuenca Cercado -->
-                <ellipse cx="450" cy="330" rx="50" ry="36" fill="none" stroke="#34d399" stroke-width="1.8" stroke-dasharray="4 2" opacity="0.85"></ellipse>
-                <text fill="#6ee7b7" font-family="'JetBrains Mono'" font-size="8.5" font-weight="700" x="420" y="285" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">&xi;-Valle #7 [380m]</text>
-
-                <!-- Valle #5 La Paz: Cuenca El Prado / Miraflores -->
-                <ellipse cx="235" cy="245" rx="45" ry="34" fill="none" stroke="#818cf8" stroke-width="1.8" stroke-dasharray="4 2" opacity="0.85"></ellipse>
-                <text fill="#a5b4fc" font-family="'JetBrains Mono'" font-size="8.5" font-weight="700" x="210" y="205" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">&xi;-Valle #5 [430m]</text>
-            </g>
-
-            <!-- CAPA DBSCAN HOTSPOTS (BOLIVIA) -->
-            <g id="layer-dbscan-bolivia">
-                <circle cx="710" cy="340" fill="url(#hotspotSCZ)" r="60"></circle>
-                <circle cx="710" cy="340" fill="#ffffff" r="3.5"></circle>
-
-                <circle cx="775" cy="410" fill="url(#hotspotPlan3000)" r="38"></circle>
-                <circle cx="775" cy="410" fill="#ffffff" r="3"></circle>
-
-                <circle cx="450" cy="330" fill="url(#hotspotCBB)" r="45"></circle>
-                <circle cx="450" cy="330" fill="#ffffff" r="3"></circle>
-
-                <circle cx="235" cy="245" fill="url(#hotspotLPZ)" r="40"></circle>
-                <circle cx="235" cy="245" fill="#ffffff" r="3"></circle>
-            </g>
-
-            <!-- CAPA HDBSCAN ESTABILIDAD PERSISTENTE (BOLIVIA) -->
-            <g id="layer-hdbscan-bolivia" class="transition-opacity duration-300">
-                <circle cx="710" cy="340" r="45" fill="#00e5ff" fill-opacity="0.22" stroke="#00e5ff" stroke-width="1.8" stroke-dasharray="3 1.5"></circle>
-                <circle cx="675" cy="315" r="18" fill="#38bdf8" fill-opacity="0.30" stroke="#38bdf8" stroke-width="1.6"></circle>
-                <circle cx="775" cy="410" r="28" fill="#ff3366" fill-opacity="0.25" stroke="#ff3366" stroke-width="1.8" stroke-dasharray="3 1.5"></circle>
-                <circle cx="450" cy="330" r="32" fill="#34d399" fill-opacity="0.25" stroke="#34d399" stroke-width="1.8" stroke-dasharray="3 1.5"></circle>
-                <circle cx="235" cy="245" r="30" fill="#818cf8" fill-opacity="0.25" stroke="#818cf8" stroke-width="1.8" stroke-dasharray="3 1.5"></circle>
-                <text fill="#34d399" font-family="'JetBrains Mono'" font-size="8" font-weight="700" x="690" y="400" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">&lambda;=3.12 (Persistente)</text>
-                <text fill="#34d399" font-family="'JetBrains Mono'" font-size="8" font-weight="700" x="760" y="450" style="paint-order: stroke fill; stroke: #070b12; stroke-width: 2.5px;">&lambda;=2.95 (Plan3000)</text>
-            </g>
-
-            <!-- Puntos de Ruido / Interurbanos (-1) -->
-            <g id="layer-noise-bolivia" fill="#64748b" opacity="0.8">
-                <circle cx="340" cy="300" r="2.5"></circle>
-                <circle cx="560" cy="335" r="2.5"></circle>
-                <circle cx="300" cy="180" r="2.5"></circle>
-                <circle cx="520" cy="220" r="2.5"></circle>
-                <circle cx="790" cy="230" r="2.5"></circle>
-                <circle cx="820" cy="350" r="2.5"></circle>
-                <circle cx="630" cy="470" r="2.5"></circle>
-            </g>
-
-            <!-- CAPA HEATMAP KDE (BOLIVIA: ESTIMACIÓN DE DENSIDAD KERNEL CONTINUA) -->
-            <g id="layer-kde-bolivia" class="transition-opacity duration-500 pointer-events-none" style="opacity: 0; display: none;">
-                <!-- Superficies de Densidad Gaussianas con Blur -->
-                <g filter="url(#kdeBlur)">
-                    <!-- Epicentro Santa Cruz Casco Central & Anillos (Densidad Crítica) -->
-                    <circle cx="710" cy="340" r="120" fill="url(#kdeThermalCyan)" opacity="0.9"></circle>
-                    <circle cx="710" cy="340" r="75" fill="url(#kdeThermalRed)" opacity="0.95"></circle>
-                    <circle cx="685" cy="325" r="45" fill="url(#kdeThermalAmber)" opacity="0.85"></circle>
-
-                    <!-- Plan 3000 / Ciudadela (Hotspot Violencia Armada) -->
-                    <circle cx="775" cy="410" r="80" fill="url(#kdeThermalRed)" opacity="0.95"></circle>
-                    <circle cx="765" cy="400" r="50" fill="url(#kdeThermalRed)" opacity="0.9"></circle>
-
-                    <!-- Los Lotes & Pampa de la Isla -->
-                    <circle cx="715" cy="435" r="55" fill="url(#kdeThermalAmber)" opacity="0.8"></circle>
-                    <circle cx="770" cy="305" r="50" fill="url(#kdeThermalEmerald)" opacity="0.8"></circle>
-
-                    <!-- Cochabamba Cercado & La Cancha -->
-                    <circle cx="450" cy="330" r="90" fill="url(#kdeThermalEmerald)" opacity="0.9"></circle>
-                    <circle cx="440" cy="320" r="60" fill="url(#kdeThermalAmber)" opacity="0.85"></circle>
-
-                    <!-- La Paz Centro / Miraflores -->
-                    <circle cx="235" cy="245" r="80" fill="url(#kdeThermalCyan)" opacity="0.85"></circle>
-                    <circle cx="240" cy="250" r="45" fill="url(#kdeThermalAmber)" opacity="0.8"></circle>
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
                 </g>
 
                 <!-- CAPA HDBSCAN ESTABILIDAD PERSISTENTE (CHICAGO) -->
@@ -494,7 +211,6 @@
                     </g>
                 </g>
 
-<<<<<<< HEAD
                 {% else %}
                 <!-- MAPA DE BOLIVIA (EJE METROPOLITANO NACIONAL & SANTA CRUZ) -->
                 <path d="M 120 180 L 250 80 L 480 90 L 720 130 L 890 280 L 860 480 L 640 560 L 380 540 L 160 410 Z" fill="#08101a" stroke="#162e42" stroke-width="1.8"></path>
@@ -752,49 +468,10 @@
                         <span class="font-bold text-on-surface">Radio de búsqueda (&epsilon;)</span>
                         <span id="val-eps-display" class="font-black text-xs px-2 py-0.5 rounded border border-sky-400/30 bg-sky-500/10 text-sky-400 font-data-code">
                             {{ hud_params.eps_meters }} m
-=======
-        <!-- Controles Tácticos de Pan & Zoom (Acercar / Achicar / Centrar) -->
-        <div id="tactical-zoom-dock" class="absolute top-4 left-4 flex flex-col gap-1.5 z-20">
-            <div class="bg-[#0b1320]/95 backdrop-blur-md border border-slate-700/80 rounded-lg flex flex-col items-center overflow-hidden shadow-2xl font-data-code">
-                <button type="button" id="btn-tactical-zoom-in" class="size-8 flex items-center justify-center text-slate-100 hover:text-cyan-400 hover:bg-slate-800 transition-colors font-bold text-base" title="Acercar mapa (Zoom In)">+</button>
-                <div class="h-px w-full bg-slate-700/70"></div>
-                <span id="tactical-zoom-badge" class="py-0.5 px-1 text-[9px] font-bold text-slate-300 select-none font-mono">100%</span>
-                <div class="h-px w-full bg-slate-700/70"></div>
-                <button type="button" id="btn-tactical-zoom-out" class="size-8 flex items-center justify-center text-slate-100 hover:text-cyan-400 hover:bg-slate-800 transition-colors font-bold text-base" title="Achicar mapa (Zoom Out)">&minus;</button>
-                <div class="h-px w-full bg-slate-700/70"></div>
-                <button type="button" id="btn-tactical-zoom-reset" class="size-8 flex items-center justify-center text-slate-400 hover:text-cyan-400 hover:bg-slate-800 transition-colors text-xs" title="Restablecer posición y zoom (Centrar)">
-                    <span class="material-symbols-outlined text-[15px]">restart_alt</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- HUD DE PARÁMETROS HAVERSINE & OPTICS (Desktop: flotante arriba a la derecha | Móvil: panel desplegable) -->
-        <div id="spatial-hud-box" 
-             class="hidden lg:block absolute top-4 right-4 w-76 max-w-[90vw] bg-[#0b1320]/95 backdrop-blur-md border border-slate-700/80 p-4 rounded-xl shadow-2xl z-20 font-data-code">
-            
-            <div class="flex items-center justify-between text-xs pb-2 mb-2 border-b border-slate-700/60 font-semibold text-white">
-                <span class="flex items-center gap-1.5 text-cyan-400 font-bold">
-                    <span class="material-symbols-outlined text-[15px]">tune</span> PARÁMETROS HAVERSINE
-                </span>
-                <!-- Botón de cerrar visible solo en móvil/tablet -->
-                <button type="button" id="btn-mobile-hud-close" class="lg:hidden text-slate-400 hover:text-white">
-                    <span class="material-symbols-outlined text-base">close</span>
-                </button>
-            </div>
-
-            <div class="space-y-3 text-[11px]">
-                <!-- Slider Radio Epsilon -->
-                <div>
-                    <div class="flex justify-between items-center mb-1 text-slate-200 font-medium">
-                        <span>Radio Epsilon (&epsilon;):</span>
-                        <span id="val-eps-display" class="text-cyan-400 font-bold text-xs font-mono">
-                            {{ hud_params.eps_meters }} m ({{ hud_params.eps_radians }} rad)
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
                         </span>
                     </div>
 
                     <input id="slider-eps" 
-<<<<<<< HEAD
                            type="range" 
                            class="w-full h-1.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-sky-400"
                            min="{{ filter_options.min_eps }}" 
@@ -808,21 +485,8 @@
                         <span>{{ filter_options.min_eps }} m</span>
                         <span class="text-on-surface-variant font-semibold">Calibrado: {{ filter_options.default_eps }} m</span>
                         <span>{{ filter_options.max_eps }} m</span>
-=======
-                           class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400" 
-                           max="{{ 500 if current_context == 'chicago' else 3000 }}" 
-                           min="{{ 150 if current_context == 'chicago' else 500 }}" 
-                           step="{{ 10 if current_context == 'chicago' else 50 }}"
-                           type="range" 
-                           value="{{ hud_params.eps_meters }}">
-                    <div class="flex justify-between text-[9px] text-slate-300 font-bold font-mono mt-0.5">
-                        <span>{{ '150m' if current_context == 'chicago' else '500m' }}</span>
-                        <span>{{ '300m' if current_context == 'chicago' else '1,500m' }}</span>
-                        <span>{{ '500m' if current_context == 'chicago' else '3,000m' }}</span>
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
                     </div>
 
-<<<<<<< HEAD
                     <!-- Botones Aplicar y Restablecer -->
                     <div class="flex items-center gap-2 pt-1">
                         <button type="button" 
@@ -851,24 +515,6 @@
                         {% if not filter_options.franja_available %}
                         <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/10 border border-amber-500/30 text-amber-500 font-semibold">No disponible</span>
                         {% endif %}
-=======
-                <!-- Slider MinPts -->
-                <div>
-                    <div class="flex justify-between items-center mb-1 text-slate-200 font-medium">
-                        <span>Mínimo Puntos (MinPts):</span>
-                        <span id="val-min-pts-display" class="text-cyan-400 font-bold text-xs font-mono">{{ hud_params.min_pts }} pts</span>
-                    </div>
-                    <input id="slider-min-pts" 
-                           class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400" 
-                           max="{{ 50 if current_context == 'chicago' else 15 }}" 
-                           min="{{ 10 if current_context == 'chicago' else 3 }}" 
-                           type="range" 
-                           value="{{ hud_params.min_pts }}">
-                    <div class="flex justify-between text-[9px] text-slate-300 font-bold font-mono mt-0.5">
-                        <span>{{ '10' if current_context == 'chicago' else '3' }}</span>
-                        <span>{{ '25' if current_context == 'chicago' else '5' }}</span>
-                        <span>{{ '50' if current_context == 'chicago' else '15' }}</span>
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
                     </div>
 
                     {% if filter_options.franja_available %}
@@ -890,7 +536,6 @@
                     {% endif %}
                 </div>
 
-<<<<<<< HEAD
                 <!-- 4. Filtro por Tipo de Delito -->
                 <div class="space-y-1.5 pt-3 border-t border-outline-variant/40">
                     <label for="filter-crime-type" class="font-bold text-xs text-on-surface block">
@@ -902,79 +547,17 @@
                         <option value="{{ c }}">{{ c }}</option>
                         {% endfor %}
                     </select>
-=======
-                <!-- Estado de Hotspots -->
-                <div class="pt-2 border-t border-slate-700/60 flex justify-between items-center text-[10px]">
-                    <span class="text-slate-300 font-medium">Hotspots Activos:</span>
-                    <span id="val-hotspots-count" class="px-2 py-0.5 rounded bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-bold text-xs font-mono">
-                        {{ hud_params.active_hotspots }} ZONAS
-                    </span>
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
                 </div>
             </div>
 
-<<<<<<< HEAD
             <!-- Resumen numérico rápido del filtrado actual -->
             <div class="pt-3 border-t border-outline-variant/40 text-[11px] text-outline flex items-center justify-between">
                 <span>Hotspots: <strong id="val-hotspots-count" class="text-on-surface">{{ hud_params.active_hotspots }} zonas</strong></span>
                 <span>Ruido: <strong id="val-noise-count" class="text-on-surface">{{ hud_params.noise_count }} pts</strong></span>
-=======
-        <!-- Leyenda Cartográfica Táctica Dinámica -->
-        <div id="tactical-legend-dock" class="absolute bottom-3 right-3 bg-[#0b1320]/95 backdrop-blur-md border border-slate-700/80 px-3.5 py-1.5 rounded-lg shadow-xl z-20 text-[10px] font-data-code flex flex-wrap items-center gap-3">
-            {% if current_context == 'chicago' %}
-            <div class="flex items-center gap-1.5">
-                <span class="size-2 rounded-full bg-[#00e5ff] shadow-[0_0_6px_#00e5ff]"></span>
-                <span class="text-slate-100 font-semibold">#1 Loop</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <span class="size-2 rounded-full bg-[#ff3366] shadow-[0_0_6px_#ff3366]"></span>
-                <span class="text-slate-100 font-semibold">#2 Harrison</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <span class="size-2 rounded-full bg-[#ffaa00] shadow-[0_0_6px_#ffaa00]"></span>
-                <span class="text-slate-100 font-semibold">#3 Englewood</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <span class="size-2 rounded-full bg-[#a855f7] shadow-[0_0_6px_#a855f7]"></span>
-                <span class="text-slate-100 font-semibold">#4 Near West</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <span class="size-2 rounded-full bg-slate-400"></span>
-                <span id="val-noise-count" class="text-slate-300 font-mono">Ruido: {{ hud_params.noise_count }} pts</span>
-            </div>
-            {% else %}
-            <div class="flex items-center gap-1.5">
-                <span class="size-2 rounded-full bg-[#00e5ff] shadow-[0_0_6px_#00e5ff]"></span>
-                <span class="text-slate-100 font-semibold">#0 Santa Cruz</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <span class="size-2 rounded-full bg-[#ff3366] shadow-[0_0_6px_#ff3366]"></span>
-                <span class="text-slate-100 font-semibold">#2 Plan 3000</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <span class="size-2 rounded-full bg-[#34d399] shadow-[0_0_6px_#34d399]"></span>
-                <span class="text-slate-100 font-semibold">#7 Cochabamba</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <span class="size-2 rounded-full bg-[#818cf8] shadow-[0_0_6px_#818cf8]"></span>
-                <span class="text-slate-100 font-semibold">#5 La Paz</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <span class="size-2 rounded-full bg-slate-400"></span>
-                <span id="val-noise-count" class="text-slate-300 font-mono">Ruido: {{ hud_params.noise_count }} pts</span>
-            </div>
-            {% endif %}
-
-            <!-- Indicador Activo de HeatMap KDE -->
-            <div id="legend-kde-indicator" style="display: none;" class="items-center gap-1.5 border-l border-slate-700/60 pl-2">
-                <span class="size-2 rounded-full bg-rose-500 shadow-[0_0_8px_#ff3366] animate-pulse"></span>
-                <span class="text-rose-300 font-bold uppercase tracking-wider text-[9px]">KDE HeatMap Activo</span>
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
             </div>
         </div>
     </div>
 
-<<<<<<< HEAD
     <!-- 3. Leyenda debajo del mapa a ancho completo con colores fijos por algoritmo -->
     <div class="bg-surface-container-low px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3 text-xs font-data-code">
         <div class="flex flex-wrap items-center gap-4 sm:gap-6">
@@ -1014,53 +597,3 @@
         </div>
     </div>
 </div>
-=======
-    <!-- Escenario Cartográfico Globo 3D WebGIS (MapLibre GL v4) -->
-    <div id="tactical-map-viewport-3d" class="relative w-full h-[400px] sm:h-[480px] lg:h-[580px] bg-[#020617] overflow-hidden select-none hidden font-data-code">
-        <!-- Canvas MapLibre WebGL -->
-        <div id="maplibre-3d-canvas" class="absolute inset-0 w-full h-full"></div>
-
-        <!-- Telemetría Flotante Superior 3D -->
-        <div class="absolute top-3 left-3 z-10 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/90 border border-cyan-500/40 backdrop-blur-md text-[11px] text-cyan-300">
-            <span class="size-2 rounded-full bg-cyan-400 animate-ping"></span>
-            <span class="font-bold">MOTOR 3D WEBGL // MAPLIBRE GL</span>
-            <span class="text-slate-400">•</span>
-            <span class="text-slate-200">Proyección Esférica Orbital</span>
-            <span class="text-slate-400">•</span>
-            <span id="globe-3d-stat-points" class="text-emerald-400 font-bold">{{ '10,000 hechos' if current_context == 'chicago' else '137 hechos' }}</span>
-        </div>
-
-        <!-- Toolbar Táctico Flotante Superior Derecho para Modo Algorítmico 3D -->
-        <div class="absolute top-3 right-3 z-10 flex items-center gap-1 p-1 rounded-lg bg-slate-900/90 border border-slate-700/80 backdrop-blur-md text-[10px]">
-            <span class="text-slate-400 px-1 font-semibold uppercase">Modo 3D:</span>
-            <button type="button" data-globe-mode="dbscan" class="globe-mode-btn px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold active">DBSCAN</button>
-            <button type="button" data-globe-mode="optics" class="globe-mode-btn px-2 py-0.5 rounded bg-surface-container text-slate-300 border border-outline-variant hover:text-white">OPTICS</button>
-            <button type="button" data-globe-mode="hdbscan" class="globe-mode-btn px-2 py-0.5 rounded bg-surface-container text-slate-300 border border-outline-variant hover:text-white">HDBSCAN</button>
-            <button type="button" data-globe-mode="ward" class="globe-mode-btn px-2 py-0.5 rounded bg-surface-container text-slate-300 border border-outline-variant hover:text-white">Ward</button>
-        </div>
-
-        <!-- Controles de Navegación 3D (Zoom / Reset / Pitch) -->
-        <div class="absolute bottom-4 left-4 z-10 flex items-center gap-1.5 p-1 rounded-lg bg-slate-900/90 border border-slate-700/80 backdrop-blur-md">
-            <button type="button" id="btn-globe-zoom-in" class="size-7 rounded bg-slate-800 text-slate-200 hover:text-white flex items-center justify-center text-xs font-bold transition-colors" title="Acercar">
-                <span class="material-symbols-outlined text-[16px]">add</span>
-            </button>
-            <button type="button" id="btn-globe-zoom-out" class="size-7 rounded bg-slate-800 text-slate-200 hover:text-white flex items-center justify-center text-xs font-bold transition-colors" title="Alejar">
-                <span class="material-symbols-outlined text-[16px]">remove</span>
-            </button>
-            <button type="button" id="btn-globe-reset" class="px-2 h-7 rounded bg-slate-800 text-slate-200 hover:text-white flex items-center justify-center text-[10px] font-bold gap-1 transition-colors" title="Restablecer Vista Orbital">
-                <span class="material-symbols-outlined text-[14px]">my_location</span>
-                <span>Centrar</span>
-            </button>
-            <button type="button" id="btn-globe-pitch" class="px-2 h-7 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 flex items-center justify-center text-[10px] font-bold gap-1 transition-colors" title="Alternar Inclinación 3D">
-                <span class="material-symbols-outlined text-[14px]">view_in_ar</span>
-                <span>3D Pitch</span>
-            </button>
-        </div>
-
-        <!-- Aviso Táctico de Navegación no invasiva -->
-        <div class="absolute bottom-4 right-4 z-10 px-2.5 py-1 rounded bg-slate-950/80 border border-slate-800 text-[10px] text-slate-400 backdrop-blur-sm pointer-events-none">
-            <span>Usa <strong>Ctrl + Rueda</strong> o botones para Zoom</span>
-        </div>
-    </div>
-</section>
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8

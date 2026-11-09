@@ -2,7 +2,14 @@ import os
 import pandas as pd
 import numpy as np
 from sklearn.cluster import DBSCAN, OPTICS
-import hdbscan
+try:
+    from sklearn.cluster import HDBSCAN
+except ImportError:
+    try:
+        import hdbscan
+        HDBSCAN = hdbscan.HDBSCAN
+    except ImportError:
+        HDBSCAN = None
 from sklearn.mixture import GaussianMixture
 
 
@@ -181,8 +188,14 @@ class WebGISService:
         sample['dbscan'] = db.fit_predict(coords_rad)
 
         # 2. HDBSCAN con min_cluster_size=5
-        hdb = hdbscan.HDBSCAN(min_cluster_size=5, metric='haversine', core_dist_n_jobs=1)
-        sample['hdbscan'] = hdb.fit_predict(coords_rad)
+        if HDBSCAN is not None:
+            try:
+                hdb = HDBSCAN(min_cluster_size=5, metric='haversine')
+                sample['hdbscan'] = hdb.fit_predict(coords_rad)
+            except Exception:
+                sample['hdbscan'] = sample['dbscan']
+        else:
+            sample['hdbscan'] = sample['dbscan']
 
         # 3. OPTICS con min_samples=5
         opt = OPTICS(min_samples=5, metric='haversine')

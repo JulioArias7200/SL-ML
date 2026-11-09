@@ -4,11 +4,6 @@
 {{ 'Bolivia' if current_context != 'chicago' else 'Chicago CPD' }} // Análisis geoespacial de densidad y taxonomía jerárquica
 {% endblock %}
 
-{% block extra_head %}
-<!-- MapLibre GL JS v4.7.1 CSS (WebGL 3D Engine Ultraligero ~250KB) -->
-<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
-{% endblock %}
-
 {% block content %}
 <div id="spatial-root" data-context="{{ current_context }}" class="flex flex-col min-w-0 bg-surface">
 
@@ -36,7 +31,6 @@
                 </p>
             </div>
 
-<<<<<<< HEAD
             <!-- Selector de contexto visible Bolivia | Chicago -->
             <div class="shrink-0 flex items-center gap-2 font-data-code">
                 <span class="text-xs text-outline hidden sm:inline">Contexto activo:</span>
@@ -51,293 +45,6 @@
                        title="Cargar benchmark oficial de Chicago CPD">
                         Chicago (CPD)
                     </a>
-=======
-        <!-- Telemetría & Badges -->
-        <div class="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-outline-variant/40 font-data-code text-xs">
-            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-outline-variant text-on-surface">
-                <span class="material-symbols-outlined text-[14px] text-cyan-600 dark:text-cyan-400">straighten</span>
-                <span>Métrica: <strong class="text-cyan-700 dark:text-cyan-400">Haversine Esférica</strong> (&epsilon;={{ hud_params.eps_meters }}m, MinPts={{ hud_params.min_pts }})</span>
-            </div>
-            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-outline-variant text-on-surface">
-                <span class="material-symbols-outlined text-[14px] text-amber-600 dark:text-amber-400">landscape</span>
-                <span>Modelo OPTICS: <strong class="text-amber-700 dark:text-amber-300">&xi; = {{ optics_data.xi }}</strong> ({{ optics_data.active_valleys_count }} Valles / Cuencas)</span>
-            </div>
-            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-outline-variant text-on-surface">
-                <span class="material-symbols-outlined text-[14px] text-emerald-600 dark:text-emerald-400">dataset</span>
-                <span>Muestra: <strong class="text-emerald-700 dark:text-emerald-400">{{ hud_params.sample_size }}</strong></span>
-            </div>
-            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-outline-variant text-on-surface">
-                <span class="material-symbols-outlined text-[14px] text-purple-600 dark:text-purple-400">verified</span>
-                <span>Validación: <strong class="text-purple-700 dark:text-purple-300">Silhouette {{ hud_params.silhouette_spatial }}</strong> | Cophenetic {{ hud_params.cophenetic_r }}</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- 2. CONTENIDO PRINCIPAL -->
-    <div class="p-4 sm:p-6 lg:p-8 space-y-8 max-w-[1700px] w-full mx-auto">
-
-        <!-- SECCIÓN 2: FUNDAMENTACIÓN MATEMÁTICA FORMAL // MODELOS DE DENSIDAD & TAXONOMÍA ESPACIAL -->
-        <section class="space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-outline-variant/60 gap-2">
-                <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-cyan-600 dark:text-cyan-400 text-lg">functions</span>
-                    <h2 class="font-headline-sm text-xs sm:text-sm font-bold uppercase tracking-wider text-on-surface">
-                        FUNDAMENTACIÓN MATEMÁTICA // MODELOS DE DENSIDAD &amp; TAXONOMÍA ESPACIAL
-                    </h2>
-                </div>
-                <div class="flex items-center gap-2 text-xs font-data-code">
-                    <span class="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant text-outline">
-                        Geometría Esférica &amp; Topología No Supervisada
-                    </span>
-                    <span class="px-2 py-0.5 rounded bg-cyan-100 text-cyan-800 border-cyan-300 dark:bg-cyan-500/20 dark:text-cyan-300 dark:border-cyan-500/40 border font-bold">
-                        4 Algoritmos
-                    </span>
-                </div>
-            </div>
-
-            <!-- Cuadrícula de 4 Tarjetas Matemáticas con KaTeX Adaptativo Día/Noche -->
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 font-data-code">
-                <!-- Tarjeta 1: Haversine -->
-                <div class="p-4 rounded-xl bg-white dark:bg-surface-container border border-slate-200 dark:border-outline-variant/40 shadow-xs flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-cyan-100 dark:bg-cyan-950/80 text-cyan-800 dark:text-cyan-300 border border-cyan-400/50">
-                                1. Métrica Haversine
-                            </span>
-                            <span class="text-[10px] text-slate-500 dark:text-outline">Geodésica Esférica</span>
-                        </div>
-                        <h4 class="text-xs font-bold text-slate-900 dark:text-white leading-snug mb-1">
-                            Distancia Angular sobre la Esfera
-                        </h4>
-                        <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed mb-2 font-label-md">
-                            Elimina la distorsión de coordenadas euclidianas planas en latitudes variables:
-                        </p>
-                        <!-- Ecuación KaTeX Adaptativa -->
-                        <div class="p-2.5 rounded-lg bg-slate-100/90 dark:bg-slate-800/70 border border-cyan-200 dark:border-cyan-800/60 text-center shadow-inner overflow-x-auto my-1.5 custom-scrollbar">
-                            <div class="text-slate-900 dark:text-cyan-300 font-bold text-xs sm:text-sm py-1 font-mono">
-                                $$d = 2R \arcsin\left(\sqrt{\sin^2\frac{\Delta\phi}{2} + \cos\phi_1\cos\phi_2\sin^2\frac{\Delta\lambda}{2}}\right)$$
-                            </div>
-                            <div class="text-slate-700 dark:text-slate-300 text-[11px] py-0.5">
-                                $$\epsilon_{\text{rad}} = \frac{\epsilon_{\text{m}}}{R_{\text{tierra}}}, \quad R \approx 6,371,008 \text{ m}$$
-                            </div>
-                        </div>
-                    </div>
-                    <div class="pt-2 border-t border-slate-200 dark:border-outline-variant/30 text-[10px] text-slate-600 dark:text-slate-400 space-y-1">
-                        <div><strong class="text-cyan-700 dark:text-cyan-300">&phi;, &lambda;:</strong> Latitud y longitud en radianes.</div>
-                        <div><strong class="text-cyan-700 dark:text-cyan-300">&epsilon; Calibrado:</strong> {{ hud_params.eps_meters }}m ({{ hud_params.eps_radians }} rad).</div>
-                    </div>
-                </div>
-
-                <!-- Tarjeta 2: DBSCAN -->
-                <div class="p-4 rounded-xl bg-white dark:bg-surface-container border border-slate-200 dark:border-outline-variant/40 shadow-xs flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-400/50">
-                                2. Densidad DBSCAN
-                            </span>
-                            <span class="text-[10px] text-slate-500 dark:text-outline">Radio Rígido (&epsilon;)</span>
-                        </div>
-                        <h4 class="text-xs font-bold text-slate-900 dark:text-white leading-snug mb-1">
-                            Clasificación Tripartita de Puntos
-                        </h4>
-                        <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed mb-2 font-label-md">
-                            Segmentación en núcleos densos, bordes y ruido sin imponer formas esféricas:
-                        </p>
-                        <!-- Ecuación KaTeX Adaptativa -->
-                        <div class="p-2.5 rounded-lg bg-slate-100/90 dark:bg-slate-800/70 border border-emerald-200 dark:border-emerald-800/60 text-center shadow-inner overflow-x-auto my-1.5 custom-scrollbar">
-                            <div class="text-slate-900 dark:text-emerald-300 font-bold text-xs sm:text-sm py-1 font-mono">
-                                $$\text{Core}(p) \iff |N_\epsilon(p)| \ge \text{MinPts}$$
-                            </div>
-                            <div class="text-slate-700 dark:text-slate-300 text-[11px] py-0.5">
-                                $$\text{Border}(q) \iff q \notin \text{Core} \land \exists p \in \text{Core}: q \in N_\epsilon(p)$$
-                            </div>
-                        </div>
-                    </div>
-                    <div class="pt-2 border-t border-slate-200 dark:border-outline-variant/30 text-[10px] text-slate-600 dark:text-slate-400 space-y-1">
-                        <div><strong class="text-emerald-700 dark:text-emerald-300">MinPts:</strong> {{ hud_params.min_pts }} puntos requeridos por núcleo.</div>
-                        <div><strong class="text-rose-700 dark:text-rose-400">Ruido (-1):</strong> {{ hud_params.noise_count }} puntos aislados ({{ hud_params.noise_pct }}%).</div>
-                    </div>
-                </div>
-
-                <!-- Tarjeta 3: OPTICS -->
-                <div class="p-4 rounded-xl bg-white dark:bg-surface-container border border-slate-200 dark:border-outline-variant/40 shadow-xs flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-400/50">
-                                3. Topología OPTICS
-                            </span>
-                            <span class="text-[10px] text-slate-500 dark:text-outline">Multiescala Continuo</span>
-                        </div>
-                        <h4 class="text-xs font-bold text-slate-900 dark:text-white leading-snug mb-1">
-                            Alcanzabilidad &amp; Cuencas &xi;
-                        </h4>
-                        <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed mb-2 font-label-md">
-                            Genera el ordenamiento espacial 1D revelando valles densos y jerarquías:
-                        </p>
-                        <!-- Ecuación KaTeX Adaptativa -->
-                        <div class="p-2.5 rounded-lg bg-slate-100/90 dark:bg-slate-800/70 border border-amber-200 dark:border-amber-800/60 text-center shadow-inner overflow-x-auto my-1.5 custom-scrollbar">
-                            <div class="text-slate-900 dark:text-amber-300 font-bold text-xs sm:text-sm py-1 font-mono">
-                                $$\text{reach-dist}(o, p) = \max(\text{core-dist}(p), \, d_{\text{hav}}(p, o))$$
-                            </div>
-                            <div class="text-slate-700 dark:text-slate-300 text-[11px] py-0.5">
-                                $$\Delta_{\text{steep}}(s, e) = \frac{R(s) - R(e)}{R(s)} \ge \xi \quad (\xi={{ optics_data.xi }})$$
-                            </div>
-                        </div>
-                    </div>
-                    <div class="pt-2 border-t border-slate-200 dark:border-outline-variant/30 text-[10px] text-slate-600 dark:text-slate-400 space-y-1">
-                        <div><strong class="text-amber-700 dark:text-amber-300">Valles Extraídos:</strong> {{ optics_data.active_valleys_count }} cuencas operativas.</div>
-                        <div><strong class="text-amber-700 dark:text-amber-300">Umbral &xi; Cut:</strong> {{ optics_data.threshold_m }} m de alcance crítico.</div>
-                    </div>
-                </div>
-
-                <!-- Tarjeta 4: HDBSCAN / Ward -->
-                <div class="p-4 rounded-xl bg-white dark:bg-surface-container border border-slate-200 dark:border-outline-variant/40 shadow-xs flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-purple-100 dark:bg-purple-950/80 text-purple-800 dark:text-purple-300 border border-purple-400/50">
-                                4. HDBSCAN &amp; Ward
-                            </span>
-                            <span class="text-[10px] text-slate-500 dark:text-outline">Persistencia &amp; Linkage</span>
-                        </div>
-                        <h4 class="text-xs font-bold text-slate-900 dark:text-white leading-snug mb-1">
-                            Estabilidad &lambda; &amp; Varianza Mínima
-                        </h4>
-                        <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed mb-2 font-label-md">
-                            Condensa el MST en clústeres persistentes y optimiza el árbol taxonómico:
-                        </p>
-                        <!-- Ecuación KaTeX Adaptativa -->
-                        <div class="p-2.5 rounded-lg bg-slate-100/90 dark:bg-slate-800/70 border border-purple-200 dark:border-purple-800/60 text-center shadow-inner overflow-x-auto my-1.5 custom-scrollbar">
-                            <div class="text-slate-900 dark:text-purple-300 font-bold text-xs sm:text-sm py-1 font-mono">
-                                $$S(C) = \sum_{p \in C} (\lambda_p - \lambda_{\text{nacimiento}}), \quad \lambda = \frac{1}{\epsilon}$$
-                            </div>
-                            <div class="text-slate-700 dark:text-slate-300 text-[11px] py-0.5">
-                                $$d_{\text{Ward}}(A, B) = \sqrt{\frac{n_A n_B}{n_A + n_B}} \|\boldsymbol{\mu}_A - \boldsymbol{\mu}_B\|_2$$
-                            </div>
-                        </div>
-                    </div>
-                    <div class="pt-2 border-t border-slate-200 dark:border-outline-variant/30 text-[10px] text-slate-600 dark:text-slate-400 space-y-1">
-                        <div><strong class="text-purple-700 dark:text-purple-300">Estabilidad Media:</strong> &lambda; = {{ hdbscan_data.lambda_stability_mean }}.</div>
-                        <div><strong class="text-emerald-700 dark:text-emerald-300">Cophenetic r:</strong> r = {{ hud_params.cophenetic_r }} (Ward Linkage).</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECCIÓN 3: VISOR CARTOGRÁFICO TÁCTICO & INSPECTOR LATERAL EN 2 COLUMNAS -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            <!-- Columna Izquierda: Visor Cartográfico Táctico (8 Columnas) -->
-            <div class="lg:col-span-8 w-full">
-                {% include 'components/map_viewport_tactical.html' %}
-            </div>
-
-            <!-- Columna Derecha: Inspector Táctico Lateral (4 Columnas) -->
-            <div class="lg:col-span-4 w-full">
-                <div id="spatial-inspector-panel" class="rounded-xl border border-outline-variant bg-surface-container p-4 sm:p-5 shadow-lg font-data-code space-y-4">
-                    <div class="flex items-center justify-between pb-3 border-b border-outline-variant/60">
-                        <div class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-cyan-600 dark:text-cyan-400 text-lg">radar</span>
-                            <span class="text-xs font-bold uppercase tracking-wider text-on-surface">
-                                INSPECTOR GEOESPACIAL
-                            </span>
-                        </div>
-                        <span id="side-inspector-badge" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/40">
-                            {% if current_context == 'chicago' %}ALERTA ROJA{% else %}VIGILANCIA ALTA{% endif %}
-                        </span>
-                    </div>
-
-                    <!-- Zona y Macro-Cluster -->
-                    <div>
-                        <h3 id="side-inspector-zone" class="text-base font-bold text-on-surface leading-snug">
-                            {% if current_context == 'chicago' %}Distrito 011: Harrison (West Side){% else %}Santa Cruz: Casco Central &amp; Anillos{% endif %}
-                        </h3>
-                        <div class="flex items-center gap-2 mt-1">
-                            <span id="side-inspector-macro" class="text-[11px] font-semibold text-rose-700 dark:text-rose-400">
-                                {% if current_context == 'chicago' %}Macro-Cluster A (Violencia Armada){% else %}Macro-Cluster A (Gravedad Crítica){% endif %}
-                            </span>
-                            <span class="text-outline text-[10px]">•</span>
-                            <span id="side-inspector-coords" class="text-[10px] text-outline font-mono">
-                                {% if current_context == 'chicago' %}41.874° N, -87.726° W{% else %}-17.783° S, -63.182° W{% endif %}
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Cuadrícula 2x2 de Métricas Clave -->
-                    <div class="grid grid-cols-2 gap-2.5 pt-1">
-                        <div class="p-2.5 rounded-lg bg-surface-container-high border border-outline-variant/50">
-                            <span class="text-[10px] text-outline uppercase block">Volumen / Hechos:</span>
-                            <span id="side-inspector-vol" class="text-xs sm:text-sm font-bold text-on-surface font-mono">
-                                {% if current_context == 'chicago' %}58,412 incidentes{% else %}16 reportes prensa{% endif %}
-                            </span>
-                        </div>
-                        <div class="p-2.5 rounded-lg bg-surface-container-high border border-outline-variant/50">
-                            <span class="text-[10px] text-outline uppercase block">Densidad Espacial:</span>
-                            <span id="side-inspector-density" class="text-xs sm:text-sm font-bold text-cyan-700 dark:text-cyan-400 font-mono">
-                                {% if current_context == 'chicago' %}184.2 crím/km²{% else %}40.0 rep/km²{% endif %}
-                            </span>
-                        </div>
-                        <div class="p-2.5 rounded-lg bg-surface-container-high border border-outline-variant/50">
-                            <span class="text-[10px] text-outline uppercase block">Delito Top:</span>
-                            <span id="side-inspector-delito" class="text-[11px] font-bold text-on-surface truncate block" title="Delito Predominante">
-                                {% if current_context == 'chicago' %}Weapons Violation / Homicide{% else %}Robo Agravado / Asalto{% endif %}
-                            </span>
-                        </div>
-                        <div class="p-2.5 rounded-lg bg-surface-container-high border border-outline-variant/50">
-                            <span class="text-[10px] text-outline uppercase block">Horario / Franja:</span>
-                            <span id="side-inspector-nocturno" class="text-xs sm:text-sm font-bold text-amber-700 dark:text-amber-400 font-mono">
-                                {% if current_context == 'chicago' %}38.4% Nocturno{% else %}12.5% Nocturno{% endif %}
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Asignaciones de los 3 Algoritmos -->
-                    <div class="space-y-2 pt-2 border-t border-outline-variant/40 text-[11px]">
-                        <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest/80 border border-outline-variant/30">
-                            <span class="text-outline flex items-center gap-1.5">
-                                <span class="size-2 rounded-full bg-cyan-400"></span>
-                                <span>DBSCAN:</span>
-                            </span>
-                            <span id="side-inspector-dbscan" class="font-bold text-cyan-700 dark:text-cyan-300">
-                                {% if current_context == 'chicago' %}DBSCAN #2 (West Hotspot){% else %}DBSCAN #0 (SCZ Central){% endif %}
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest/80 border border-outline-variant/30">
-                            <span class="text-outline flex items-center gap-1.5">
-                                <span class="size-2 rounded-full bg-amber-400"></span>
-                                <span>OPTICS:</span>
-                            </span>
-                            <span id="side-inspector-optics" class="font-bold text-amber-700 dark:text-amber-300">
-                                {% if current_context == 'chicago' %}Valle #2 (Harrison, 125m){% else %}Valle #0 (Casco SCZ, 295m){% endif %}
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest/80 border border-outline-variant/30">
-                            <span class="text-outline flex items-center gap-1.5">
-                                <span class="size-2 rounded-full bg-emerald-400"></span>
-                                <span>HDBSCAN:</span>
-                            </span>
-                            <span id="side-inspector-hdbscan" class="font-bold text-emerald-700 dark:text-emerald-300">
-                                {% if current_context == 'chicago' %}&lambda;=6.15 (Persistencia Muy Alta){% else %}&lambda;=3.12 (Persistencia Muy Alta){% endif %}
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Tip Pedagógico -->
-                    <div class="p-2.5 rounded-lg bg-surface-container-lowest/50 border border-outline-variant/30 text-[10px] text-outline flex items-start gap-2">
-                        <span class="material-symbols-outlined text-xs text-cyan-600 dark:text-cyan-400 mt-0.5 shrink-0">info</span>
-                        <span>Haz clic en cualquier punto del mapa, barra de OPTICS o fila de la tabla para actualizar esta ficha en tiempo real.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SECCIÓN 4: SUITE ANALÍTICA DE DENSIDAD // SELECTOR INTERACTIVO EN 3 TARJETAS (DBSCAN / HDBSCAN / OPTICS) -->
-        <section class="space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1">
-                <div class="flex items-center gap-2">
-                    <span class="size-2 rounded-full bg-primary-container animate-pulse"></span>
-                    <h2 class="font-headline-sm text-xs sm:text-sm font-bold uppercase tracking-wider text-on-surface">
-                        SUITE ANALÍTICA DE DENSIDAD // SELECCIÓN DE MODELO
-                    </h2>
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
                 </div>
             </div>
         </div>
@@ -401,7 +108,6 @@
                 </span>
             </div>
 
-<<<<<<< HEAD
             <!-- Barra de 4 KPIs con línea de contexto -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 font-data-code">
                 <!-- KPI 1: Incidentes -->
@@ -409,22 +115,6 @@
                     <div class="flex items-center justify-between text-outline text-[11px] mb-1">
                         <span class="uppercase tracking-wider">Incidentes analizados</span>
                         <span class="material-symbols-outlined text-sm text-primary-container">dataset</span>
-=======
-            <!-- Las 3 Tarjetas Interactivas Selectoras -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-data-code" id="density-cards-selector">
-                <!-- Tarjeta 1: DBSCAN -->
-                <button type="button" 
-                        data-algo-card="dbscan"
-                        class="algo-tab-card text-left p-4 rounded-xl border border-cyan-400 bg-surface-container-high transition-all duration-300 relative overflow-hidden group cursor-pointer shadow-[0_0_15px_rgba(0,229,255,0.18)] active">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center gap-2">
-                            <div class="size-7 rounded-lg bg-cyan-500/15 border border-cyan-500/40 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
-                                <span class="material-symbols-outlined text-base">radar</span>
-                            </div>
-                            <span class="font-bold text-xs text-on-surface uppercase tracking-wide">DBSCAN Estándar</span>
-                        </div>
-                        <span class="card-status-badge text-[9px] px-2 py-0.5 rounded font-bold uppercase bg-cyan-100 text-cyan-800 border-cyan-300 dark:bg-cyan-500/20 dark:text-cyan-300 dark:border-cyan-500/40 border">Activo</span>
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
                     </div>
                     <div class="text-xl sm:text-2xl font-black text-on-surface tracking-tight">
                         {{ '137 crónicas' if current_context == 'bolivia' else (hud_params.evaluated_records | string ~ ' eventos') }}
@@ -477,7 +167,6 @@
                 </div>
             </div>
 
-<<<<<<< HEAD
             <!-- Caja: Hallazgos clave generados automáticamente -->
             <div class="p-4 sm:p-5 rounded-xl border border-outline-variant/60 bg-surface-container shadow-sm space-y-3">
                 <div class="flex items-center justify-between border-b border-outline-variant/40 pb-2">
@@ -486,32 +175,12 @@
                         <h3 class="text-xs sm:text-sm font-bold font-data-code text-on-surface uppercase tracking-wider">
                             Hallazgos clave
                         </h3>
-=======
-            <!-- CONTENEDOR DINÁMICO DE MÉTRICAS -->
-            <div id="algo-details-container" class="rounded-xl border border-outline-variant/80 bg-surface-container overflow-hidden shadow-xl font-data-code">
-                
-                <!-- 1. PANEL DE MÉTRICAS DBSCAN -->
-                <div id="panel-algo-dbscan" class="algo-detail-panel p-4 sm:p-6 space-y-4">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/60 gap-2">
-                        <div class="flex items-center gap-2">
-                            <span class="size-2 rounded-full bg-cyan-400 animate-ping"></span>
-                            <span class="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
-                                CLUSTERING CON RADIO RÍGIDO // HAVERSINE DENSITY ENGINE
-                            </span>
-                        </div>
-                        <div class="text-[11px] text-outline flex items-center gap-2">
-                            <span>Métrica: <strong class="text-on-surface">Haversine Esférica</strong></span>
-                            <span>|</span>
-                            <span>Muestra: <strong class="text-on-surface">{{ hud_params.sample_size }}</strong></span>
-                        </div>
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
                     </div>
                     <span class="text-[11px] font-data-code text-outline">
                         Generados dinámicamente desde el dataset activo
                     </span>
                 </div>
 
-<<<<<<< HEAD
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 font-data-code text-xs">
                     {% for h in hallazgos %}
                     <div class="p-3 rounded-lg border transition-colors flex items-start gap-2.5
@@ -537,146 +206,10 @@
                         </p>
                     </div>
                     {% endfor %}
-=======
-                    <!-- Cuadrícula de KPIs DBSCAN -->
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                        <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40">
-                            <span class="text-outline text-[10px] block uppercase">Radio Esférico (&epsilon;)</span>
-                            <span class="text-sm sm:text-base font-bold text-cyan-600 dark:text-cyan-400">{{ hud_params.eps_meters }} m</span>
-                            <span class="text-[9px] text-outline block">{{ hud_params.eps_radians }} rad</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40">
-                            <span class="text-outline text-[10px] block uppercase">Vecinos Mínimos (MinPts)</span>
-                            <span class="text-sm sm:text-base font-bold text-on-surface">{{ hud_params.min_pts }} puntos</span>
-                            <span class="text-[9px] text-outline block">Umbral de punto núcleo</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40">
-                            <span class="text-outline text-[10px] block uppercase">Hotspots Formados</span>
-                            <span class="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400">{{ hud_params.active_hotspots }} Núcleos</span>
-                            <span class="text-[9px] text-outline block">Silueta: {{ hud_params.silhouette_spatial }}</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40">
-                            <span class="text-outline text-[10px] block uppercase">Ruido Residual (-1)</span>
-                            <span class="text-sm sm:text-base font-bold text-rose-600 dark:text-rose-400">{{ hud_params.noise_count }} ({{ hud_params.noise_pct }}%)</span>
-                            <span class="text-[9px] text-outline block">Puntos dispersos aislados</span>
-                        </div>
-                    </div>
-
-                    <!-- Desglose de Macro-Núcleos DBSCAN -->
-                    <div class="mt-4 pt-3 border-t border-outline-variant/30">
-                        <span class="text-[11px] text-outline font-bold uppercase tracking-wider block mb-2.5">
-                            Macro-Núcleos Geográficos Identificados (DBSCAN):
-                        </span>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-                            {% for hs in dbscan_data.hotspots %}
-                            <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40 flex flex-col justify-between hover:border-cyan-400/40 transition-colors">
-                                <div class="flex items-center justify-between mb-1.5">
-                                    <span class="text-xs font-bold text-on-surface flex items-center gap-1.5">
-                                        <span class="size-2 rounded-full" style="background-color: {{ hs.color }};"></span>
-                                        <span>{{ hs.name }}</span>
-                                    </span>
-                                </div>
-                                <div class="text-[11px] text-on-surface-variant mb-2">
-                                    Delito Top: <strong class="text-on-surface">{{ hs.top_delito }}</strong>
-                                </div>
-                                <div class="flex justify-between text-[10px] text-outline pt-1.5 border-t border-outline-variant/20">
-                                    <span>Volumen: <strong class="text-on-surface">{{ hs.count }}</strong></span>
-                                    <span>Densidad: <strong class="text-cyan-600 dark:text-cyan-400">{{ hs.density }}</strong></span>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. PANEL DE MÉTRICAS HDBSCAN -->
-                <div id="panel-algo-hdbscan" class="algo-detail-panel p-4 sm:p-6 space-y-4 hidden">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/60 gap-2">
-                        <div class="flex items-center gap-2">
-                            <span class="size-2 rounded-full bg-emerald-400 animate-ping"></span>
-                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                                CLUSTERING DE DENSIDADES VARIABLES // HDBSCAN HIERARCHICAL ENGINE
-                            </span>
-                        </div>
-                        <div class="text-[11px] text-outline flex items-center gap-2">
-                            <span>Métrica: <strong class="text-on-surface">Minimum Spanning Tree (MST)</strong></span>
-                            <span>|</span>
-                            <span>Persistencia: <strong class="text-emerald-600 dark:text-emerald-400">&lambda; = 1/distancia</strong></span>
-                        </div>
-                    </div>
-
-                    <!-- Cuadrícula de KPIs HDBSCAN -->
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                        <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40">
-                            <span class="text-outline text-[10px] block uppercase">Min Cluster Size</span>
-                            <span class="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400">{{ hdbscan_data.min_cluster_size }} puntos</span>
-                            <span class="text-[9px] text-outline block">Condensación mínima</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40">
-                            <span class="text-outline text-[10px] block uppercase">Clusters Persistentes</span>
-                            <span class="text-sm sm:text-base font-bold text-on-surface">{{ hdbscan_data.active_clusters }} Estables</span>
-                            <span class="text-[9px] text-outline block">Densidad no uniforme</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40">
-                            <span class="text-outline text-[10px] block uppercase">Eventos Rescatados</span>
-                            <span class="text-sm sm:text-base font-bold text-cyan-600 dark:text-cyan-400">+{{ hdbscan_data.rescued_count }} recuperados</span>
-                            <span class="text-[9px] text-outline block">Que DBSCAN descartaba</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/40">
-                            <span class="text-outline text-[10px] block uppercase">Estabilidad Media (&lambda;)</span>
-                            <span class="text-sm sm:text-base font-bold text-amber-600 dark:text-amber-400">&lambda;={{ hdbscan_data.lambda_stability_mean }}</span>
-                            <span class="text-[9px] text-outline block">GLOSH Outlier={{ hdbscan_data.glosh_outlier_mean }}</span>
-                        </div>
-                    </div>
-
-                    <div class="p-3 rounded-lg bg-surface-container-high border border-emerald-500/20 text-xs text-on-surface-variant leading-relaxed">
-                        <strong class="text-emerald-600 dark:text-emerald-400">Ventaja Algorítmica HDBSCAN:</strong> {{ hdbscan_data.insights }}
-                    </div>
-
-                    <!-- Diagrama de Estabilidad Lambda y Árbol Condensado -->
-                    <div class="mt-4 pt-3 border-t border-outline-variant/30">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-2.5 gap-1">
-                            <span class="text-[11px] text-outline font-bold uppercase tracking-wider block">
-                                Espectro de Estabilidad y Persistencia de Clústeres (&lambda; = 1/distancia):
-                            </span>
-                            <span class="text-[10px] text-outline">Mayor &lambda; &rarr; Clúster más denso y persistente</span>
-                        </div>
-                        
-                        <div class="space-y-2">
-                            {% for c in hdbscan_data.clusters %}
-                            <div class="p-2.5 rounded-lg bg-surface-container-high border border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:border-emerald-500/40 transition-colors">
-                                <div class="flex items-center gap-2 min-w-[220px]">
-                                    <span class="size-2 rounded-full shrink-0" style="background-color: {{ c.color }};"></span>
-                                    <span class="text-xs font-semibold text-on-surface">{{ c.name }}</span>
-                                </div>
-                                <div class="flex-1 max-w-md mx-2 hidden md:block">
-                                    <!-- Barra de persistencia lambda -->
-                                    <div class="w-full h-2 rounded-full bg-surface-container-lowest overflow-hidden flex">
-                                        <div class="h-full rounded-full transition-all duration-700" 
-                                             style="width: {{ (c.stability_lambda / 8.0 * 100) | round(1) }}%; background-color: {{ c.color }};"></div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3 text-[11px]">
-                                    <span class="text-outline">Persistencia: <strong class="text-emerald-600 dark:text-emerald-400">&lambda; = {{ c.stability_lambda }}</strong></span>
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-500/10 dark:border-emerald-500/30 dark:text-emerald-300 border">
-                                        {{ c.persistency }}
-                                    </span>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3. PANEL DE MÉTRICAS OPTICS (CONTIENE EL REACHABILITY PLOT) -->
-                <div id="panel-algo-optics" class="algo-detail-panel hidden">
-                    {% include 'components/optics_reachability_card.html' %}
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
                 </div>
             </div>
         </section>
 
-<<<<<<< HEAD
         <!-- ================================================================== -->
         <!-- SECCIÓN 2: MAPA PROTAGONISTA                                       -->
         <!-- ================================================================== -->
@@ -1180,19 +713,9 @@
         </section>
 
     </main>
-=======
-        <!-- SECCIÓN 5: PANEL DEL DENDROGRAMA JERÁRQUICO AGLOMERATIVO (WARD LINKAGE & CLUSTERMAP) -->
-        {% include 'components/dendrogram_card.html' %}
-
-        <!-- SECCIÓN 6: TABLA DE TAXONOMÍA DE ZONAS / DISTRITOS URBANOS -->
-        {% include 'components/district_table.html' %}
-    </div>
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
 </div>
 {% endblock %}
 
 {% block extra_scripts %}
-<!-- MapLibre GL JS v4.7.1 Script (Motor WebGL 3D Ultraligero ~250KB) -->
-<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="{{ url_for('static', filename='js/spatial_controls.js') }}"></script>
 {% endblock %}

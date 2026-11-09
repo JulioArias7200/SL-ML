@@ -183,7 +183,6 @@
                     
                     <!-- Código y Nombre -->
                     <td class="py-2.5 px-3">
-<<<<<<< HEAD
                         <div class="flex items-center gap-2">
                             <span class="font-mono font-bold text-on-surface">{{ u.code }}</span>
                             <span class="text-on-surface-variant font-medium">{{ u.name }}</span>
@@ -196,13 +195,6 @@
                               style="background-color: {{ u.group_color }}20; color: {{ u.group_color }}; border-color: {{ u.group_color }}40;">
                             <span class="size-1.5 rounded-full" style="background-color: {{ u.group_color }};"></span>
                             <span>{{ u.group_label }}</span>
-=======
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold border 
-                            {% if d.macro == 'A' %}bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/30
-                            {% elif d.macro == 'B' %}bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30
-                            {% else %}bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/30{% endif %}">
-                            Cluster {{ d.macro }}
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
                         </span>
                     </td>
 
@@ -215,28 +207,11 @@
                             {{ u.predominant_pct }}% del perfil distrital
                         </span>
                     </td>
-<<<<<<< HEAD
 
                     <!-- Volumen de Eventos y Periodo -->
                     <td class="py-2.5 px-3 text-right">
                         <span class="font-mono font-bold text-on-surface block text-xs">
                             {{ "{:,}".format(u.events_count) }}
-=======
-                    <td class="py-2.5 px-3 text-on-surface font-mono text-right">
-                        {{ "{:,}".format(d.total_5y) }}
-                    </td>
-                    <td class="py-2.5 px-3 font-semibold text-right
-                        {% if d.macro == 'A' %}text-rose-700 dark:text-rose-400{% elif d.macro == 'B' %}text-amber-700 dark:text-amber-400{% else %}text-emerald-700 dark:text-emerald-400{% endif %}">
-                        {{ d.density_km2 }}
-                    </td>
-                    <td class="py-2.5 px-3 text-center text-outline text-[11px]">
-                        {{ d.pct_nocturno_str or 'N/D' }}
-                    </td>
-                    <td class="py-2.5 px-3 text-outline">{{ d.cluster }}</td>
-                    <td class="py-2.5 px-3">
-                        <span class="text-[11px] font-bold text-amber-800 dark:text-amber-300">
-                            {{ d.optics_valley }}
->>>>>>> a7611eb26d37f7588bb570c6570a2165013422c8
                         </span>
                         <span class="text-[10px] text-outline block">
                             {{ u.period }}
