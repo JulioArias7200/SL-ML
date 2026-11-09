@@ -27,6 +27,7 @@
 \usepackage{array}
 \usepackage{multirow}
 \usepackage{colortbl}
+\usepackage{float}
 
 % --- Formato APA 7 para Títulos de Tablas y Figuras ---
 \usepackage{caption}
@@ -89,15 +90,29 @@
     bottom=8pt
 }
 
-% --- Encabezados y Pies de Página ---
+% --- Encabezados y Pies de Página según APA 7 ---
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\color{darkgray}\textit{Inteligencia Urbana y Criminalidad - Aprendizaje No Supervisado}}
-\fancyhead[R]{\small\color{darkgray}\textit{UMSA - Informática}}
-\fancyfoot[C]{\thepage}
-\renewcommand{\headrulewidth}{0.5pt}
-\renewcommand{\footrulewidth}{0.5pt}
+\fancyhead[L]{\small\color{darkgray}\textit{Inteligencia Urbana y Criminología Computacional -- UMSA}}
+\fancyhead[R]{\small\thepage}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% --- Macros de Notas de Tablas y Figuras en Estándar APA 7 ---
+\newcommand{\tablenote}[1]{%
+    \vspace{2mm}%
+    \begin{minipage}{\linewidth}%
+        \footnotesize\textit{Nota.} #1%
+    \end{minipage}%
+}
+\newcommand{\figurenote}[1]{%
+    \vspace{2mm}%
+    \begin{minipage}{\linewidth}%
+        \footnotesize\textit{Nota.} #1%
+    \end{minipage}%
+}
 
 % --- Títulos de Secciones ---
 \usepackage{titlesec}
@@ -147,8 +162,8 @@
     keywordstyle=\color{accentorange}\bfseries
 }
 
-\setlength{\parskip}{0.6em}
-\setlength{\parindent}{0pt}
+\setlength{\parindent}{1.27cm}
+\setlength{\parskip}{0pt}
 
 \begin{document}
 
@@ -158,17 +173,28 @@
 \input{secciones/00_portada.tex}
 
 % ----------------------------------------------------
-% TABLA DE CONTENIDO
+% TABLA DE CONTENIDO E ÍNDICES SEGÚN APA 7
 % ----------------------------------------------------
 \newpage
 \pagenumbering{roman}
+\setcounter{page}{2}
+\phantomsection
+\addcontentsline{toc}{section}{ÍNDICE GENERAL}
 \tableofcontents
+
 \newpage
+\phantomsection
+\addcontentsline{toc}{section}{ÍNDICE DE FIGURAS}
 \listoffigures
+
+\newpage
+\phantomsection
+\addcontentsline{toc}{section}{ÍNDICE DE TABLAS}
 \listoftables
+
 \newpage
 \pagenumbering{arabic}
-\setcounter{page}{4}
+\setcounter{page}{1}
 
 % ----------------------------------------------------
 % SECCIONES ESTRUCTURALES DEL INFORME

@@ -1,8 +1,33 @@
 \babel@toc {spanish}{}\relax 
-\contentsline {figure}{\numberline {1}{\ignorespaces Árbol de Problemas del Sistema de Inteligencia Urbana y Análisis Delictivo.}}{8}{figure.caption.1}%
-\contentsline {figure}{\numberline {2}{\ignorespaces Árbol de Objetivos del Proyecto de Inteligencia Urbana y Criminología Computacional.}}{10}{figure.caption.2}%
-\contentsline {figure}{\numberline {3}{\ignorespaces Curvas de selección de hiperparámetro $k$: Método del Codo y Coeficiente de Silueta.}}{27}{figure.caption.6}%
-\contentsline {figure}{\numberline {4}{\ignorespaces Dendrograma condensado de estabilidad y persistencia de clústeres en HDBSCAN.}}{28}{figure.caption.8}%
-\contentsline {figure}{\numberline {5}{\ignorespaces Diagrama de Alcanzabilidad de OPTICS con identificación de valles de densidad.}}{29}{figure.caption.9}%
-\contentsline {figure}{\numberline {6}{\ignorespaces Diagrama de Arquitectura Modular del Sistema en Cuatro Capas.}}{37}{figure.caption.14}%
-\contentsline {figure}{\numberline {7}{\ignorespaces Diseño esquemático de la consola del visor cartográfico interactivo Globo 3D en WebGL.}}{43}{figure.caption.15}%
+\contentsline {figure}{\numberline {1}{\ignorespaces Árbol de Problemas del Conjunto de Datos de Chicago.}}{4}{figure.caption.4}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Árbol de Problemas del Conjunto de Datos de Bolivia.}}{6}{figure.caption.5}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Árbol de Objetivos del Proyecto de Inteligencia Urbana y Criminología Computacional.}}{8}{figure.caption.6}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Proyección Bidimensional del Espacio Semántico Reducido LSA Mediante TruncatedSVD.}}{18}{figure.caption.9}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Panel Táctico de Calibración Espacial y Detección de Hotspots en The Loop.}}{21}{figure.caption.10}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Evaluación Multivariable de Hiperparámetros K-Means: Codo, Coeficiente Silhouette y Davies-Bouldin.}}{26}{figure.caption.13}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Validación Cruzada y Matriz de Contingencia entre K-Means (Particional) y Enlace de Ward (Jerárquico).}}{27}{figure.caption.14}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Comparador Tri-Modelo de Densidad Espacial (DBSCAN, HDBSCAN y OPTICS) sobre Chicago Distrito 1.}}{28}{figure.caption.16}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Hallazgos Clave de Auditoría Espacial: Cobertura, Rescate de Eventos y Duplicados de Geocodificación.}}{29}{figure.caption.17}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Dendrograma condensado de estabilidad y persistencia de clústeres en HDBSCAN.}}{30}{figure.caption.18}%
+\contentsline {figure}{\numberline {11}{\ignorespaces Diagrama de Alcanzabilidad de OPTICS con identificación de valles de densidad.}}{30}{figure.caption.19}%
+\contentsline {figure}{\numberline {12}{\ignorespaces Elipses de Covarianza Multivariantes Gaussianas (GMM) a Escala Urbana en Santa Cruz.}}{32}{figure.caption.21}%
+\contentsline {figure}{\numberline {13}{\ignorespaces Superficie de Densidad Continua GMM y Muestreo Táctico por Sonda Espacial.}}{32}{figure.caption.22}%
+\contentsline {figure}{\numberline {14}{\ignorespaces Dendrograma Jerárquico Aglomerativo (Ward) y Clustermap de Sectores Urbanos de Bolivia.}}{33}{figure.caption.23}%
+\contentsline {figure}{\numberline {15}{\ignorespaces Perfiles Operacionales y Diagramas Radiales por Macro-Grupo Taxonómico ($k=3$).}}{34}{figure.caption.25}%
+\contentsline {figure}{\numberline {16}{\ignorespaces Plano Bidimensional PCA Coloreado por Macro-Conglomerados Jerárquicos de Ward.}}{35}{figure.caption.27}%
+\contentsline {figure}{\numberline {17}{\ignorespaces Plano Bidimensional PCA Coloreado por Tipología Penal Específica.}}{36}{figure.caption.28}%
+\contentsline {figure}{\numberline {18}{\ignorespaces Plano Bidimensional PCA Coloreado por Tópicos Latentes de Dirichlet (LDA).}}{36}{figure.caption.29}%
+\contentsline {figure}{\numberline {19}{\ignorespaces Consola de Detección de Anomalías por Autoencoder y Umbral Crítico P90.}}{37}{figure.caption.30}%
+\contentsline {figure}{\numberline {20}{\ignorespaces Fichas Técnicas de Noticias Anómalas Aisladas con Error de Reconstrucción Exacto.}}{38}{figure.caption.31}%
+\contentsline {figure}{\numberline {21}{\ignorespaces Panel de Control del Modelado de Tópicos Latentes (LDA) y Métricas de Coherencia.}}{39}{figure.caption.33}%
+\contentsline {figure}{\numberline {22}{\ignorespaces Prevalencia de Tópicos en el Corpus Documental y Matriz de Separación Semántica.}}{40}{figure.caption.34}%
+\contentsline {figure}{\numberline {23}{\ignorespaces Consola Ejecutiva de la Plataforma CPD Analytics Core (Urban Intelligence v4.8).}}{43}{figure.caption.36}%
+\contentsline {figure}{\numberline {24}{\ignorespaces Visor Esférico 3D Globo en WebGL a 985 km de Altitud Orbital.}}{44}{figure.caption.37}%
+\contentsline {figure}{\numberline {25}{\ignorespaces Delimitación Cartográfica 3D de Hotspots Urbanos mediante DBSCAN Geodésico.}}{44}{figure.caption.38}%
+\contentsline {figure}{\numberline {26}{\ignorespaces Visualización de Valles de Densidad Jerárquica en Modo OPTICS 3D.}}{45}{figure.caption.39}%
+\contentsline {figure}{\numberline {27}{\ignorespaces Auditoría Táctica de Incidentes a Nivel Urbano en La Paz mediante Enlace de Ward.}}{45}{figure.caption.40}%
+\contentsline {figure}{\numberline {28}{\ignorespaces Inferencia Semántica NLP de Modus Operandi y Diagnóstico Táctico en Tiempo Real.}}{46}{figure.caption.41}%
+\contentsline {figure}{\numberline {29}{\ignorespaces Proyector de Dirichlet en Vivo sobre Reportes Criminalísticos Emergentes.}}{47}{figure.caption.42}%
+\contentsline {figure}{\numberline {30}{\ignorespaces Explorador del Corpus Documental de Noticias Etiquetado Automáticamente por Tópicos LDA.}}{47}{figure.caption.43}%
+\contentsline {figure}{\numberline {31}{\ignorespaces Diagrama de Arquitectura Modular del Sistema en Cuatro Capas.}}{48}{figure.caption.44}%
+\contentsline {figure}{\numberline {32}{\ignorespaces Diseño esquemático de la consola del visor cartográfico interactivo Globo 3D en WebGL.}}{55}{figure.caption.46}%

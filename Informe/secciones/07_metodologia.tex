@@ -51,9 +51,19 @@ Se aplicaron transformaciones fundamentales para garantizar la compatibilidad ma
     \item \textbf{Estandarización Numérica:} Aplicación de \texttt{StandardScaler} ($\mu = 0, \sigma = 1$) para las características continuas empleadas en K-Means, GMM y Autoencoder.
 \end{itemize}
 
-\subsubsection{Gestión de Registros Duplicados}
+\subsubsection{Gestión de Registros Duplicados y Amontonamiento Coordenado (Stacking)}
 
-Se identificaron registros con idéntica marca temporal, código IUCR y localización espacial precisa. Cuando múltiples delitos ocurren en un mismo punto geográfico (por ejemplo, múltiples denuncias en un centro comercial), la eliminación indiscriminada de filas destruiría la verdadera densidad del punto. En consecuencia, se implementó un procedimiento dual: para el entrenamiento de densidades espaciales se agruparon las coordenadas idénticas asignándoles un peso muestral de frecuencia (\textit{sample weight}), preservando la integridad de la densidad sin computar distancias nulas redundantes.
+Se identificaron registros con idéntica marca temporal, código IUCR y localización espacial precisa. Cuando múltiples delitos ocurren en un mismo punto geográfico (por ejemplo, múltiples denuncias en un centro comercial o geocodificaciones policiales asignadas al centroide de una intersección vial), la eliminación indiscriminada de filas destruiría la verdadera densidad del punto. En consecuencia, se implementó un procedimiento dual: para el entrenamiento de densidades espaciales se agruparon las coordenadas idénticas asignándoles un peso muestral de frecuencia (\textit{sample weight}), preservando la integridad de la densidad sin computar distancias nulas redundantes.
+
+La Figura \ref{fig:grfico_clustering} ilustra la consola de calibración espacial y el análisis del amontonamiento coordenado en el Distrito 1 de Chicago (The Loop), evidenciando cómo se ajusta el radio geodésico $\varepsilon$ a 102 metros para capturar clústeres densos sin saturación por duplicados.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\textwidth]{figuras/imgGrficoClustering.png}
+\caption{Panel Táctico de Calibración Espacial y Detección de Hotspots en The Loop.}
+\label{fig:grfico_clustering}
+\figurenote{Captura de la plataforma en modo Chicago CPD (Distrito 1, 16,771 eventos). Muestra la delimitación en tiempo real de hotspots DBSCAN, HDBSCAN y valles OPTICS frente al Lago Michigan con radio calibrado $\varepsilon = 102\text{ m}$.}
+\end{figure}
 
 \subsubsection{Tratamiento de Valores Faltantes}
 
@@ -83,6 +93,7 @@ CSV en Bruto (Chicago) & 814.230 & 30 & Archivo original fuente. \\
 \end{tabular}
 \caption{Resumen del balance del pipeline de depuración y preparación de datos.}
 \label{tab:balance_limpieza}
+\tablenote{Elaboración propia a partir del flujo de ingeniería de datos. La conversión columnar Parquet Snappy reduce el tamaño en disco de 324.5 MB a 48.2 MB y multiplica por doce la velocidad de ingesta en memoria.}
 \end{table}
 
 \subsection{Validación Cruzada y Análisis de Complejidad de Hiperparámetros}

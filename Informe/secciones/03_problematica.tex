@@ -1,46 +1,45 @@
 \section{PROBLEMÁTICA}
 
-La gestión estratégica de la seguridad ciudadana y la prevención del delito en centros urbanos se enfrentan a un desafío estructural: la limitación de los métodos analíticos tradicionales para procesar, segmentar y valorizar de forma oportuna grandes volúmenes de datos espaciotemporales heterogéneos y crónicas narrativas no estructuradas.
+El análisis de la criminalidad y los incidentes de seguridad ciudadana en este proyecto se apoya en dos fuentes de información con realidades muy distintas: por un lado, una base de datos policial oficial y masiva de la ciudad de Chicago (Estados Unidos), y por el otro, un conjunto de noticias de sucesos extraídas de la prensa digital de Bolivia. 
 
-De acuerdo con el diagnóstico formulado en el presente trabajo, el \textbf{problema central} radica en la \textbf{tasa de omisión espacial del 40\% en la delimitación de micro-focos delictivos urbanos y la persistencia de más del 80\% de registros narrativos sin procesar mediante esquemas analíticos convencionales}. En las metodologías vigentes de agregación por precintos o distritos policiales, la literatura empírica en criminología ambiental documenta que hasta un 40\% de las concentraciones críticas reales en segmentos viales se omiten debido al Problema de la Unidad de Área Modificable (\textit{MAUP -- Modifiable Areal Unit Problem}), el cual asume erróneamente homogeneidad espacial dentro de los límites administrativos oficiales. Paralelamente, los campos narrativos descriptivos de los hechos permanecen como texto libre sin vectorización semántica ni modelado temático.
+Cada uno de estos conjuntos de datos presenta desafíos propios que dificultan la identificación precisa de zonas de riesgo y patrones delictivos mediante sistemas informáticos convencionales. Para comprender con claridad el origen y las consecuencias de estas dificultades, se formulan a continuación dos árboles de problemas separados: uno enfocado en el conjunto masivo de Chicago y otro enfocado en las noticias recolectadas de Bolivia.
 
-Esta problemática se origina por una serie de factores técnicos interconectados:
-\begin{enumerate}
-    \item \textbf{Violación de la métrica ortodrómica real:} El cálculo de matrices de proximidad geográfica entre incidentes aplicando distancias euclidianas planas sobre coordenadas angulares esferoidales $(\text{Latitud}, \text{Longitud})$ genera deformaciones métricas sistemáticas al omitir la curvatura terrestre.
-    \item \textbf{Supuesto de compacidad isotrópica:} La aplicación de algoritmos centroides que imponen agrupamientos esféricos y varianza homogénea resulta incompatible con la topología lineal y ramificada de la malla vial urbana, así como con los gradientes de densidad dispar entre el centro metropolitano y las periferias.
-    \item \textbf{Tratamiento exclusivo de atributos estructurados:} Los sistemas de información policial tradicionales aíslan los campos tabulares convencionales (fecha, tipo penal, cuadrante), omitiendo la extracción algorítmica del \textit{modus operandi} y patrones circunstanciales contenidos en las narrativas textuales.
-    \item \textbf{Enmascaramiento de anomalías criminales:} Los delitos atípicos o secuencias espaciotemporales anómalas quedan diluidos en la masa de cientos de miles de registros de infracciones rutinarias, impidiendo la emisión oportuna de alertas analíticas.
-\end{enumerate}
+\subsection{Árbol de Problemas del Conjunto de Datos de Chicago}
 
-Las consecuencias directas de esta brecha metodológica se traducen en una disparidad estimada del 35\% en la cobertura de patrullaje preventivo respecto a la demanda espacial real, latencias analíticas de 48 a 72 horas en la correlación interjurisdiccional de incidentes emergentes y el descarte sistemático del 80\% al 85\% de variables cualitativas de modus operandi. A nivel superior, esto propicia la persistencia de gradientes de riesgo delictivo no detectados en la evaluación longitudinal de series temporales urbanas y la consolidación de sesgos de agregación territorial en los sistemas de información estratégica de seguridad pública.
+El conjunto de datos de Chicago proviene del portal de datos abiertos de su policía (\textit{Chicago Police Department}). Cuenta con más de $1.2\text{ millones}$ de filas y $324.5\text{ MB}$ de tamaño en su formato original, registrando incidentes tipificados con fecha, tipo de delito y ubicación.
 
-\subsection{Árbol de Problemas}
+Las dificultades observadas en este conjunto de datos son las siguientes:
+\begin{itemize}
+    \item \textbf{Agrupación por distritos administrativos fijos:} Tradicionalmente, los delitos se suman y reportan dentro de los límites de los 22 distritos policiales de la ciudad. Esto asume que el peligro se reparte de forma pareja en todo el distrito, cuando en la práctica los delitos se concentran en esquinas o cuadras específicas y dejan otras zonas completamente tranquilas.
+    \item \textbf{Uso de distancias planas:} Al calcular la cercanía entre dos delitos usando fórmulas de línea recta plana sobre coordenadas geográficas (latitud y longitud), se producen desajustes de distancia al no tomar en cuenta la curvatura de la Tierra a la latitud de Chicago ($41.8^\circ\text{ N}$).
+    \item \textbf{Registros incompletos y volumen masivo:} Al procesar el archivo bruto, se identificaron $14.015$ registros que no tienen coordenadas geográficas cargadas (1.16\% del total), los cuales deben ser apartados para no perjudicar los análisis en mapas. Además, el gran volumen de datos genera demoras de 2 a 3 días cuando se quiere cruzar información entre diferentes comisarías.
+\end{itemize}
 
-El diagrama de la Figura \ref{fig:arbol_problemas} sintetiza la estructura causal de la problemática, articulando las causas subyacentes, las causas directas, el problema central y los efectos derivados:
+La Figura \ref{fig:arbol_problemas_chicago} presenta el Árbol de Problemas correspondiente a la base de datos de Chicago.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}[
-    node distance=1.0cm and 0.35cm,
-    box_problema/.style={rectangle, draw=accentred!80!black, fill=accentred!10, text width=10.2cm, align=center, font=\bfseries\scriptsize, minimum height=1.3cm, rounded corners=3pt, line width=1.2pt},
-    box_efecto/.style={rectangle, draw=primaryblue!80, fill=primaryblue!8, text width=3.8cm, align=center, font=\tiny, minimum height=1.35cm, rounded corners=2pt, line width=0.8pt},
-    box_efecto_sup/.style={rectangle, draw=darkgray, fill=lightgray, text width=4.3cm, align=center, font=\tiny, minimum height=1.35cm, rounded corners=2pt, line width=0.8pt},
-    box_causa_1/.style={rectangle, draw=secondaryblue!90, fill=secondaryblue!10, text width=3.8cm, align=center, font=\tiny, minimum height=1.45cm, rounded corners=2pt, line width=0.8pt},
-    box_causa_2/.style={rectangle, draw=darkgray!70, fill=white, text width=3.8cm, align=center, font=\tiny, minimum height=1.45cm, rounded corners=2pt, line width=0.6pt},
+    node distance=0.8cm and 0.35cm,
+    box_problema/.style={rectangle, draw=accentred!85!black, fill=accentred!10, text width=11.2cm, align=center, font=\bfseries\scriptsize, minimum height=1.3cm, rounded corners=3pt, line width=1.1pt},
+    box_efecto/.style={rectangle, draw=primaryblue!85, fill=primaryblue!8, text width=4.3cm, align=center, font=\scriptsize, minimum height=1.3cm, rounded corners=2pt, line width=0.8pt},
+    box_efecto_sup/.style={rectangle, draw=darkgray!80, fill=lightgray!80, text width=5.2cm, align=center, font=\scriptsize, minimum height=1.3cm, rounded corners=2pt, line width=0.8pt},
+    box_causa_1/.style={rectangle, draw=secondaryblue!90, fill=secondaryblue!10, text width=4.3cm, align=center, font=\scriptsize, minimum height=1.35cm, rounded corners=2pt, line width=0.8pt},
+    box_causa_2/.style={rectangle, draw=darkgray!60, fill=white, text width=4.3cm, align=center, font=\scriptsize, minimum height=1.35cm, rounded corners=2pt, line width=0.6pt},
     arrow/.style={->, >=stealth, thick, color=darkgray!80}
 ]
 
     % Problema Central
-    \node (problema) [box_problema] {PROBLEMA CENTRAL:\\Tasa de omisión espacial del 40\% en la delimitación de micro-focos delictivos urbanos y persistencia de más del 80\% de registros narrativos sin procesar mediante esquemas analíticos convencionales.};
+    \node (problema) [box_problema] {PROBLEMA CENTRAL:\\Los reportes de delitos se agrupan en distritos administrativos fijos y se procesan con distancias planas, ocultando las calles exactas de mayor concentración en una base masiva de 1.2 millones de filas.};
 
     % Nivel Efectos Directos
-    \node (efecto2) [box_efecto, above=0.9cm of problema] {Disparidad del 35\% en la cobertura de patrullaje preventivo respecto a la demanda espacial observada.};
-    \node (efecto1) [box_efecto, left=0.45cm of efecto2] {Latencia analítica de 48 a 72 horas en la correlación de patrones delictivos emergentes entre jurisdicciones limítrofes.};
-    \node (efecto3) [box_efecto, right=0.45cm of efecto2] {Descarte sistemático del 80\% al 85\% de variables cualitativas y modus operandi en tablas relacionales planas.};
+    \node (efecto2) [box_efecto, above=0.8cm of problema] {Mapas que muestran a todo un distrito policial con el mismo nivel de delincuencia uniforme.};
+    \node (efecto1) [box_efecto, left=0.45cm of efecto2] {Demoras de 48 a 72 horas para consolidar y cruzar datos entre distintas comisarías de la ciudad.};
+    \node (efecto3) [box_efecto, right=0.45cm of efecto2] {Descarte de 14.015 registros de delitos por no contar con coordenadas registradas.};
 
-    % Nivel Efectos Indirectos (Superiores)
-    \node (sup1) [box_efecto_sup, above=0.75cm of efecto1] {Persistencia de gradientes de riesgo delictivo no detectados en la evaluación longitudinal de series temporales urbanas.};
-    \node (sup2) [box_efecto_sup, above=0.75cm of efecto3] {Consolidación de sesgos de agregación territorial en los sistemas de información estratégica de seguridad pública.};
+    % Nivel Efectos Finales (Superiores)
+    \node (sup1) [box_efecto_sup, above=0.7cm of efecto1] {Las esquinas y cuadras con mayor cantidad de delitos quedan ocultas en el promedio general del distrito.};
+    \node (sup2) [box_efecto_sup, above=0.7cm of efecto3] {Dificultad para comparar el comportamiento real de los delitos a lo largo del tiempo entre zonas vecinas.};
 
     % Conexiones Efectos
     \draw [arrow] (problema) -- (efecto1);
@@ -50,14 +49,14 @@ El diagrama de la Figura \ref{fig:arbol_problemas} sintetiza la estructura causa
     \draw [arrow] (efecto3) -- (sup2);
 
     % Nivel Causas Directas
-    \node (causa2) [box_causa_1, below=0.9cm of problema] {Supuesto paramétrico de compacidad isotrópica en algoritmos de centroides, incompatible con la topología de la malla vial urbana.};
-    \node (causa1) [box_causa_1, left=0.45cm of causa2] {Violación de la métrica ortodrómica real en el cálculo de matrices de proximidad geográfica entre incidentes.};
-    \node (causa3) [box_causa_1, right=0.45cm of causa2] {Tratamiento exclusivo de atributos estructurados de base de datos, omitiendo la extracción de modus operandi mediante tópicos latentes.};
+    \node (causa2) [box_causa_1, below=0.8cm of problema] {Modelos de agrupación que buscan círculos perfectos sin seguir el recorrido real de calles y avenidas.};
+    \node (causa1) [box_causa_1, left=0.45cm of causa2] {Cálculo de cercanía geográfica aplicando distancia plana directa sobre coordenadas de latitud y longitud.};
+    \node (causa3) [box_causa_1, right=0.45cm of causa2] {Los filtros del sistema solo leen categorías básicas (código penal y fecha) sin analizar el texto descriptivo.};
 
-    % Nivel Causas Indirectas (Inferiores / Subyacentes)
-    \node (sub1) [box_causa_2, below=0.75cm of causa1] {Omisión de transformaciones geodésicas ortodrómicas (Haversine) en los pipelines analíticos convencionales.};
-    \node (sub2) [box_causa_2, below=0.75cm of causa2] {Invarianza paramétrica de densidad global frente a gradientes entre zonas urbanas céntricas y periféricas.};
-    \node (sub3) [box_causa_2, below=0.75cm of causa3] {Almacenamiento de reportes como texto plano libre desprovisto de vectorización TF-IDF ni descomposición latente.};
+    % Nivel Causas Base / Estructurales
+    \node (sub1) [box_causa_2, below=0.7cm of causa1] {El sistema asume un mapa plano sin aplicar la fórmula esférica de la curvatura terrestre.};
+    \node (sub2) [box_causa_2, below=0.7cm of causa2] {La ciudad está dividida oficialmente en 22 distritos policiales de tamaño y población desiguales.};
+    \node (sub3) [box_causa_2, below=0.7cm of causa3] {Archivo original de gran tamaño (324.5 MB) con 1.2 millones de filas guardadas en tablas relacionales.};
 
     % Conexiones Causas
     \draw [arrow] (causa1) -- (problema);
@@ -68,7 +67,78 @@ El diagrama de la Figura \ref{fig:arbol_problemas} sintetiza la estructura causa
     \draw [arrow] (sub3) -- (causa3);
 
 \end{tikzpicture}
-\caption{Árbol de Problemas del Sistema de Inteligencia Urbana y Análisis Delictivo.}
-\label{fig:arbol_problemas}
+\caption{Árbol de Problemas del Conjunto de Datos de Chicago.}
+\label{fig:arbol_problemas_chicago}
 \end{figure}
 
+\clearpage
+
+\subsection{Árbol de Problemas del Conjunto de Datos de Bolivia}
+
+El conjunto de datos de Bolivia se construyó mediante la recolección automática de noticias de sucesos y seguridad desde portales de periódicos nacionales. Contiene 137 crónicas que abarcan los 9 departamentos del país (La Paz, Santa Cruz, Cochabamba, Oruro, Potosí, Chuquisaca, Tarija, Beni y Pando).
+
+Al tratarse de información extraída directamente de artículos periodísticos en internet y no de un sistema policial oficial, presenta los siguientes aspectos observados:
+\begin{itemize}
+    \item \textbf{Acumulación de noticias en puntos centrales idénticos:} La prensa suele indicar la ciudad o el barrio en general (por ejemplo, "ocurrió en Cochabamba"), pero rara vez menciona la calle y número exacto. Al ubicar estos hechos en el mapa mediante un diccionario geográfico, el 38.7\% de las noticias reciben la coordenada central del municipio. Esto hace que 53 noticias de Cochabamba y 26 noticias de otras ciudades queden colocadas exactamente en el mismo punto físico, generando distancias de cero metros entre hechos ocurridos en días y circunstancias totalmente distintas.
+    \item \textbf{Textos libres y variados en español:} Las noticias están escritas como párrafos de texto libre con extensiones muy variadas (desde notas breves de 15 palabras hasta reportajes de 450 palabras). Contienen palabras de relleno periodístico que dificultan extraer automáticamente la forma de actuar de los delincuentes.
+    \item \textbf{Separación de cientos de kilómetros entre ciudades:} La distancia entre las capitales departamentales es muy grande (por ejemplo, más de $500\text{ km}$ entre La Paz y Santa Cruz), mientras que los delitos dentro de un barrio ocurren a pocas cuadras. Esto provoca que los gráficos de agrupación vean primero la distancia gigante entre ciudades y dejen en segundo plano las diferencias entre barrios.
+    \item \textbf{Casos aislados y noticias poco comunes:} Al buscar zonas calientes con algoritmos de densidad, un 8.7\% de las noticias (12 casos) quedan marcadas como puntos sueltos o ruido por estar alejadas de los centros principales, mientras que un 10.2\% (14 noticias) son clasificadas como hechos atípicos por tener un vocabulario muy diferente al resto.
+\end{itemize}
+
+La Figura \ref{fig:arbol_problemas_bolivia} presenta el Árbol de Problemas correspondiente a los datos de Bolivia.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=0.8cm and 0.35cm,
+    box_problema_b/.style={rectangle, draw=accentred!85!black, fill=accentred!10, text width=11.2cm, align=center, font=\bfseries\scriptsize, minimum height=1.3cm, rounded corners=3pt, line width=1.1pt},
+    box_efecto_b/.style={rectangle, draw=accentorange!85!black, fill=accentorange!10, text width=4.3cm, align=center, font=\scriptsize, minimum height=1.3cm, rounded corners=2pt, line width=0.8pt},
+    box_efecto_sup_b/.style={rectangle, draw=darkgray!80, fill=lightgray!80, text width=5.2cm, align=center, font=\scriptsize, minimum height=1.3cm, rounded corners=2pt, line width=0.8pt},
+    box_causa_1_b/.style={rectangle, draw=primaryblue!90, fill=primaryblue!10, text width=4.3cm, align=center, font=\scriptsize, minimum height=1.35cm, rounded corners=2pt, line width=0.8pt},
+    box_causa_2_b/.style={rectangle, draw=darkgray!60, fill=white, text width=4.3cm, align=center, font=\scriptsize, minimum height=1.35cm, rounded corners=2pt, line width=0.6pt},
+    arrow/.style={->, >=stealth, thick, color=darkgray!80}
+]
+
+    % Problema Central
+    \node (problema_b) [box_problema_b] {PROBLEMA CENTRAL:\\Gran cantidad de noticias de delitos quedan registradas en el mismo punto del mapa al no tener dirección exacta, junto a textos largos en español que no están estructurados.};
+
+    % Nivel Efectos Directos
+    \node (efecto2_b) [box_efecto_b, above=0.8cm of problema_b] {Un 8.7\% de noticias (12 casos) quedan como puntos sueltos o ruido en los mapas de densidad.};
+    \node (efecto1_b) [box_efecto_b, left=0.45cm of efecto2_b] {Aparición de distancia cero entre delitos distintos al compartir la misma coordenada central.};
+    \node (efecto3_b) [box_efecto_b, right=0.45cm of efecto2_b] {Un 10.2\% de noticias (14 casos) son marcadas como hechos raros o atípicos por su texto variado.};
+
+    % Nivel Efectos Finales (Superiores)
+    \node (sup1_b) [box_efecto_sup_b, above=0.7cm of efecto1_b] {Los mapas de calor muestran concentraciones artificiales sobre la plaza o centro de cada ciudad.};
+    \node (sup2_b) [box_efecto_sup_b, above=0.7cm of efecto3_b] {Dificultad para agrupar y reconocer la forma de actuar de los delincuentes a partir de crónicas libres.};
+
+    % Conexiones Efectos
+    \draw [arrow] (problema_b) -- (efecto1_b);
+    \draw [arrow] (problema_b) -- (efecto2_b);
+    \draw [arrow] (problema_b) -- (efecto3_b);
+    \draw [arrow] (efecto1_b) -- (sup1_b);
+    \draw [arrow] (efecto3_b) -- (sup2_b);
+
+    % Nivel Causas Directas
+    \node (causa2_b) [box_causa_1_b, below=0.8cm of problema_b] {Gran cantidad de palabras de relleno periodístico que dificultan encontrar los temas principales.};
+    \node (causa1_b) [box_causa_1_b, left=0.45cm of causa2_b] {Asignación del centro de la ciudad a noticias que no tienen nombre de calle o esquina precisa.};
+    \node (causa3_b) [box_causa_1_b, right=0.45cm of causa2_b] {La gran distancia entre departamentos opaca las diferencias entre zonas de una misma ciudad.};
+
+    % Nivel Causas Base / Estructurales
+    \node (sub1_b) [box_causa_2_b, below=0.7cm of causa1_b] {Extracción por internet desde periódicos digitales que redactan en texto libre sin datos de GPS.};
+    \node (sub2_b) [box_causa_2_b, below=0.7cm of causa2_b] {Artículos con extensiones muy distintas entre sí, que van desde 15 hasta más de 450 palabras.};
+    \node (sub3_b) [box_causa_2_b, below=0.7cm of causa3_b] {Las principales ciudades del país están separadas por cientos de kilómetros de distancia geográfica.};
+
+    % Conexiones Causas
+    \draw [arrow] (causa1_b) -- (problema_b);
+    \draw [arrow] (causa2_b) -- (problema_b);
+    \draw [arrow] (causa3_b) -- (problema_b);
+    \draw [arrow] (sub1_b) -- (causa1_b);
+    \draw [arrow] (sub2_b) -- (causa2_b);
+    \draw [arrow] (sub3_b) -- (causa3_b);
+
+\end{tikzpicture}
+\caption{Árbol de Problemas del Conjunto de Datos de Bolivia.}
+\label{fig:arbol_problemas_bolivia}
+\end{figure}
+
+\clearpage

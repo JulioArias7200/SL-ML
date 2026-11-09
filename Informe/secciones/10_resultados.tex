@@ -1,40 +1,93 @@
 \section{RESULTADOS}
 
-Los resultados del proyecto validan la capacidad del aprendizaje no supervisado para transformar datos espaciotemporales masivos y crónicas narrativas no estructuradas en inteligencia criminal operativa y reproducible.
+Los resultados del proyecto validan la capacidad del aprendizaje no supervisado para transformar datos espaciotemporales masivos y crónicas narrativas no estructuradas en inteligencia criminal operativa, visualizable y reproducible.
 
-\subsection{Segmentación de Hotspots Urbanos y Micro-clusters de Alta Densidad}
+\subsection{Plataforma Web Master y Consola Ejecutiva}
 
-La aplicación coordinada de DBSCAN, HDBSCAN y OPTICS sobre el benchmark metropolitano de Chicago y el corpus de Bolivia produjo los siguientes hallazgos:
+La Figura \ref{fig:dashboard_general} ilustra la consola principal de la plataforma web interactiva desarrollada (\textit{CPD Analytics Core // Urban Intelligence v4.8}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figuras/imgDahborad.png}
+\caption{Consola Ejecutiva de la Plataforma CPD Analytics Core (Urban Intelligence v4.8).}
+\label{fig:dashboard_general}
+\figurenote{Captura del dashboard general. Muestra la conmutación entre los contextos de Bolivia (137 crónicas) y Chicago (+1.19M registros CPD), barra de simulación táctica (Frío/Ruido, Cálido/DBSCAN, Crítico/Anomalía) y accesos directos al Globo 3D, Anomalías GMM y Reducción 2D.}
+\end{figure}
+
+\subsection{Segmentación Cartográfica y Visor 3D WebGL}
+
+La integración de MapLibre GL JS y Deck.gl permitió proyectar los modelos de agrupamiento espacial sobre un globo terráqueo tridimensional acelerado por hardware:
+
 \begin{itemize}
-    \item \textbf{Aislamiento de Micro-Focos Críticos:} En Chicago, se identificaron 87 micro-hotspots delictivos hiper-concentrados. El $48.3\%$ de los robos agravados en vía pública se concentra en apenas el $3.2\%$ de la superficie urbana total, verificando empíricamente la Ley de Concentración del Crimen de Weisburd \cite{weisburd2015}.
-    \item \textbf{Filtrado Formal de Ruido:} El algoritmo discriminó un $11.76\%$ de eventos esporádicos clasificados como ruido (etiqueta $-1$). Desde la perspectiva policial, este resultado previene el despilfarro de patrullas hacia zonas con eventos aislados que no responden a una estructura criminal sistemática.
-    \item \textbf{Detección Multiescala en Bolivia:} En el territorio boliviano, HDBSCAN agrupó las 137 noticias en 9 macro-conglomerados departamentales y 14 micro-cúmulos metropolitanos, evidenciando que las ciudades de Santa Cruz y El Alto concentran los agrupamientos delictivos de mayor densidad relativa del país.
+    \item \textbf{Visor Esférico Global (Figura \ref{fig:globo_3d_bolivia}):} Renderiza a 985 km de altitud orbital la dispersión nacional de incidentes en Bolivia, aplicando buffers pulsantes de densidad sobre los nodos críticos del eje troncal (Santa Cruz, La Paz y Cochabamba).
+    \item \textbf{Delimitación de Hotspots DBSCAN (Figura \ref{fig:globo_dbscan_bolivia}):} Identifica con precisión los micro-hotspots urbanos: Los Lotes, Plan 3000, Casco Viejo y Pampa de la Isla en Santa Cruz, discriminando el ruido periférico.
+    \item \textbf{Valles de Alcanzabilidad OPTICS (Figura \ref{fig:globo_optics_bolivia}):} Permite al operador inspeccionar valles de densidad geodésica a diferentes cotas de distancia métrica (e.g. Equipetrol a 240 m, Sopocachi a 390 m).
+    \item \textbf{Auditoría Táctica Territorial Ward (Figura \ref{fig:globo_ward_lapaz}):} Permite hacer zoom a escala urbana (4 km de altitud) y desplegar fichas interactivas de crónicas policiales georreferenciadas con metadatos de fuente, fecha y tipología penal.
 \end{itemize}
 
-\subsection{Partición Semántica y Tipificación de Delitos (NLP)}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/img3DAgrupacion.png}
+\caption{Visor Esférico 3D Globo en WebGL a 985 km de Altitud Orbital.}
+\label{fig:globo_3d_bolivia}
+\figurenote{Captura del visor 3D en WebGL. Proyecta los 137 incidentes georreferenciados de Bolivia con micro-buffers de calor y clústeres agrupados sobre el eje metropolitano.}
+\end{figure}
 
-La vectorización TF-IDF acoplada a K-Means ($k=5$) y reducción TruncatedSVD demostró una elevada coherencia semántica:
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/imgDBSCAN.png}
+\caption{Delimitación Cartográfica 3D de Hotspots Urbanos mediante DBSCAN Geodésico.}
+\label{fig:globo_dbscan_bolivia}
+\figurenote{Captura del visor táctico en modo DBSCAN individual. Muestra la identificación de micro-focos urbanos en Santa Cruz (Los Lotes, Plan 3000, Equipetrol) y Cochabamba.}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/imgOptics.png}
+\caption{Visualización de Valles de Densidad Jerárquica en Modo OPTICS 3D.}
+\label{fig:globo_optics_bolivia}
+\figurenote{Captura del visor en modo OPTICS. Identifica los valles de densidad geodésica urbana: Valle \#0 (Casco SCZ, 295 m), Sub-Valle \#1 (Equipetrol, 240 m) y Sub-Valle \#3 (La Paz Sopocachi, 390 m).}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/imgWard.png}
+\caption{Auditoría Táctica de Incidentes a Nivel Urbano en La Paz mediante Enlace de Ward.}
+\label{fig:globo_ward_lapaz}
+\figurenote{Captura a 4 km de altitud en La Paz / El Alto. Despliega el modal interactivo de un hecho noticioso en San Pedro con su pertenencia al Macro-Cluster C, persistencia $\lambda=0.70$ y probabilidad GMM.}
+\end{figure}
+
+\subsection{Partición Semántica y Clasificación de Modus Operandi en Tiempo Real}
+
+El procesamiento de lenguaje natural (NLP) acoplado a la plataforma web permitió materializar herramientas operativas de inferencia inmediata:
+
 \begin{itemize}
-    \item \textbf{Arquetipos Automáticos de Modus Operandi:} El modelo particionó las narrativas textuales sin intervención humana, delimitando nítidamente delitos armados callejeros (\textit{ARMED: HANDGUN}), hurtos comerciales en tiendas minoristas (\textit{RETAIL THEFT}), violencia intrafamiliar residencial (\textit{DOMESTIC BATTERY}), sustracción de vehículos en estacionamientos y fraudes bancarios.
-    \item \textbf{Clasificador Semántico en Tiempo Real:} Se implementó un módulo interactivo en la plataforma web donde el analista introduce una crónica o descripción policial en lenguaje natural, y el sistema infiere en menos de $4\text{ ms}$ el clúster temático asociado, sus palabras clave representativas y su probabilidad de pertenencia.
-    \item \textbf{Extracción de Tópicos con LDA:} El modelo generativo LDA identificó de manera autónoma las cinco temáticas periodísticas dominantes en Bolivia, permitiendo correlacionar automáticamente notas de prensa con tipos penales específicos.
+    \item \textbf{Clasificador de Modus Operandi en Tiempo Real (Figura \ref{fig:nlp_inferencia_real}):} Al introducir una narrativa de texto libre sobre un asalto armado en el 6to anillo de Santa Cruz, el modelo TF-IDF + K-Means infiere en menos de $4\text{ ms}$ su pertenencia al Clúster \#2 (\textit{Robo Agravado a Mano Armada}) con un $94.2\%$ de certeza semántica, reportando el horario crítico (21:00--04:00 hrs) y la tasa histórica de arresto.
+    \item \textbf{Proyector Bayesiano de Dirichlet en Vivo (Figura \ref{fig:dirichlet_live}):} Permite ingresar cualquier fragmento noticioso y proyectarlo sobre el simplex de Dirichlet del modelo LDA, infiriendo que una denuncia por estafa inmobiliaria corresponde en un $91.5\%$ al Tópico \#1 (\textit{Litigios Judiciales y Delitos Financieros}).
+    \item \textbf{Explorador del Corpus Etiquetado Automáticamente (Figura \ref{fig:corpus_etiquetado_auto}):} Tabla interactiva que filtra los 137 artículos clasificados de forma autónoma por los tópicos descubiertos.
 \end{itemize}
 
-\subsection{Detección de Delitos Anómalos y Eventos Atípicos}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/img_inferencia_semantica_bolivia.png}
+\caption{Inferencia Semántica NLP de Modus Operandi y Diagnóstico Táctico en Tiempo Real.}
+\label{fig:nlp_inferencia_real}
+\figurenote{Captura del núcleo interactivo de NLP. Clasifica un reporte de atraco con arma de fuego en el Clúster \#2 con $94.2\%$ de probabilidad, identificando los términos léxicos discriminantes (armed, robbery, asalto, pistola, disparo).}
+\end{figure}
 
-La integración del Autoencoder neuronal con cuello de botella ($D \to 16 \to 4 \to 16 \to D$) y los \textit{outlier scores} de HDBSCAN permitió aislar eventos que se desvían de los patrones comunes:
-\begin{itemize}
-    \item \textbf{Scoring de Reconstrucción (MSE):} Los delitos convencionales (ej. hurtos diurnos en aceras comerciales) registraron un error de reconstrucción medio de $\text{MSE} \approx 0.0210$. En contraste, incidentes excepcionales superaron el umbral $\tau = 0.0821$, alcanzando valores de $\text{MSE} > 0.3500$.
-    \item \textbf{Tipología de Anomalías Descubiertas:} Entre los eventos con mayor error cuadrático se detectaron: delitos de falsificación y estafas corporativas en horarios de madrugada, incidentes con armas no convencionales en parques residenciales, y homicidios cometidos en locaciones con nula tasa histórica delictiva previa.
-\end{itemize}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/imgIngestaLive.png}
+\caption{Proyector de Dirichlet en Vivo sobre Reportes Criminalísticos Emergentes.}
+\label{fig:dirichlet_live}
+\figurenote{Captura del proyector temático bayesiano. Estima la distribución posterior $\theta$ ante una denuncia de fraude comercial, asignándole un $91.5\%$ de probabilidad al Tópico \#1.}
+\end{figure}
 
-\subsection{Plataforma Web y Visor Cartográfico ``Globo 3D de Inteligencia Criminal''}
-
-Como resultado aplicado central, se implementó y desplegó una plataforma analítica completa basada en Flask y WebGL:
-\begin{itemize}
-    \item \textbf{Dashboard Ejecutivo y KPIs Globales:} Monitorea en tiempo real el total de incidentes analizados ($+800.000$ en Chicago, $137$ en Bolivia), la cantidad de hotspots activos, el coeficiente de silueta global y la tasa de eventos anómalos.
-    \item \textbf{Visor Cartográfico Esférico 3D (Globo WebGL):} Desarrollado con MapLibre GL JS y Deck.gl, renderiza una esfera terráquea 3D interactiva que permite al usuario alternar entre la escala metropolitana de Chicago y la proyección nacional de Bolivia.
-    \item \textbf{Conmutador de Capas Algorítmicas:} Permite activar y desactivar dinámicamente las capas de: 1) Marcadores coloreados por clúster DBSCAN/HDBSCAN, 2) Elipses de covarianza de riesgo GMM al $95.4\%$, 3) Puntos clasificados como ruido y anomalías del Autoencoder, y 4) Malla de densidad hexagonal continua.
-    \item \textbf{Simulador Interactivo de Riesgo GMM:} Permite al usuario pinchar cualquier punto del mapa para consultar la probabilidad continua de incidencia delictiva calculada mediante la mezcla de densidades gaussianas.
-\end{itemize}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/img_etiquetado_automatico.png}
+\caption{Explorador del Corpus Documental de Noticias Etiquetado Automáticamente por Tópicos LDA.}
+\label{fig:corpus_etiquetado_auto}
+\figurenote{Captura del módulo de curaduría automática. Permite consultar y auditar los incidentes estructurados por ubicación, tipología penal y tópico de Dirichlet asignado.}
+\end{figure}
 

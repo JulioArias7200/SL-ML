@@ -1,68 +1,72 @@
 \babel@toc {spanish}{}\relax 
-\contentsline {section}{\numberline {1}INTRODUCCIÓN}{4}{section.1}%
-\contentsline {section}{\numberline {2}ANTECEDENTES}{5}{section.2}%
-\contentsline {section}{\numberline {3}PROBLEMÁTICA}{6}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Árbol de Problemas}{7}{subsection.3.1}%
+\contentsline {section}{ÍNDICE GENERAL}{\es@scroman {ii}}{section*.1}%
+\contentsline {section}{ÍNDICE DE FIGURAS}{\es@scroman {iv}}{section*.2}%
+\contentsline {section}{ÍNDICE DE TABLAS}{\es@scroman {vi}}{section*.3}%
+\contentsline {section}{\numberline {1}INTRODUCCIÓN}{1}{section.1}%
+\contentsline {section}{\numberline {2}ANTECEDENTES}{2}{section.2}%
+\contentsline {section}{\numberline {3}PROBLEMÁTICA}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Árbol de Problemas del Conjunto de Datos de Chicago}{3}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Árbol de Problemas del Conjunto de Datos de Bolivia}{5}{subsection.3.2}%
 \contentsline {section}{\numberline {4}OBJETIVOS}{7}{section.4}%
 \contentsline {subsection}{\numberline {4.1}Objetivo Principal}{7}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}Objetivos Específicos}{7}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Árbol de Objetivos}{9}{subsection.4.3}%
-\contentsline {section}{\numberline {5}JUSTIFICACIÓN}{11}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Árbol de Objetivos: Medios y Fines}{11}{subsection.5.1}%
-\contentsline {section}{\numberline {6}MARCO TEÓRICO}{13}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Diccionario de Datos: Inteligencia Urbana y Criminalidad}{13}{subsection.6.1}%
-\contentsline {subsubsection}{\numberline {6.1.1}Diccionario Original (Fuentes en Bruto)}{13}{subsubsection.6.1.1}%
-\contentsline {subsubsection}{\numberline {6.1.2}Diccionario de Datos Después de la Limpieza y Preprocesamiento}{14}{subsubsection.6.1.2}%
-\contentsline {subsection}{\numberline {6.2}Algoritmos No Supervisados Aplicados}{16}{subsection.6.2}%
-\contentsline {subsubsection}{\numberline {6.2.1}K-Means Particional y Variantes Semánticas}{16}{subsubsection.6.2.1}%
-\contentsline {subsubsection}{\numberline {6.2.2}DBSCAN con Métrica Geodésica de Haversine}{16}{subsubsection.6.2.2}%
-\contentsline {subsubsection}{\numberline {6.2.3}HDBSCAN: Clustering Jerárquico por Densidad y Persistencia}{16}{subsubsection.6.2.3}%
-\contentsline {subsubsection}{\numberline {6.2.4}OPTICS: Diagrama de Alcanzabilidad y Detección de Valles}{17}{subsubsection.6.2.4}%
-\contentsline {subsubsection}{\numberline {6.2.5}Gaussian Mixture Models (GMM) y Esperanza-Maximización (EM)}{17}{subsubsection.6.2.5}%
-\contentsline {subsubsection}{\numberline {6.2.6}Clustering Jerárquico Aglomerativo (Ward)}{18}{subsubsection.6.2.6}%
-\contentsline {subsubsection}{\numberline {6.2.7}Reducción de Dimensionalidad (PCA, SVD, PPCA, t-SNE, UMAP)}{18}{subsubsection.6.2.7}%
-\contentsline {subsubsection}{\numberline {6.2.8}Autoencoders Neuronales para Detección de Anomalías}{19}{subsubsection.6.2.8}%
-\contentsline {subsubsection}{\numberline {6.2.9}Modelado de Tópicos con Latent Dirichlet Allocation (LDA)}{19}{subsubsection.6.2.9}%
-\contentsline {section}{\numberline {7}METODOLOGÍA}{20}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Fuente de Datos}{20}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Tareas de Modelado No Supervisado}{20}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}Desarrollo de la Limpieza de Datos}{21}{subsection.7.3}%
-\contentsline {subsubsection}{\numberline {7.3.1}Auditoría y Perfilado de los Datos}{21}{subsubsection.7.3.1}%
-\contentsline {subsubsection}{\numberline {7.3.2}Normalización y Estandarización de Formatos}{21}{subsubsection.7.3.2}%
-\contentsline {subsubsection}{\numberline {7.3.3}Gestión de Registros Duplicados}{22}{subsubsection.7.3.3}%
-\contentsline {subsubsection}{\numberline {7.3.4}Tratamiento de Valores Faltantes}{22}{subsubsection.7.3.4}%
+\contentsline {subsection}{\numberline {4.3}Árbol de Objetivos}{8}{subsection.4.3}%
+\contentsline {section}{\numberline {5}JUSTIFICACIÓN}{9}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Árbol de Objetivos: Medios y Fines}{9}{subsection.5.1}%
+\contentsline {section}{\numberline {6}MARCO TEÓRICO}{10}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Diccionario de Datos: Inteligencia Urbana y Criminalidad}{11}{subsection.6.1}%
+\contentsline {subsubsection}{\numberline {6.1.1}Diccionario Original (Fuentes en Bruto)}{11}{subsubsection.6.1.1}%
+\contentsline {subsubsection}{\numberline {6.1.2}Diccionario de Datos Después de la Limpieza y Preprocesamiento}{12}{subsubsection.6.1.2}%
+\contentsline {subsubsection}{\numberline {6.1.3}Mapeo Departamental y Ecosistema de Medios Informativos de Bolivia}{12}{subsubsection.6.1.3}%
+\contentsline {subsection}{\numberline {6.2}Algoritmos No Supervisados Aplicados}{12}{subsection.6.2}%
+\contentsline {subsubsection}{\numberline {6.2.1}K-Means Particional y Variantes Semánticas}{15}{subsubsection.6.2.1}%
+\contentsline {subsubsection}{\numberline {6.2.2}DBSCAN con Métrica Geodésica de Haversine}{15}{subsubsection.6.2.2}%
+\contentsline {subsubsection}{\numberline {6.2.3}HDBSCAN: Clustering Jerárquico por Densidad y Persistencia}{15}{subsubsection.6.2.3}%
+\contentsline {subsubsection}{\numberline {6.2.4}OPTICS: Diagrama de Alcanzabilidad y Detección de Valles}{16}{subsubsection.6.2.4}%
+\contentsline {subsubsection}{\numberline {6.2.5}Gaussian Mixture Models (GMM) y Esperanza-Maximización (EM)}{16}{subsubsection.6.2.5}%
+\contentsline {subsubsection}{\numberline {6.2.6}Clustering Jerárquico Aglomerativo (Ward)}{17}{subsubsection.6.2.6}%
+\contentsline {subsubsection}{\numberline {6.2.7}Reducción de Dimensionalidad (PCA, SVD, PPCA, t-SNE, UMAP)}{17}{subsubsection.6.2.7}%
+\contentsline {subsubsection}{\numberline {6.2.8}Autoencoders Neuronales para Detección de Anomalías}{18}{subsubsection.6.2.8}%
+\contentsline {subsubsection}{\numberline {6.2.9}Modelado de Tópicos con Latent Dirichlet Allocation (LDA)}{18}{subsubsection.6.2.9}%
+\contentsline {section}{\numberline {7}METODOLOGÍA}{19}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Fuente de Datos}{19}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Tareas de Modelado No Supervisado}{19}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Desarrollo de la Limpieza de Datos}{20}{subsection.7.3}%
+\contentsline {subsubsection}{\numberline {7.3.1}Auditoría y Perfilado de los Datos}{20}{subsubsection.7.3.1}%
+\contentsline {subsubsection}{\numberline {7.3.2}Normalización y Estandarización de Formatos}{20}{subsubsection.7.3.2}%
+\contentsline {subsubsection}{\numberline {7.3.3}Gestión de Registros Duplicados y Amontonamiento Coordenado (Stacking)}{21}{subsubsection.7.3.3}%
+\contentsline {subsubsection}{\numberline {7.3.4}Tratamiento de Valores Faltantes}{21}{subsubsection.7.3.4}%
 \contentsline {subsubsection}{\numberline {7.3.5}Tratamiento de Valores Atípicos Espaciales}{22}{subsubsection.7.3.5}%
 \contentsline {subsubsection}{\numberline {7.3.6}Resultado y Balance de la Limpieza}{22}{subsubsection.7.3.6}%
 \contentsline {subsection}{\numberline {7.4}Validación Cruzada y Análisis de Complejidad de Hiperparámetros}{22}{subsection.7.4}%
 \contentsline {section}{\numberline {8}MARCO PRÁCTICO}{23}{section.8}%
 \contentsline {subsection}{\numberline {8.1}Análisis de Exploración de Datos (EDA)}{23}{subsection.8.1}%
-\contentsline {subsubsection}{\numberline {8.1.1}Carga y Vista General (Dimensiones, Tipos de Dato y Nulos)}{24}{subsubsection.8.1.1}%
-\contentsline {subsubsection}{\numberline {8.1.2}Estadística Descriptiva de Variables Numéricas y Espaciales}{24}{subsubsection.8.1.2}%
+\contentsline {subsubsection}{\numberline {8.1.1}Carga y Vista General (Dimensiones, Tipos de Dato y Nulos)}{23}{subsubsection.8.1.1}%
+\contentsline {subsubsection}{\numberline {8.1.2}Estadística Descriptiva de Variables Numéricas y Espaciales}{23}{subsubsection.8.1.2}%
 \contentsline {subsubsection}{\numberline {8.1.3}Análisis de Variables Categóricas}{24}{subsubsection.8.1.3}%
-\contentsline {subsubsection}{\numberline {8.1.4}Análisis Temporal (Mes, Hora y Estacionalidad Cíclica)}{25}{subsubsection.8.1.4}%
+\contentsline {subsubsection}{\numberline {8.1.4}Análisis Temporal (Mes, Hora y Estacionalidad Cíclica)}{24}{subsubsection.8.1.4}%
 \contentsline {subsubsection}{\numberline {8.1.5}Análisis Geográfico y Cartografía de Densidad Espacial}{25}{subsubsection.8.1.5}%
 \contentsline {subsubsection}{\numberline {8.1.6}Análisis Bivariado y Matriz de Correlación}{25}{subsubsection.8.1.6}%
-\contentsline {subsubsection}{\numberline {8.1.7}Relación entre Tipos Criminales y Entornos Físicos (Boxplots)}{26}{subsubsection.8.1.7}%
+\contentsline {subsubsection}{\numberline {8.1.7}Relación entre Tipos Criminales y Entornos Físicos (Boxplots)}{25}{subsubsection.8.1.7}%
 \contentsline {subsubsection}{\numberline {8.1.8}Detección de Valores Atípicos Espaciotemporales (Outliers)}{26}{subsubsection.8.1.8}%
 \contentsline {subsection}{\numberline {8.2}Modelo K-Means Particional y Minería Semántica NLP}{26}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}Modelo DBSCAN con Métrica Haversine}{27}{subsection.8.3}%
-\contentsline {subsection}{\numberline {8.4}Modelo HDBSCAN Multiescala y Persistencia Lambda}{28}{subsection.8.4}%
-\contentsline {subsection}{\numberline {8.5}Modelo OPTICS y Diagrama de Alcanzabilidad (Reachability Plot)}{29}{subsection.8.5}%
-\contentsline {subsection}{\numberline {8.6}Modelo Gaussian Mixture Models (GMM) y Elipses de Covarianza}{29}{subsection.8.6}%
-\contentsline {subsection}{\numberline {8.7}Modelo Clustering Jerárquico Aglomerativo (Ward)}{30}{subsection.8.7}%
-\contentsline {subsection}{\numberline {8.8}Modelos de Reducción de Dimensionalidad (PCA, SVD, PPCA, t-SNE, UMAP)}{30}{subsection.8.8}%
-\contentsline {subsection}{\numberline {8.9}Modelo Autoencoder Neuronal para Detección de Anomalías}{31}{subsection.8.9}%
-\contentsline {subsection}{\numberline {8.10}Modelo de Asignación de Tópicos Latentes (LDA)}{32}{subsection.8.10}%
-\contentsline {subsection}{\numberline {8.11}Análisis Comparativo Multimodelo (A/B Testing de Clustering y Métricas)}{32}{subsection.8.11}%
-\contentsline {section}{\numberline {9}HERRAMIENTAS Y TÉCNICAS}{33}{section.9}%
-\contentsline {section}{\numberline {10}RESULTADOS}{34}{section.10}%
-\contentsline {subsection}{\numberline {10.1}Segmentación de Hotspots Urbanos y Micro-clusters de Alta Densidad}{34}{subsection.10.1}%
-\contentsline {subsection}{\numberline {10.2}Partición Semántica y Tipificación de Delitos (NLP)}{35}{subsection.10.2}%
-\contentsline {subsection}{\numberline {10.3}Detección de Delitos Anómalos y Eventos Atípicos}{35}{subsection.10.3}%
-\contentsline {subsection}{\numberline {10.4}Plataforma Web y Visor Cartográfico ``Globo 3D de Inteligencia Criminal''}{36}{subsection.10.4}%
-\contentsline {section}{\numberline {11}ARQUITECTURA DEL SISTEMA}{36}{section.11}%
-\contentsline {subsection}{\numberline {11.1}Descripción Funcional de las Capas}{36}{subsection.11.1}%
-\contentsline {section}{\numberline {12}CONCLUSIONES}{37}{section.12}%
-\contentsline {section}{\numberline {13}RECURSOS Y ENLACES DEL PROYECTO}{39}{section.13}%
-\contentsline {section}{ANEXOS}{40}{section.13}%
-\contentsline {section}{REFERENCIAS BIBLIOGRÁFICAS}{43}{section*.16}%
+\contentsline {subsection}{\numberline {8.3}Modelo DBSCAN con Métrica Haversine y Benchmark de Densidad}{27}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Modelo HDBSCAN Multiescala y Persistencia Lambda}{29}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Modelo OPTICS y Diagrama de Alcanzabilidad (Reachability Plot)}{30}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.6}Modelo Gaussian Mixture Models (GMM) y Elipses de Covarianza}{31}{subsection.8.6}%
+\contentsline {subsection}{\numberline {8.7}Modelo Clustering Jerárquico Aglomerativo (Ward)}{33}{subsection.8.7}%
+\contentsline {subsection}{\numberline {8.8}Modelos de Reducción de Dimensionalidad (PCA, SVD, PPCA, t-SNE, UMAP)}{34}{subsection.8.8}%
+\contentsline {subsection}{\numberline {8.9}Modelo Autoencoder Neuronal para Detección de Anomalías}{35}{subsection.8.9}%
+\contentsline {subsection}{\numberline {8.10}Modelo de Asignación de Tópicos Latentes (LDA)}{38}{subsection.8.10}%
+\contentsline {subsection}{\numberline {8.11}Análisis Comparativo Multimodelo (A/B Testing de Clustering y Métricas)}{38}{subsection.8.11}%
+\contentsline {section}{\numberline {9}HERRAMIENTAS Y TÉCNICAS}{41}{section.9}%
+\contentsline {section}{\numberline {10}RESULTADOS}{42}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Plataforma Web Master y Consola Ejecutiva}{42}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Segmentación Cartográfica y Visor 3D WebGL}{42}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Partición Semántica y Clasificación de Modus Operandi en Tiempo Real}{43}{subsection.10.3}%
+\contentsline {section}{\numberline {11}ARQUITECTURA DEL SISTEMA}{46}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Descripción Funcional de las Capas}{46}{subsection.11.1}%
+\contentsline {section}{\numberline {12}CONCLUSIONES}{49}{section.12}%
+\contentsline {section}{\numberline {13}RECURSOS Y ENLACES DEL PROYECTO}{51}{section.13}%
+\contentsline {section}{APÉNDICES}{51}{section.13}%
+\contentsline {section}{REFERENCIAS BIBLIOGRÁFICAS}{55}{section*.47}%

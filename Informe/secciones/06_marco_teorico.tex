@@ -68,6 +68,41 @@ Tras la ejecución del pipeline de preparación, optimización de tipos y extrac
 \end{tabularx}
 \caption{Diccionario de variables estructuradas listas para modelado no supervisado.}
 \label{tab:diccionario_limpio}
+\tablenote{Elaboración propia a partir de la ingeniería de variables sobre el benchmark CPD de Chicago y el corpus geocodificado de prensa de Bolivia. Las variables cíclicas se normalizan en el rango $[-1, 1]$ mediante componentes ortogonales y las coordenadas geográficas se expresan en radianes para cómputo geodésico directo.}
+\end{table}
+
+\subsubsection{Mapeo Departamental y Ecosistema de Medios Informativos de Bolivia}
+
+La extracción y minería de texto sobre la seguridad ciudadana en Bolivia requirió estructurar un inventario exhaustivo de fuentes de información abiertas (OSINT). Dado que el país no cuenta con una base de datos abierta centralizada de denuncias policiales, se sistematizaron los rotativos y cadenas de mayor penetración editorial en el eje troncal y los seis departamentos restantes, tal como sintetiza la Tabla \ref{tab:medios_bolivia}:
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l p{3.2cm} l X}
+\toprule
+\textbf{Jurisdicción} & \textbf{Medio Informativo} & \textbf{Portal Web Oficial} & \textbf{Canal YouTube / Identificador} \\
+\midrule
+Nacional (TV) & Bolivia TV (BTv) & \texttt{boliviatv.bo} & \texttt{@BoliviaTvMul} \\
+Nacional (TV) & Unitel Bolivia & \texttt{unitel.bo} & \texttt{@unitel-bolivia} \\
+Nacional (TV) & Red Uno de Bolivia & \texttt{reduno.com.bo} & \texttt{@redunotv} \\
+Nacional (TV) & Red ATB & \texttt{atb.com.bo} & \texttt{@ATBEnConexion} \\
+Nacional (Radio) & Erbol Digital & \texttt{erbol.com.bo} & \texttt{@rederbol} \\
+Nacional (Radio) & Radio Panamericana & \texttt{panamericana.bo} & \texttt{@radio.panamericana} \\
+Nacional (Agencia) & Agencia Fides (ANF) & \texttt{noticiasfides.com} & \texttt{@agenciadenoticiasfides2497} \\
+La Paz & La Razón / El Diario & \texttt{larazon.bo} & \texttt{@LaRazónDigitalBolivia} \\
+Santa Cruz & El Deber / El Día & \texttt{eldeber.com.bo} & \texttt{@webeldeber1} \\
+Cochabamba & Los Tiempos / Opinión & \texttt{lostiempos.com} & \texttt{@lostiemposbol} \\
+Chuquisaca & Correo del Sur & \texttt{correodelsur.com} & \texttt{@correodelsuryt} \\
+Oruro & La Patria & \texttt{lapatria.bo} & \texttt{@PeriódicoLaPatriaBolivia} \\
+Potosí & El Potosí / Kollasuyo & \texttt{elpotosi.net} & \texttt{@el.potosi} \\
+Tarija & El País / La Voz & \texttt{elpais.bo} & \texttt{@elpaisbo} \\
+Beni & La Palabra del Beni & \texttt{lapalabradelbeni.com} & \texttt{@benitvenlinea} \\
+Pando & Sol de Pando & \texttt{soldepando.com} & \texttt{Sol de Pando Oficial} \\
+\bottomrule
+\end{tabularx}
+\caption{Ecosistema de medios y fuentes periodísticas georreferenciadas de Bolivia.}
+\label{tab:medios_bolivia}
+\tablenote{Elaboración propia a partir del levantamiento documental consolidado en \texttt{NOTICIAS.md}. Comprende agencias estatales, redes privadas, emisoras de radio e impresos departamentales de los 9 departamentos del Estado Plurinacional de Bolivia.}
 \end{table}
 
 \subsection{Algoritmos No Supervisados Aplicados}
@@ -97,7 +132,7 @@ donde $R = 6371.0088 \text{ km}$ representa el radio medio volumétrico de la Ti
 
 \subsubsection{HDBSCAN: Clustering Jerárquico por Densidad y Persistencia}
 
-HDBSCAN (\textit{Hierarchical DBSCAN}) \cite{campello2013} supera la principal limitación de DBSCAN (la incapacidad de manejar densidades dispares simultáneas en una misma ciudad). HDBSCAN define la \textbf{distancia de alcanzalibidad mutua} (\textit{Mutual Reachability Distance}):
+HDBSCAN (\textit{Hierarchical DBSCAN}) \cite{campello2013} supera la principal limitación de DBSCAN (la incapacidad de manejar densidades dispares simultáneas en una misma ciudad). HDBSCAN define la \textbf{distancia de alcanzabilidad mutua} (\textit{Mutual Reachability Distance}):
 \begin{equation}
     d_{\text{mreach-}k}(a, b) = \max \left\{ d_{\text{core-}k}(a), \, d_{\text{core-}k}(b), \, d(a, b) \right\}
 \end{equation}
@@ -158,6 +193,14 @@ Para proyectar y visualizar matrices dispersas de texto y espacios multivariable
     \end{equation}
     \item \textbf{UMAP \cite{mcinnes2018}:} Técnica no lineal fundamentada en topología algebraica y geometría riemanniana que preserva tanto las distancias locales como las globales con una velocidad de cálculo sustancialmente superior a t-SNE.
 \end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\textwidth]{figuras/imgProyeccionBidimensionalBolivia.png}
+\caption{Proyección Bidimensional del Espacio Semántico Reducido LSA Mediante TruncatedSVD.}
+\label{fig:lsa_proyeccion}
+\figurenote{Captura del laboratorio analítico interactivo del proyecto. Ilustra la descomposición semántica latente ($1000 \to 2\text{D}$) sobre las crónicas de Bolivia, proyectando la Dimensión 1 (delitos armados y violencia callejera) frente a la Dimensión 2 (ámbito residencial y hurtos menores).}
+\end{figure}
 
 \subsubsection{Autoencoders Neuronales para Detección de Anomalías}
 

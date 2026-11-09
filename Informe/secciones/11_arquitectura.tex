@@ -75,14 +75,35 @@ El flujo integral se estructura en dos fases operativas: la \textbf{Fase Offline
 \end{tikzpicture}
 \caption{Diagrama de Arquitectura Modular del Sistema en Cuatro Capas.}
 \label{fig:arquitectura_sistema}
+\figurenote{Elaboración propia. Articula el desacoplamiento entre el cómputo intensivo offline (Data Lakehouse y entrenamiento serializado en joblib) y el servicio interactivo online (Flask API REST y visualizador 3D acelerado por WebGL).}
 \end{figure}
 
 \subsection{Descripción Funcional de las Capas}
 
 \begin{enumerate}
-    \item \textbf{Capa de Datos e Ingestión:} Almacena los datos maestros en Parquet con compresión Snappy y mantiene la muestra de $50.000$ registros para renderizado web reactivo. Administra asimismo el archivo \texttt{data\_noticias\_bolivia.csv} con los 137 incidentes geocodificados.
-    \item \textbf{Capa Analítica Offline:} Ejecuta los scripts de entrenamiento por lotes (\texttt{modules/train\_*.py}), optimiza los hiperparámetros de densidad y reconstrucción neuronal, y genera las gráficas diagnósticas de alta resolución.
-    \item \textbf{Capa de Servicio y Persistencia (Flask Master):} Carga los modelos serializados binariamente con \texttt{joblib} al iniciar el servidor. A través de Blueprints modulares (\texttt{modules/routes/}), expone endpoints REST (\texttt{/api/predict\_risk}, \texttt{/api/classify\_text}, etc.) que atienden peticiones asíncronas en tiempo real.
-    \item \textbf{Capa de Presentación (Frontend WebGL 3D):} Renderiza el tablero de mando interactivo utilizando HTML5 semántico, hojas de estilo CSS3 y scripts en JavaScript que se conectan con el motor WebGL (MapLibre GL JS / Deck.gl) para proyectar el Globo 3D con conmutación dinámica de capas algorítmicas.
+    \item \textbf{Capa de Datos e Ingestión:} Almacena los datos maestros en Parquet con compresión Snappy y mantiene la muestra balanceada para renderizado web reactivo. Administra asimismo el repositorio estructurado de noticias de Bolivia con los 137 incidentes geocodificados y los gazetteers urbanos.
+    \item \textbf{Capa Analítica Offline:} Ejecuta los scripts de entrenamiento por lotes (\texttt{modules/algorithms/}), optimiza los hiperparámetros de densidad y reconstrucción neuronal, y genera las matrices precalculadas de estabilidad y benchmark.
+    \item \textbf{Capa de Servicio y Persistencia (Flask Master):} Carga los modelos serializados binariamente con \texttt{joblib} al iniciar el servidor. A través de Blueprints modulares (\texttt{modules/routes/}), expone los endpoints JSON RESTful detallados en la Tabla \ref{tab:endpoints_api}.
+    \item \textbf{Capa de Presentación (Frontend WebGL 3D):} Renderiza el tablero de mando interactivo utilizando HTML5 semántico, hojas de estilo CSS3 y scripts en JavaScript conectados al motor WebGL (MapLibre GL JS / Deck.gl) para proyectar el Globo 3D con conmutación dinámica de capas algorítmicas.
 \end{enumerate}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l l p{4.2cm} X}
+\toprule
+\textbf{Método} & \textbf{Ruta del Endpoint} & \textbf{Entrada / Parámetros} & \textbf{Función y Respuesta JSON} \\
+\midrule
+\texttt{GET} & \texttt{/} & Ninguno & Renderiza el dashboard principal interactivo. \\
+\texttt{GET} & \texttt{/webgis} & \texttt{ctx} (bolivia / chicago) & Carga la consola del visor esférico Globo 3D WebGL. \\
+\texttt{POST} & \texttt{/api/predict\_risk} & Coordenadas $(\text{lat}, \text{lon})$ & Retorna la densidad continua $p(x)$ y componentes GMM. \\
+\texttt{POST} & \texttt{/api/classify\_text} & Cadena de texto libre & Infiere el clúster semántico TF-IDF y modus operandi. \\
+\texttt{GET} & \texttt{/api/benchmark} & \texttt{distrito\_id} (CPD) & Provee métricas auditadas (DBSCAN, HDBSCAN, OPTICS). \\
+\texttt{POST} & \texttt{/api/project\_dirichlet} & Texto o preset criminal & Estima las probabilidades posteriores del simplex LDA. \\
+\bottomrule
+\end{tabularx}
+\caption{Catálogo de endpoints y microservicios REST de la plataforma analítica.}
+\label{tab:endpoints_api}
+\tablenote{Elaboración propia a partir de la especificación de rutas en \texttt{modules/routes/api\_routes.py}. Todos los endpoints operan con tiempos de respuesta en memoria inferiores a 50 milisegundos.}
+\end{table}
 

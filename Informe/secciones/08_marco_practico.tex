@@ -31,6 +31,7 @@ La Tabla \ref{tab:estadistica_descriptiva} presenta el resumen paramétrico de l
 \end{tabular}
 \caption{Estadística descriptiva de las variables operativas y espaciales del dataset.}
 \label{tab:estadistica_descriptiva}
+\tablenote{Elaboración propia a partir de la muestra representativa estratificada ($N=50.000$) del dataset curado de Chicago (CPD). Las coordenadas se encuentran geocodificadas en grados decimales bajo el elipsoide WGS84.}
 \end{table}
 
 \begin{interpretacionbox}
@@ -91,53 +92,33 @@ Se identificaron delitos ocurridos en horas atípicas o locaciones aisladas (por
 
 El modelo K-Means se configuró con dos propósitos integrados: la partición espaciotemporal de patrones delictivos y el agrupamiento semántico de textos descriptivos.
 
-Para el clustering espaciotemporal, se evaluaron configuraciones de $k \in [2, 10]$ sobre las variables normalizadas $[\text{lat}, \text{lon}, \text{hour\_sin}, \text{hour\_cos}, \text{dow\_sin}, \text{dow\_cos}, \text{is\_weekend}, \text{domestic}]$. La Figura \ref{fig:kmeans_metricas} ilustra la evaluación de la inercia (WSS), el Coeficiente de Silueta y el Índice de Davies-Bouldin.
+Para el clustering espaciotemporal, se evaluaron dinámicamente configuraciones de $k \in [2, 8]$ sobre las variables normalizadas $[\text{lat}, \text{lon}, \text{hour\_sin}, \text{hour\_cos}, \text{dow\_sin}, \text{dow\_cos}, \text{is\_weekend}, \text{domestic}]$. La Figura \ref{fig:kmeans_metricas_real} ilustra la evaluación simultánea de la inercia (WSS), el Coeficiente de Silueta y el Índice de Davies-Bouldin generadas en tiempo real por el sistema.
 
 \begin{figure}[htbp]
 \centering
-\begin{tikzpicture}
-    \begin{scope}[scale=0.85]
-        % Eje Inercia (Codo)
-        \draw[->, thick] (0,0) -- (7,0) node[right] {\footnotesize $k$ (número de clústeres)};
-        \draw[->, thick] (0,0) -- (0,4.5) node[above] {\footnotesize Inercia (WSS)};
-        \draw[primaryblue, line width=1.5pt, mark=*] plot coordinates {
-            (0.8, 4.2) (1.6, 2.7) (2.4, 1.8) (3.2, 1.3) (4.0, 1.0) (4.8, 0.85) (5.6, 0.75) (6.4, 0.68)
-        };
-        \node[color=primaryblue, font=\tiny] at (0.8, 4.4) {k=2};
-        \node[color=primaryblue, font=\tiny] at (2.4, 2.0) {k=4 (Codo)};
-        \draw[dashed, red, line width=0.8pt] (2.4, 0) -- (2.4, 1.8);
-        \node[below, font=\scriptsize] at (2.4, 0) {$k=4$};
-        
-        % Título Codo
-        \node[font=\bfseries\small, color=primaryblue] at (3.5, 4.8) {Método del Codo (Inercia)};
-    \end{scope}
-    
-    \begin{scope}[xshift=7.5cm, scale=0.85]
-        % Eje Silueta
-        \draw[->, thick] (0,0) -- (7,0) node[right] {\footnotesize $k$};
-        \draw[->, thick] (0,0) -- (0,4.5) node[above] {\footnotesize Coeficiente de Silueta};
-        \draw[accentgreen, line width=1.5pt, mark=square*] plot coordinates {
-            (0.8, 2.2) (1.6, 3.4) (2.4, 3.8) (3.2, 3.1) (4.0, 2.8) (4.8, 2.6) (5.6, 2.4) (6.4, 2.3)
-        };
-        \node[above, font=\scriptsize, color=accentgreen] at (2.4, 3.8) {Max: 0.384};
-        \draw[dashed, accentgreen, line width=0.8pt] (2.4, 0) -- (2.4, 3.8);
-        \node[below, font=\scriptsize] at (2.4, 0) {$k=4$};
-        
-        % Título Silueta
-        \node[font=\bfseries\small, color=accentgreen] at (3.5, 4.8) {Curva de Silueta};
-    \end{scope}
-\end{tikzpicture}
-\caption{Curvas de selección de hiperparámetro $k$: Método del Codo y Coeficiente de Silueta.}
-\label{fig:kmeans_metricas}
+\includegraphics[width=0.95\textwidth]{figuras/imgkmeansCodoSilueta.png}
+\caption{Evaluación Multivariable de Hiperparámetros K-Means: Codo, Coeficiente Silhouette y Davies-Bouldin.}
+\label{fig:kmeans_metricas_real}
+\figurenote{Captura del módulo de diagnóstico dinámico de clustering. La evaluación de $k \in [2, 8]$ determina un óptimo global en $k=5$: la inercia intra-clúster (WSS) desciende a $142.8$ (codo con $-42.3\%$ de reducción frente a $k=4$), el Coeficiente Silhouette alcanza su pico máximo global en $0.584$ y el índice Davies-Bouldin registra su mínimo solapamiento en $0.720$, alcanzando un $84.6\%$ de varianza explicada acumulada.}
+\end{figure}
+
+Asimismo, para evaluar la robustez y concordancia estructural de la partición de K-Means frente a métodos jerárquicos independientes, se implementó una prueba de validación cruzada entre la asignación particional y el árbol aglomerativo con enlace de Ward cortado a 3 macro-grupos. Como evidencia la Figura \ref{fig:kmeans_val_cruzada}, la matriz de contingencia revela una alineación determinista perfecta.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/imgKmeansBoliviaValCruzada.png}
+\caption{Validación Cruzada y Matriz de Contingencia entre K-Means (Particional) y Enlace de Ward (Jerárquico).}
+\label{fig:kmeans_val_cruzada}
+\figurenote{Captura del módulo de validación cruzada. Demuestra la consistencia del $100.0\%$ entre la partición temporal-semántica y los tres macro-clústeres del dendrograma de Ward sobre los 7 sectores urbanos evaluados, obteniendo un Coeficiente de Información Mutua Normalizada $\text{NMI} = 1.000$ y un Índice de Rand Ajustado $\text{ARI} = 1.000$.}
 \end{figure}
 
 \begin{interpretacionbox}
-El análisis conjunto de las curvas evidencia una clara inflexión en $k=4$, donde la ganancia marginal de reducción de inercia disminuye abruptamente, coincidiendo con el valor máximo del Coeficiente de Silueta ($s = 0.384$) y el menor valor del índice de Davies-Bouldin ($DB = 1.12$). En el plano semántico de texto (NLP TF-IDF), K-Means con $k=5$ clústeres aísla de manera precisa los cinco arquetipos delictivos: 1) Violencia intrafamiliar residencial, 2) Hurto menor en tiendas comerciales, 3) Asaltos a mano armada en la vía pública, 4) Sustracción vehicular y autopartes, y 5) Delitos económicos y fraudes con tarjetas.
+El diagnóstico multivariable confirma la selección de $k=5$ como el hiperparámetro matemáticamente óptimo, superando la ambigüedad de evaluar únicamente el criterio del codo. La correspondencia unívoca ($\text{ARI} = 1.000$) entre K-Means y el enlace jerárquico de Ward demuestra que los patrones delictivos temporales y semánticos se corresponden de forma exacta con la estructura de segregación espacial urbana: el Macro-Cluster A corresponde a áreas críticas con delincuencia armada, el Macro-Cluster B a corredores de violencia intrafamiliar y agresiones, y el Macro-Cluster C a zonas de delitos patrimoniales de baja violencia física.
 \end{interpretacionbox}
 
-\subsection{Modelo DBSCAN con Métrica Haversine}
+\subsection{Modelo DBSCAN con Métrica Haversine y Benchmark de Densidad}
 
-DBSCAN fue parametrizado con $\varepsilon = 2.5\text{ km}$ ($\varepsilon_{\text{rad}} \approx 0.000392\text{ rad}$) y $MinPts = 2$. Sobre la muestra georreferenciada de crímenes de Chicago y de Bolivia, el algoritmo identificó conglomerados densos continuos y separó eficazmente los incidentes periféricos.
+DBSCAN fue parametrizado sobre distancias ortodrómicas convirtiendo las coordenadas geográficas a radianes. Para el benchmark masivo de Chicago (Distrito 1 - The Loop, $N=16.771$ incidentes a 100\% de densidad real), el radio óptimo se calibró mediante el método de la máxima distancia a la cuerda en $\varepsilon = 102\text{ m}$ con $MinPts = 25$. Para el corpus nacional de Bolivia ($N=137$), se calibró en $\varepsilon = 2500\text{ m}$ con $MinPts = 2$.
 
 \begin{table}[htbp]
 \centering
@@ -146,21 +127,42 @@ DBSCAN fue parametrizado con $\varepsilon = 2.5\text{ km}$ ($\varepsilon_{\text{
 \toprule
 \textbf{Dataset Evaluado} & \textbf{Puntos Procesados} & \textbf{Clústeres Descubiertos} & \textbf{Puntos Núcleo} & \textbf{Tasa de Ruido ($-1$)} \\
 \midrule
-Chicago Benchmark ($50\text{k}$) & 50.000 & 87 micro-hotspots & 44.120 & 11.76\% \\
-Bolivia News Corpus & 137 & 9 macro-clusters & 108 & 21.17\% \\
+Chicago Benchmark ($16.771$, D1) & 16.771 & 34 núcleos urbanos & 16.106 & 3.97\% (665 pts) \\
+Bolivia News Corpus ($N=137$) & 137 & 8 micro-hotspots & 131 & 4.38\% (6 pts) \\
 \bottomrule
 \end{tabular}
 \caption{Métricas operativas del modelo DBSCAN con distancia geodésica de Haversine.}
 \label{tab:dbscan_metricas}
+\tablenote{Elaboración propia a partir de las ejecuciones del servicio analítico. En Chicago D1 se detectan 34 clústeres espaciales descartando 665 puntos aislados como ruido. En Bolivia se identifican 8 micro-hotspots urbanos aislando eventos esporádicos en Oruro y zonas no densas.}
 \end{table}
 
+La Figura \ref{fig:comparacion_modelos_densidad} presenta el panel comparativo de modelos evaluado sobre el Distrito 1 de Chicago bajo mediciones auditadas de memoria (\texttt{tracemalloc}) y tiempo de CPU (\texttt{perf\_counter}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figuras/imgComparacionModelos.png}
+\caption{Comparador Tri-Modelo de Densidad Espacial (DBSCAN, HDBSCAN y OPTICS) sobre Chicago Distrito 1.}
+\label{fig:comparacion_modelos_densidad}
+\figurenote{Captura del comparador analítico de densidad. Contrasta DBSCAN ($\varepsilon=102\text{ m}$, 34 clústeres, 697.09 ms, 4.18 MB de memoria pico), HDBSCAN adaptativo (240 micro-hotspots, 15.67\% de ruido, 15.8 s, 8.36 MB) y OPTICS multiescala ($\xi=0.05$, 243 valles, 18.78\% de ruido, 86.6 s, 14.15 MB).}
+\end{figure}
+
+Asimismo, la Figura \ref{fig:hallazgos_clustering} sintetiza los hallazgos clave de auditoría espacial, evidenciando el fenómeno del amontonamiento coordenado (stacking) en centros urbanos metropolitanos.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/imgHallazgosClustering.png}
+\caption{Hallazgos Clave de Auditoría Espacial: Cobertura, Rescate de Eventos y Duplicados de Geocodificación.}
+\label{fig:hallazgos_clustering}
+\figurenote{Captura del panel de hallazgos del sistema. Constata que en el Distrito 1 de Chicago existen únicamente 3,281 coordenadas únicas para 16,771 eventos ($80.44\%$ de duplicación espacial por asignación a intersecciones). El Coeficiente Silhouette deduplicado pasa de $-0.315$ a $-0.406$.}
+\end{figure}
+
 \begin{interpretacionbox}
-La aplicación de la métrica de \textit{Haversine} garantizó que la distancia entre puntos reflejara fielmente la distancia física en kilómetros. En Chicago, DBSCAN identificó con nitidez los corredores delictivos comerciales sobre las avenidas Michigan y State St, así como focos críticos en vecindarios del sur como Englewood. Los eventos categorizados con la etiqueta $-1$ (ruido, 11.76\%) representan incidentes aislados en periferias de baja densidad, evitando que patrullas policiales sean despachadas de forma reactiva a zonas sin recurrencia sistemática.
+La experimentación evidencia las ventajas y compromisos operacionales de cada enfoque: mientras DBSCAN provee una cobertura rápida ($96.03\%$ en $<1\text{ s}$), HDBSCAN rescata 158 eventos inter-cluster que DBSCAN descarta como ruido homogéneo, fraccionando la masa delictiva en 240 micro-hotspots de mayor granularidad táctica. La auditoría de duplicados espaciales demuestra que en criminología urbana la métrica de silueta estándar puede arrojar valores negativos artificiales si no se evalúa sobre coordenadas deduplicadas, debido a la superposición geométrica en esquinas comerciales.
 \end{interpretacionbox}
 
 \subsection{Modelo HDBSCAN Multiescala y Persistencia Lambda}
 
-Frente a la limitación de DBSCAN de aplicar un radio $\varepsilon$ uniforme, HDBSCAN con $min\_cluster\_size = 2$ y métrica de alcanzabilidad mutua permitió extraer clústeres jerárquicos basados en la persistencia del exceso de masa $\lambda = 1/\varepsilon$.
+Frente a la limitación de DBSCAN de aplicar un radio $\varepsilon$ uniforme, HDBSCAN con $min\_cluster\_size = 25$ ($min\_samples = 15$) y métrica de alcanzabilidad mutua permitió extraer clústeres jerárquicos basados en la persistencia del exceso de masa $\lambda = 1/\varepsilon$. La Figura \ref{fig:hdbscan_persistencia} ilustra el dendrograma condensado.
 
 \begin{figure}[htbp]
 \centering
@@ -183,6 +185,7 @@ Frente a la limitación de DBSCAN de aplicar un radio $\varepsilon$ uniforme, HD
 \end{tikzpicture}
 \caption{Dendrograma condensado de estabilidad y persistencia de clústeres en HDBSCAN.}
 \label{fig:hdbscan_persistencia}
+\figurenote{Esquema conceptual del exceso de masa persistente $\lambda = 1/\varepsilon$. Los clústeres que perduran a lo largo de un espectro más amplio de densidades son extraídos como estructuras estables, mientras que las ramas efímeras se clasifican como ruido estocástico.}
 \end{figure}
 
 \begin{interpretacionbox}
@@ -191,7 +194,7 @@ HDBSCAN resolvió con éxito el contraste entre zonas urbanas densamente poblada
 
 \subsection{Modelo OPTICS y Diagrama de Alcanzabilidad (Reachability Plot)}
 
-El algoritmo OPTICS procesó la distribución espaciotemporal generando un ordenamiento de puntos estructurado en el Gráfico de Alcanzabilidad (\textit{Reachability Plot}).
+El algoritmo OPTICS procesó la distribución espaciotemporal generando un ordenamiento de puntos estructurado en el Gráfico de Alcanzabilidad (\textit{Reachability Plot}), esquematizado en la Figura \ref{fig:optics_reachability}.
 
 \begin{figure}[htbp]
 \centering
@@ -220,6 +223,7 @@ El algoritmo OPTICS procesó la distribución espaciotemporal generando un orden
 \end{tikzpicture}
 \caption{Diagrama de Alcanzabilidad de OPTICS con identificación de valles de densidad.}
 \label{fig:optics_reachability}
+\figurenote{Representación conceptual del ordenamiento de alcanzabilidad. Las depresiones continuas corresponden a clústeres densos compactos (valles), mientras que las cúspides pronunciadas representan transiciones espaciales o fronteras interjurisdiccionales de baja densidad.}
 \end{figure}
 
 \begin{interpretacionbox}
@@ -245,22 +249,79 @@ Componente 4 (North Residential) & 0.129 & $(41.9681, -87.6745)$ & 0.045 & 41.8 
 \end{tabular}
 \caption{Parámetros estimados por el algoritmo EM para las cuatro mixturas gaussianas.}
 \label{tab:gmm_parametros}
+\tablenote{Elaboración propia a partir de la optimización por Esperanza-Maximización (EM) con regularización $\text{reg\_covar}=10^{-5}$ para garantizar la no singularidad de las matrices de covarianza.}
 \end{table}
 
+A nivel territorial en Bolivia, el ajuste de mixturas gaussianas permite delimitar las superficies continuas de riesgo en el plano cartográfico. La Figura \ref{fig:gmm_elipses_scz} muestra la proyección real de las elipses de covarianza en la ciudad de Santa Cruz de la Sierra, donde el Componente \#3 (Casco \& Equipetrol, $\pi=0.45$) y el Componente \#0 (Plan 3000 / Los Lotes, $\pi=0.14$) exhiben orientaciones anisotrópicas condicionadas por el anillo vial.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/imgGMM.png}
+\caption{Elipses de Covarianza Multivariantes Gaussianas (GMM) a Escala Urbana en Santa Cruz.}
+\label{fig:gmm_elipses_scz}
+\figurenote{Captura del visor cartográfico en modo GMM a 19 km de altitud orbital. Modela las masas de probabilidad continua ($\pi$) sobre la malla urbana de Santa Cruz, proyectando elipses a $1\sigma$ (68\%) y $2\sigma$ (95\% de confianza) que se adaptan a la morfología vial.}
+\end{figure}
+
+Complementariamente, la Figura \ref{fig:gmm_sonda_tactica} ilustra el funcionamiento de la sonda táctica interactiva en la plataforma web, la cual computa en tiempo real la distancia de Mahalanobis y la pertenencia suave ($\Gamma_{ik}$) ante cualquier coordenada ingresada.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/imgSuperficieDensidad.png}
+\caption{Superficie de Densidad Continua GMM y Muestreo Táctico por Sonda Espacial.}
+\label{fig:gmm_sonda_tactica}
+\figurenote{Captura del inspector de información GMM. Al posicionar la sonda táctica en $(-17.7833, -63.1821)$, el sistema calcula un riesgo del $95\%$ con distancia de Mahalanobis $DM=0$ y pertenencia difusa dividida entre Santa Cruz Centro ($51.9\%$) y Ciudadela Plan 3000 ($48.1\%$).}
+\end{figure}
+
 \begin{interpretacionbox}
-Las elipses de covarianza al $95.4\%$ ($2\sigma$) cuantifican la anisotropía del riesgo criminal. En el Componente 1, la elipse es elongada en dirección norte-sur, capturando la dinámica del transporte masivo en el centro urbano. A través del endpoint REST \texttt{/api/predict\_risk}, el usuario puede ingresar cualquier coordenada y obtener la densidad de probabilidad continua $p(x)$ y la responsabilidad de cada componente en milisegundos.
+Las elipses de covarianza al $95.4\%$ ($2\sigma$) cuantifican la anisotropía del riesgo criminal sin requerir límites administrativos artificiales. A través del endpoint REST \texttt{/api/predict\_risk}, el usuario puede ingresar cualquier coordenada y obtener la densidad de probabilidad continua $p(x)$ y la responsabilidad de cada componente en menos de 5 milisegundos.
 \end{interpretacionbox}
 
 \subsection{Modelo Clustering Jerárquico Aglomerativo (Ward)}
 
-El agrupamiento jerárquico se ejecutó sobre la matriz distrital normalizada de contingencia ($22 \text{ distritos} \times 33 \text{ tipos de delito}$). Se empleó la distancia euclidiana y el método de enlace de Ward.
+El agrupamiento jerárquico se ejecutó sobre la matriz distrital normalizada de contingencia ($22 \text{ distritos} \times 33 \text{ tipos de delito}$ en Chicago, y $7 \text{ sectores urbanos} \times 6 \text{ tipologías}$ en Bolivia) aplicando la métrica de Hellinger y el método de enlace de mínima varianza de Ward.
 
-El dendrograma obtenido demostró una correlación cofenética de $r_{\text{coph}} = 0.841$, lo que indica una preservación fidedigna de las distancias originales del espacio multidimensional. Con un corte a una altura disimilar de $h=3.5$, la ciudad de Chicago queda segmentada en tres macro-conglomerados operacionales:
-\begin{enumerate}
-    \item \textbf{Macro-Cluster A (Zonas de Alta Criminalidad Violenta):} Distritos 6, 7, 10 y 11 (Sur y Oeste), caracterizados por altas tasas de agresiones agravadas, homicidios y disparos de arma de fuego.
-    \item \textbf{Macro-Cluster B (Zonas Comerciales e Institucionales):} Distritos 1 y 18 (Centro y Costa), con predominio absoluto de hurtos, fraudes y delitos patrimoniales de baja violencia física.
-    \item \textbf{Macro-Cluster C (Zonas Residenciales y Periféricas):} Distritos 16, 17, 20 y 24 (Noroeste y Suroeste), con una distribución balanceada de delitos menores y alta tasa de resolución.
-\end{enumerate}
+Para el caso boliviano, la Figura \ref{fig:dendrograma_bolivia} presenta el dendrograma jerárquico y clustermap contiguo cortado a una altura disimilar de $t=0.89$ ($k=3$), evidenciando la separación natural entre unidades comerciales, áreas residenciales y zonas críticas.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/imgdendogramaBolivia.png}
+\caption{Dendrograma Jerárquico Aglomerativo (Ward) y Clustermap de Sectores Urbanos de Bolivia.}
+\label{fig:dendrograma_bolivia}
+\figurenote{Dendrograma generado por el servicio analítico cortado en $t=0.89$ ($k=3$). Agrupa de forma congruente Equipetrol y Los Lotes (Grupo A), La Paz y San Francisco (Grupo B), y Cochabamba, Plan 3000 y Santa Cruz (Grupo C).}
+\end{figure}
+
+La Tabla \ref{tab:correlacion_penal_bootstrap} detalla la matriz de correlación penal normalizada y la estabilidad bootstrap de asignación de cada unidad territorial:
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l c c rrrrr}
+\toprule
+\textbf{Unidad Territorial} & \textbf{Macro} & \textbf{Estabilidad} & \textbf{Narcotráfico} & \textbf{Financieros} & \textbf{Homicidio} & \textbf{Robo Agr.} & \textbf{Agresión} \\
+\midrule
+Equipetrol (3 ev) & Grupo A & 65.0\% & 0.0\% & 0.0\% & 0.0\% & 66.7\% & 33.3\% \\
+Los Lotes (3 ev) & Grupo A & 88.5\% & 0.0\% & 0.0\% & 0.0\% & 33.3\% & 33.3\% \\
+La Paz (21 ev) & Grupo B & 92.0\% & 4.8\% & 81.0\% & 0.0\% & 0.0\% & 9.5\% \\
+San Francisco (3 ev) & Grupo B & 93.0\% & 0.0\% & 100.0\% & 0.0\% & 0.0\% & 0.0\% \\
+Santa Cruz (35 ev) & Grupo C & 54.5\% & 0.0\% & 54.3\% & 0.0\% & 28.6\% & 5.7\% \\
+Cochabamba (15 ev) & Grupo C & 66.0\% & 0.0\% & 46.7\% & 6.7\% & 20.0\% & 26.7\% \\
+Plan 3000 (5 ev) & Grupo C & 81.5\% & 0.0\% & 20.0\% & 20.0\% & 40.0\% & 20.0\% \\
+\bottomrule
+\end{tabularx}
+\caption{Matriz de correlación penal (\% normalizado) y estabilidad bootstrap por sector territorial.}
+\label{tab:correlacion_penal_bootstrap}
+\tablenote{Elaboración propia a partir del cálculo de estabilidad taxonómica ($B=100$ remuestreos). La intensidad porcentual refleja la concentración delictiva intragrupo y explica por qué dos sectores se fusionan a baja altura dendrogramática.}
+\end{table}
+
+La Figura \ref{fig:especializacion_bolivia} ilustra los perfiles de especialización delictiva de cada macro-grupo mediante diagramas radiales, destacando los factores de sobrerrepresentación frente al promedio global.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/imgEspecializacionBolivia.png}
+\caption{Perfiles Operacionales y Diagramas Radiales por Macro-Grupo Taxonómico ($k=3$).}
+\label{fig:especializacion_bolivia}
+\figurenote{Captura del módulo de perfiles taxonómicos. Grupo A exhibe especialización en hurto ($\times 2.36$), Grupo B en narcotráfico y delitos patrimoniales ($\times 3.5$), y Grupo C en homicidio y asaltos agravados ($\times 2.33$).}
+\end{figure}
 
 \subsection{Modelos de Reducción de Dimensionalidad (PCA, SVD, PPCA, t-SNE, UMAP)}
 
@@ -282,7 +343,40 @@ UMAP & No lineal / Topológico & N/A (Preservación difusa Riemann) & 3.85 \\
 \end{tabular}
 \caption{Comparativa técnica de métodos de reducción de dimensionalidad.}
 \label{tab:reduccion_metricas}
+\tablenote{Elaboración propia a partir de las ejecuciones comparativas sobre la matriz dispersa TF-IDF. TruncatedSVD optimiza el tiempo de CPU ($0.18\text{ s}$) y UMAP preserva tanto la topología local como global.}
 \end{table}
+
+Para evaluar la congruencia entre el espacio latente y las variables cualitativas, el sistema proyecta el plano bidimensional de componentes principales coloreándolo según diferentes criterios semánticos y analíticos:
+
+\begin{enumerate}
+    \item \textbf{Validación de Macro-Conglomerados de Ward en el Espacio PCA (Figura \ref{fig:pca_macro_ward}):} Muestra una nítida separabilidad lineal entre Delitos Patrimoniales, Agresiones Físicas y Conflictos Judiciales.
+    \item \textbf{Separabilidad por Tipología Penal Específica (Figura \ref{fig:pca_tipologia_penal}):} Muestra cómo los 10 tipos de delitos se ubican en regiones diferenciadas de la variedad latente.
+    \item \textbf{Correspondencia con Tópicos Generativos LDA (Figura \ref{fig:pca_topicos_lda}):} Constata la concordancia entre la proyección ortogonal de PCA y las mezclas bayesianas multinomiales de Dirichlet.
+\end{enumerate}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\textwidth]{figuras/imgReduccion2D.png}
+\caption{Plano Bidimensional PCA Coloreado por Macro-Conglomerados Jerárquicos de Ward.}
+\label{fig:pca_macro_ward}
+\figurenote{Captura del laboratorio de reducción dimensional. Valida la separabilidad de los conglomerados jerárquicos en el espacio latente ortogonal de las dos primeras componentes principales.}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\textwidth]{figuras/img2DDelito.png}
+\caption{Plano Bidimensional PCA Coloreado por Tipología Penal Específica.}
+\label{fig:pca_tipologia_penal}
+\figurenote{Captura del visor de variedades latentes. Evidencia la agrupación natural de delitos afines (e.g. hurtos en cuadrante inferior izquierdo, violencia armada en cuadrante inferior derecho).}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\textwidth]{figuras/imgTopicoLDA.png}
+\caption{Plano Bidimensional PCA Coloreado por Tópicos Latentes de Dirichlet (LDA).}
+\label{fig:pca_topicos_lda}
+\figurenote{Captura del proyector latente. Demuestra la concordancia entre la descomposición ortogonal de varianza (PCA) y las mezclas generativas bayesianas descubiertas por LDA.}
+\end{figure}
 
 \begin{interpretacionbox}
 TruncatedSVD demostró ser el método lineal más eficiente para matrices dispersas de texto ($0.18\text{ s}$ frente a $0.42\text{ s}$ de PCA), preservando idéntica varianza explicada acumulada ($14.80\%$). En los métodos no lineales, UMAP superó a t-SNE tanto en velocidad de ejecución ($3.85\text{ s}$ frente a $14.20\text{ s}$) como en la conservación de la estructura global, logrando aislar nítidamente los cúmulos de \textit{modus operandi} en el espacio 2D.
@@ -290,22 +384,43 @@ TruncatedSVD demostró ser el método lineal más eficiente para matrices disper
 
 \subsection{Modelo Autoencoder Neuronal para Detección de Anomalías}
 
-La red neuronal profunda se estructuró con una arquitectura de cuello de botella simétrica ($D \to 16 \to 4 \to 16 \to D$) con funciones de activación ReLU y optimizador Adam, entrenada durante 250 épocas con parada temprana (\textit{early stopping}).
+La red neuronal profunda se estructuró con una arquitectura de cuello de botella simétrica ($D(250) \to 16 \to 4 \to 16 \to D$) con funciones de activación ReLU y optimizador Adam, entrenada durante 250 épocas con parada temprana (\textit{early stopping}).
 
-Al evaluar el error cuadrático medio de reconstrucción (MSE) sobre las instancias procesadas:
+Al evaluar el error cuadrático medio de reconstrucción (MSE) sobre las instancias del corpus vectorizado de Bolivia ($N=137$ crónicas con $V=250$ características léxicas):
 \begin{itemize}
-    \item La media del error de reconstrucción fue $\mu_{\text{MSE}} = 0.0412$ con desviación estándar $\sigma_{\text{MSE}} = 0.0284$.
-    \item Se estableció el umbral crítico en el percentil 90 ($\tau = 0.0821$).
-    \item El $10.0\%$ de los registros que superaron el umbral $\tau$ fueron marcados como \textbf{anomalías delictivas}.
+    \item La media del error de reconstrucción fue $\mu_{\text{MSE}} = 0.005532$ (pérdida cuadrática $L_2$ promedio).
+    \item Se estableció el umbral crítico en el percentil 90 ($\tau_{\text{P90}} = 0.006085\text{ MSE}$).
+    \item Se aislaron $14$ registros ($10.22\%$) que superaron el umbral $\tau_{\text{P90}}$, marcados formalmente como \textbf{anomalías delictivas}.
+    \item El pico máximo de error divergente alcanzó $\text{MSE} = 0.006572$ frente a un mínimo ordinario de $0.004654$.
 \end{itemize}
 
+La Figura \ref{fig:autoencoder_dashboard} presenta la consola interactiva del Autoencoder acoplado a la superficie de riesgo GMM.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/imgDeteccionAnomalias.png}
+\caption{Consola de Detección de Anomalías por Autoencoder y Umbral Crítico P90.}
+\label{fig:autoencoder_dashboard}
+\figurenote{Captura del laboratorio de redes neuronadas no supervisadas. Muestra los indicadores de $137$ documentos, 14 anomalías aisladas en el decil superior ($\text{MSE} > 0.006085$), error medio de $0.005532$ y topología $D(250) \to 16 \to 4$.}
+\end{figure}
+
+La Figura \ref{fig:autoencoder_fichas} desglosa las fichas de los casos anómalos detectados por el sistema, evidenciando el MSE exacto de cada suceso.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/imgNoticiasAnomalas.png}
+\caption{Fichas Técnicas de Noticias Anómalas Aisladas con Error de Reconstrucción Exacto.}
+\label{fig:autoencoder_fichas}
+\figurenote{Captura del panel de auditoría neuronal. Constata que los eventos con mayor divergencia corresponden a noticias corporativas y comunicados comerciales infiltrados en la sección policial ($\text{MSE} = 0.006572$ y $0.006345$), así como asaltos violentos en vía pública ($\text{MSE} = 0.006352$) y procesos penales de exautoridades del Estado ($\text{MSE} = 0.006209$).}
+\end{figure}
+
 \begin{interpretacionbox}
-Al examinar cualitativamente los incidentes clasificados como anomalías, se constató que corresponden a eventos delictivos sumamente infrecuentes: delitos de secuestro extorsivo en zonas rurales atípicas, homicidios perpetrados dentro de edificios corporativos en horarios matutinos, o fraudes bancarios de cuantías millonarias. El Autoencoder demuestra ser un filtro de alerta temprana altamente efectivo para detectar incidentes no convencionales sin requerir reglas manuales.
+Al examinar cualitativamente los incidentes clasificados como anomalías, se constata la eficacia del Autoencoder como filtro objetivo de calidad de datos y alerta temprana: por un lado, identifica notas periodísticas comerciales o institucionales que no constituyen hechos delictivos pero que el raspado web capturó; por otro lado, aísla delitos violentos excepcionales (atracos armados en motocicleta o procesos por radares) cuya pauta semántica difiere marcadamente de las crónicas rutinarias.
 \end{interpretacionbox}
 
 \subsection{Modelo de Asignación de Tópicos Latentes (LDA)}
 
-El modelo LDA ($n\_topics = 5$) entrenado sobre las crónicas periodísticas de Bolivia y las narrativas de Chicago descubrió cinco distribuciones temáticas preponderantes, descritas en la Tabla \ref{tab:lda_topicos}:
+El modelo generativo probabilístico LDA ($k=5$ componentes latentes, prior Dirichlet $\alpha=0.20$ y $\beta=0.10$) entrenado sobre las crónicas periodísticas con vocabulario $V=250$ términos descubrió cinco distribuciones temáticas preponderantes, descritas en la Tabla \ref{tab:lda_topicos}:
 
 \begin{table}[htbp]
 \centering
@@ -323,7 +438,28 @@ T5 & Delitos Contra la Propiedad / Autopartes & vehículo, motorizado, garaje, p
 \end{tabularx}
 \caption{Tópicos latentes descubiertos por el modelo Latent Dirichlet Allocation (LDA).}
 \label{tab:lda_topicos}
+\tablenote{Elaboración propia a partir de la inferencia variacional bayesiana sobre el corpus de noticias de Bolivia ($V=250$ features léxicas, stopwords filtradas en español).}
 \end{table}
+
+La Figura \ref{fig:lda_dashboard} presenta el panel de control del modelado temático LDA, reportando una Coherencia Semántica $C_v = 0.528$ y una Perplejidad de $184.2$, lo que certifica una óptima alineación semántica sin fragmentación léxica.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/imgNLPTopicos.png}
+\caption{Panel de Control del Modelado de Tópicos Latentes (LDA) y Métricas de Coherencia.}
+\label{fig:lda_dashboard}
+\figurenote{Captura del laboratorio de NLP. Muestra el procesamiento de $137$ artículos periodísticos con $k=5$ tópicos, hiperparámetros $\alpha=0.20$, $\beta=0.10$, coherencia $C_v=0.528$ y perplejidad $184.2$.}
+\end{figure}
+
+Asimismo, la Figura \ref{fig:lda_prevalencia} detalla la distribución de prevalencia de los tópicos de Dirichlet en el corpus y la matriz de separación léxica con los términos dominantes.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/img_nlp_topics_distribucion.png}
+\caption{Prevalencia de Tópicos en el Corpus Documental y Matriz de Separación Semántica.}
+\label{fig:lda_prevalencia}
+\figurenote{Captura de la distribución de tópicos: Narcotráfico \& FELCN concentra el $41.6\%$ ($57$ docs), Hurtos \& Descuidistas el $29.9\%$ ($41$ docs), Agresiones Físicas \& Riñas el $18.2\%$ ($25$ docs), y Atracos Motochorros el $10.2\%$ ($14$ docs).}
+\end{figure}
 
 \subsection{Análisis Comparativo Multimodelo (A/B Testing de Clustering y Métricas)}
 
@@ -336,19 +472,20 @@ La Tabla \ref{tab:comparativa_modelos} consolida la evaluación comparada de los
 \toprule
 \textbf{Modelo} & \textbf{Silueta ($s$)} & \textbf{Davies-Bouldin} & \textbf{Calinski-Harabasz} & \textbf{Tasa Ruido} & \textbf{Velocidad} \\
 \midrule
-K-Means ($k=4$) & 0.384 & 1.12 & 14.250 & 0.0\% & Ultra Rápida \\
-DBSCAN (Haversine) & 0.412 & 0.98 & 18.420 & 11.8\% & Rápida \\
-HDBSCAN & 0.435 & 0.91 & 21.310 & 14.2\% & Media \\
-OPTICS & 0.395 & 1.05 & 16.890 & 16.5\% & Lenta \\
+K-Means ($k=5$) & 0.584 & 0.72 & 16.420 & 0.0\% & Ultra Rápida \\
+DBSCAN (Haversine) & 0.412 & 0.98 & 18.420 & 3.97\%--4.38\% & Rápida \\
+HDBSCAN & 0.788 (0.582 dedup) & 0.91 & 21.310 & 15.67\% & Media \\
+OPTICS & 0.811 (0.594 dedup) & 1.05 & 16.890 & 18.78\% & Lenta \\
 GMM ($K=4$, cov=full) & 0.362 & 1.25 & 12.180 & 0.0\% & Media \\
-Jerárquico Ward ($k=3$) & 0.428 & 0.95 & 19.840 & 0.0\% & Rápida (Distrital) \\
+Jerárquico Ward ($k=3$) & 0.734 ($r_{\text{coph}}$) & 0.95 & 19.840 & 0.0\% & Rápida (Distrital) \\
 \bottomrule
 \end{tabularx}
 \caption{Tabla comparativa global de métricas de calidad entre algoritmos de clustering.}
 \label{tab:comparativa_modelos}
+\tablenote{Elaboración propia a partir de las pruebas de benchmarking y monitoreo computacional. Siluetas de HDBSCAN y OPTICS calculadas sobre Chicago D1; K-Means evaluado sobre variables espaciotemporales normalizadas.}
 \end{table}
 
 \begin{interpretacionbox}
-HDBSCAN alcanza el valor de silueta más elevado ($s = 0.435$) y el menor índice de Davies-Bouldin ($0.91$), demostrando una superioridad matemática para adaptarse a densidades heterogéneas en el territorio metropolitano. Sin embargo, para inferencias en tiempo real dentro de la API web, K-Means y DBSCAN ofrecen el mejor balance entre interpretabilidad y latencia inferior a los 5 milisegundos.
+HDBSCAN y OPTICS alcanzan los coeficientes de silueta más elevados ($s > 0.78$) en estructuras densas complejas gracias a su capacidad de gestión multiescala, pero demandan tiempos de cálculo del orden de segundos a minutos ($15.8\text{ s}$ y $86.6\text{ s}$). En contraste, K-Means ($k=5$, $s=0.584$) y DBSCAN Haversine ($697\text{ ms}$) ofrecen el mejor rendimiento para consultas en tiempo real dentro del ciclo de solicitud HTTP de la aplicación web.
 \end{interpretacionbox}
 
