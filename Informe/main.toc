@@ -66,7 +66,7 @@
 \contentsline {subsection}{\numberline {10.3}Partición Semántica y Clasificación de Modus Operandi en Tiempo Real}{43}{subsection.10.3}%
 \contentsline {section}{\numberline {11}ARQUITECTURA DEL SISTEMA}{46}{section.11}%
 \contentsline {subsection}{\numberline {11.1}Descripción Funcional de las Capas}{46}{subsection.11.1}%
-\contentsline {section}{\numberline {12}CONCLUSIONES}{49}{section.12}%
-\contentsline {section}{\numberline {13}RECURSOS Y ENLACES DEL PROYECTO}{51}{section.13}%
-\contentsline {section}{APÉNDICES}{51}{section.13}%
-\contentsline {section}{REFERENCIAS BIBLIOGRÁFICAS}{55}{section*.47}%
+\contentsline {section}{\numberline {12}CONCLUSIONES}{48}{section.12}%
+\contentsline {section}{\numberline {13}RECURSOS Y ENLACES DEL PROYECTO}{50}{section.13}%
+\contentsline {section}{APÉNDICES}{50}{section.13}%
+\contentsline {section}{REFERENCIAS BIBLIOGRÁFICAS}{54}{section*.45}%

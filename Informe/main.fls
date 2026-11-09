@@ -84,8 +84,6 @@ INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\tex\latex\graphics-def\pdftex
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\tex\latex\graphics\mathcolor.ltx
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\tex\latex\graphics\mathcolor.ltx
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\tex\latex\graphics\mathcolor.ltx
-INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\tex\latex\float\float.sty
-INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\tex\latex\float\float.sty
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\tex\latex\caption\caption.sty
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\tex\latex\caption\caption.sty
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\tex\latex\caption\caption3.sty
@@ -688,8 +686,6 @@ INPUT .\figuras\img_etiquetado_automatico.png
 INPUT .\secciones\11_arquitectura.tex
 INPUT .\secciones\11_arquitectura.tex
 INPUT secciones\11_arquitectura.tex
-INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmtt8.tfm
-INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\tfm\public\lm\ec-lmbx10.tfm
 INPUT .\secciones\12_conclusiones.tex
 INPUT .\secciones\12_conclusiones.tex
 INPUT secciones\12_conclusiones.tex
@@ -714,8 +710,6 @@ INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmbx10.
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmbx10.pfb
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmbx12.pfb
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmbx12.pfb
-INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmbx6.pfb
-INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmbx6.pfb
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmbx8.pfb
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmbx8.pfb
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmbxi10.pfb
@@ -762,8 +756,6 @@ INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmtt10.
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmtt10.pfb
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmtt12.pfb
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmtt12.pfb
-INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmtt8.pfb
-INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmtt8.pfb
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmtti10.pfb
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\lm\lmtti10.pfb
 INPUT C:\Users\julio\AppData\Local\Programs\MiKTeX\fonts\type1\public\amsfonts\symbols\msbm10.pfb
