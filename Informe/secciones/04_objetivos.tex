@@ -24,26 +24,26 @@ El Árbol de Objetivos presentado en la Figura \ref{fig:arbol_objetivos} transfo
 \begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[
-    node distance=1.1cm and 0.5cm,
-    box_objetivo/.style={rectangle, draw=accentgreen!80!black, fill=accentgreen!10, text width=9.5cm, align=center, font=\bfseries\small, minimum height=1.3cm, rounded corners=3pt, line width=1.3pt},
-    box_fin/.style={rectangle, draw=primaryblue!80, fill=primaryblue!8, text width=3.9cm, align=center, font=\scriptsize, minimum height=1.3cm, rounded corners=2pt, line width=0.8pt},
-    box_fin_sup/.style={rectangle, draw=darkgray, fill=lightgray, text width=4.1cm, align=center, font=\scriptsize, minimum height=1.3cm, rounded corners=2pt, line width=0.8pt},
-    box_medio_1/.style={rectangle, draw=secondaryblue!90, fill=secondaryblue!10, text width=3.8cm, align=center, font=\scriptsize, minimum height=1.4cm, rounded corners=2pt, line width=0.8pt},
-    box_medio_2/.style={rectangle, draw=darkgray!70, fill=white, text width=3.8cm, align=center, font=\tiny, minimum height=1.4cm, rounded corners=2pt, line width=0.6pt},
+    node distance=1.0cm and 0.35cm,
+    box_objetivo/.style={rectangle, draw=accentgreen!80!black, fill=accentgreen!10, text width=10.2cm, align=center, font=\bfseries\scriptsize, minimum height=1.3cm, rounded corners=3pt, line width=1.2pt},
+    box_fin/.style={rectangle, draw=primaryblue!80, fill=primaryblue!8, text width=3.8cm, align=center, font=\tiny, minimum height=1.35cm, rounded corners=2pt, line width=0.8pt},
+    box_fin_sup/.style={rectangle, draw=darkgray, fill=lightgray, text width=4.3cm, align=center, font=\tiny, minimum height=1.35cm, rounded corners=2pt, line width=0.8pt},
+    box_medio_1/.style={rectangle, draw=secondaryblue!90, fill=secondaryblue!10, text width=3.8cm, align=center, font=\tiny, minimum height=1.45cm, rounded corners=2pt, line width=0.8pt},
+    box_medio_2/.style={rectangle, draw=darkgray!70, fill=white, text width=3.8cm, align=center, font=\tiny, minimum height=1.45cm, rounded corners=2pt, line width=0.6pt},
     arrow/.style={->, >=stealth, thick, color=darkgray!80}
 ]
 
     % Objetivo Central
-    \node (objetivo) [box_objetivo] {OBJETIVO CENTRAL:\\Desarrollar un sistema de Machine Learning No Supervisado para la detección de hotspots, caracterización de modus operandi y aislamiento de anomalías delictivas.};
+    \node (objetivo) [box_objetivo] {OBJETIVO CENTRAL:\\Desarrollar un sistema de Machine Learning No Supervisado para la delimitación geodésica de micro-hotspots, análisis semántico de modus operandi y aislamiento de anomalías espaciotemporales.};
 
     % Fines Directos
-    \node (fin2) [box_fin, above=1.0cm of objetivo] {Optimizar en un 35\% la asignación táctica y focalización de recursos de patrullaje.};
-    \node (fin1) [box_fin, left=0.6cm of fin2] {Detección temprana y cartografía de micro-hotspots delictivos sin rigidez administrativa.};
-    \node (fin3) [box_fin, right=0.6cm of fin2] {Dotar a los analistas de un visor visual 3D interactivo que reduzca la sobrecarga cognitiva.};
+    \node (fin2) [box_fin, above=0.9cm of objetivo] {Mitigar la disparidad del 35\% en la cobertura de patrullaje preventivo mediante asignación guiada por densidad real.};
+    \node (fin1) [box_fin, left=0.45cm of fin2] {Reducir la latencia analítica a tiempos casi reales en la correlación interjurisdiccional de incidentes emergentes.};
+    \node (fin3) [box_fin, right=0.45cm of fin2] {Valorizar y estructurar computacionalmente más del 80\% de variables cualitativas de modus operandi a partir de texto libre.};
 
     % Fines Superiores
-    \node (finsup1) [box_fin_sup, above=0.8cm of fin1] {Mitigar la tasa de criminalidad y victimización mediante prevención focalizada en evidencia.};
-    \node (finsup2) [box_fin_sup, above=0.8cm of fin3] {Fortalecer las políticas públicas de seguridad urbana mediante analítica computacional objetiva.};
+    \node (finsup1) [box_fin_sup, above=0.75cm of fin1] {Identificación y cuantificación continua de gradientes de riesgo en la evaluación longitudinal de series temporales urbanas.};
+    \node (finsup2) [box_fin_sup, above=0.75cm of fin3] {Superación de los sesgos de agregación territorial en sistemas de información mediante modelado continuo georreferenciado.};
 
     % Conexiones Fines
     \draw [arrow] (objetivo) -- (fin1);
@@ -53,14 +53,14 @@ El Árbol de Objetivos presentado en la Figura \ref{fig:arbol_objetivos} transfo
     \draw [arrow] (fin3) -- (finsup2);
 
     % Medios Directos
-    \node (medio2) [box_medio_1, below=1.0cm of objetivo] {Implementar algoritmos de densidad (DBSCAN, HDBSCAN, OPTICS) con Haversine.};
-    \node (medio1) [box_medio_1, left=0.6cm of medio2] {Aplicar métricas geodésicas ortodrómicas y codificación temporal circular $(\sin, \cos)$.};
-    \node (medio3) [box_medio_1, right=0.6cm of medio2] {Desarrollar minería semántica NLP (TF-IDF, K-Means, LDA) y Autoencoders neuronales.};
+    \node (medio2) [box_medio_1, below=0.9cm of objetivo] {Implementación de modelos de agrupamiento por densidad (DBSCAN, HDBSCAN, OPTICS) adaptables a morfologías viales complejas.};
+    \node (medio1) [box_medio_1, left=0.45cm of medio2] {Aplicación rigurosa de métricas geodésicas ortodrómicas (Haversine) sobre coordenadas esferoidales $(\text{Lat}, \text{Lon})$.};
+    \node (medio3) [box_medio_1, right=0.45cm of medio2] {Extracción y modelado semántico de crónicas narrativas mediante vectorización léxica (TF-IDF) y reducción dimensional latente.};
 
     % Medios Subyacentes
-    \node (subm1) [box_medio_2, below=0.8cm of medio1] {Pipeline automatizado de preprocesamiento, tipado eficiente y conversión a Snappy Parquet.};
-    \node (subm2) [box_medio_2, below=0.8cm of medio2] {Estimación continua de superficies de riesgo con Gaussian Mixture Models y elipses $2\sigma$.};
-    \node (subm3) [box_medio_2, below=0.8cm of medio3] {Arquitectura desacoplada en Flask API REST y visualizador cartográfico interactivo Globo 3D.};
+    \node (subm1) [box_medio_2, below=0.75cm of medio1] {Pipeline automatizado de preprocesamiento, tipado eficiente y conversión a Snappy Parquet.};
+    \node (subm2) [box_medio_2, below=0.75cm of medio2] {Estimación continua de superficies de riesgo con Gaussian Mixture Models y elipses $2\sigma$.};
+    \node (subm3) [box_medio_2, below=0.75cm of medio3] {Arquitectura desacoplada en Flask API REST y visualizador cartográfico interactivo Globo 3D.};
 
     % Conexiones Medios
     \draw [arrow] (medio1) -- (objetivo);

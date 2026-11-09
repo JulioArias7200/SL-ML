@@ -1,0 +1,59 @@
+\begin{thebibliography}{}
+
+\bibitem[Ankerst et~al., 1999]{ankerst1999}
+Ankerst, M., Breunig, M.~M., Kriegel, H.-P., and Sander, J. (1999).
+\newblock Optics: Ordering points to identify the clustering structure.
+\newblock {\em ACM SIGMOD Record}, 28(2):49--60.
+
+\bibitem[Arthur and Vassilvitskii, 2007]{arthur2007}
+Arthur, D. and Vassilvitskii, S. (2007).
+\newblock k-means++: The advantages of careful seeding.
+\newblock In {\em Proceedings of the Eighteenth Annual ACM-SIAM Symposium on
+  Discrete Algorithms (SODA)}, pages 1027--1035.
+
+\bibitem[Blei et~al., 2003]{blei2003}
+Blei, D.~M., Ng, A.~Y., and Jordan, M.~I. (2003).
+\newblock Latent dirichlet allocation.
+\newblock {\em Journal of Machine Learning Research}, 3:993--1022.
+
+\bibitem[Brantingham and Brantingham, 1993]{brantingham1993}
+Brantingham, P.~L. and Brantingham, P.~J. (1993).
+\newblock Nodes, paths and edges: Considerations on the complexity of crime and
+  the physical environment.
+\newblock In {\em Environmental Criminology}, pages 3--28. Waveland Press.
+
+\bibitem[Campello et~al., 2013]{campello2013}
+Campello, R. J. G.~B., Moulavi, D., and Sander, J. (2013).
+\newblock Density-based clustering based on hierarchical density estimates.
+\newblock In {\em Pacific-Asia Conference on Knowledge Discovery and Data
+  Mining (PAKDD)}, pages 160--172. Springer.
+
+\bibitem[Cohen and Felson, 1979]{cohen1979}
+Cohen, L.~E. and Felson, M. (1979).
+\newblock Social change and crime rate trends: A routine activity approach.
+\newblock {\em American Sociological Review}, 44(4):588--608.
+
+\bibitem[Ester et~al., 1996]{ester1996}
+Ester, M., Kriegel, H.-P., Sander, J., and Xu, X. (1996).
+\newblock A density-based algorithm for discovering clusters in large spatial
+  databases with noise.
+\newblock In {\em Proceedings of the Second International Conference on
+  Knowledge Discovery and Data Mining (KDD-96)}, pages 226--231.
+
+\bibitem[McInnes et~al., 2018]{mcinnes2018}
+McInnes, L., Healy, J., and Melville, J. (2018).
+\newblock Umap: Uniform manifold approximation and projection for dimension
+  reduction.
+\newblock {\em arXiv preprint arXiv:1802.03426}.
+
+\bibitem[van~der Maaten and Hinton, 2008]{vandermaaten2008}
+van~der Maaten, L. and Hinton, G. (2008).
+\newblock Visualizing data using t-sne.
+\newblock {\em Journal of Machine Learning Research}, 9:2579--2605.
+
+\bibitem[Weisburd, 2015]{weisburd2015}
+Weisburd, D. (2015).
+\newblock The law of crime concentration and the criminology of place.
+\newblock {\em Criminology}, 53(2):133--157.
+
+\end{thebibliography}

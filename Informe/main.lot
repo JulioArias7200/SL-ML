@@ -1,0 +1,9 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {table}{\numberline {1}{\ignorespaces Diccionario de variables estructuradas listas para modelado no supervisado.}}{15}{table.caption.3}%
+\contentsline {table}{\numberline {2}{\ignorespaces Resumen del balance del pipeline de depuración y preparación de datos.}}{23}{table.caption.4}%
+\contentsline {table}{\numberline {3}{\ignorespaces Estadística descriptiva de las variables operativas y espaciales del dataset.}}{24}{table.caption.5}%
+\contentsline {table}{\numberline {4}{\ignorespaces Métricas operativas del modelo DBSCAN con distancia geodésica de Haversine.}}{27}{table.caption.7}%
+\contentsline {table}{\numberline {5}{\ignorespaces Parámetros estimados por el algoritmo EM para las cuatro mixturas gaussianas.}}{29}{table.caption.10}%
+\contentsline {table}{\numberline {6}{\ignorespaces Comparativa técnica de métodos de reducción de dimensionalidad.}}{31}{table.caption.11}%
+\contentsline {table}{\numberline {7}{\ignorespaces Tópicos latentes descubiertos por el modelo Latent Dirichlet Allocation (LDA).}}{32}{table.caption.12}%
+\contentsline {table}{\numberline {8}{\ignorespaces Tabla comparativa global de métricas de calidad entre algoritmos de clustering.}}{32}{table.caption.13}%

@@ -7,10 +7,10 @@
 \usepackage{lmodern}
 \usepackage{geometry}
 \geometry{
-    top=2.5cm,
-    bottom=2.5cm,
-    left=2.5cm,
-    right=2.5cm,
+    top=2.54cm,
+    bottom=2.54cm,
+    left=2.54cm,
+    right=2.54cm,
     headheight=15pt
 }
 
@@ -18,6 +18,7 @@
 \usepackage{amsmath,amssymb,amsfonts,amsthm}
 \usepackage{bm}
 \usepackage{enumitem}
+\usepackage[round,authoryear]{natbib}
 
 % --- Paquetes de Tablas y Formato ---
 \usepackage{booktabs}
@@ -26,6 +27,23 @@
 \usepackage{array}
 \usepackage{multirow}
 \usepackage{colortbl}
+
+% --- Formato APA 7 para Títulos de Tablas y Figuras ---
+\usepackage{caption}
+\captionsetup[table]{
+    labelfont=bf,
+    textfont=it,
+    labelsep=newline,
+    justification=raggedright,
+    singlelinecheck=false
+}
+\captionsetup[figure]{
+    labelfont=bf,
+    textfont=it,
+    labelsep=newline,
+    justification=raggedright,
+    singlelinecheck=false
+}
 
 % --- Gráficos, Colores y Diagramas ---
 \usepackage{graphicx}
@@ -88,7 +106,7 @@
 \titleformat{\subsection}
     {\normalfont\large\bfseries\color{secondaryblue}}{\thesubsection.}{0.6em}{}
 \titleformat{\subsubsection}
-    {\normalfont\normalsize\bfseries\color{darkgray}}{\thesubsubsection.}{0.5em}{}
+    {\normalfont\normalsize\bfseries\itshape\color{darkgray}}{\thesubsubsection.}{0.5em}{}
 
 % --- Hipervínculos ---
 \usepackage{hyperref}
@@ -176,7 +194,7 @@
 \newpage
 \phantomsection
 \addcontentsline{toc}{section}{REFERENCIAS BIBLIOGRÁFICAS}
-\bibliographystyle{plain}
+\bibliographystyle{apalike}
 \bibliography{secciones/bibliografia}
 
 \end{document}

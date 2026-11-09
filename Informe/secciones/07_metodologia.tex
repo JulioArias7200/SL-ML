@@ -7,7 +7,7 @@ El desarrollo del proyecto se fundamenta en la metodología estándar para proye
 El sistema procesa dos conjuntos de datos empíricos complementarios:
 
 \begin{enumerate}
-    \item \textbf{Dataset Benchmark Internacional (Chicago Police Department -- CPD):} Obtenido del portal oficial de datos abiertos de la ciudad de Chicago (`Crimes_-_2020_to_Present_20250228.csv`). Contiene un volumen en bruto de $324.5\text{ MB}$, con más de $800.000$ filas y $30$ variables originales que registran la totalidad de incidentes criminales reportados en la metrópoli estadounidense entre enero de 2020 y febrero de 2025.
+    \item \textbf{Dataset Benchmark Internacional (Chicago Police Department -- CPD):} Obtenido del portal oficial de datos abiertos de la ciudad de Chicago (\texttt{Crimes\_-\_2020\_to\_Present\_20250228.csv}). Contiene un volumen en bruto de $324.5\text{ MB}$, con más de $800.000$ filas y $30$ variables originales que registran la totalidad de incidentes criminales reportados en la metrópoli estadounidense entre enero de 2020 y febrero de 2025.
     \item \textbf{Corpus Nacional de Bolivia (\texttt{data\_noticias\_bolivia.csv}):} Construido mediante un pipeline de extracción automatizada y raspado web (\textit{web scraping}) sobre la prensa digital boliviana. Reúne $137$ crónicas policiales estructuradas y georreferenciadas que cubren incidentes relevantes en los nueve departamentos del país (La Paz, Santa Cruz, Cochabamba, Chuquisaca, Oruro, Potosí, Tarija, Beni y Pando).
 \end{enumerate}
 
@@ -31,7 +31,7 @@ La fase de preparación de datos fue implementada en el módulo automatizado \te
 
 \subsubsection{Auditoría y Perfilado de los Datos}
 
-Se ejecutó un diagnóstico sistemático sobre los tipos de variables, tasas de valores faltantes y distribuciones de frecuencia. Se verificó que las variables geoespaciales primarias (`Latitude`, `Longitude`) y temporales (`Date`) registraban valores nulos en incidentes no resueltos o faltos de georreferenciación. La auditoría constató además que las cadenas de texto en `Location Description` y `Description` presentaban inconsistencias de capitalización, espacios redundantes y caracteres de control.
+Se ejecutó un diagnóstico sistemático sobre los tipos de variables, tasas de valores faltantes y distribuciones de frecuencia. Se verificó que las variables geoespaciales primarias (\texttt{Latitude}, \texttt{Longitude}) y temporales (\texttt{Date}) registraban valores nulos en incidentes no resueltos o faltos de georreferenciación. La auditoría constató además que las cadenas de texto en \texttt{Location Description} y \texttt{Description} presentaban inconsistencias de capitalización, espacios redundantes y caracteres de control.
 
 \subsubsection{Normalización y Estandarización de Formatos}
 
@@ -48,7 +48,7 @@ Se aplicaron transformaciones fundamentales para garantizar la compatibilidad ma
     \begin{equation}
         d_{\sin} = \sin\left(\frac{2\pi d}{7}\right), \quad d_{\cos} = \cos\left(\frac{2\pi d}{7}\right)
     \end{equation}
-    \item \textbf{Estandarización Numérica:} Aplicación de `StandardScaler` ($\mu = 0, \sigma = 1$) para las características continuas empleadas en K-Means, GMM y Autoencoder.
+    \item \textbf{Estandarización Numérica:} Aplicación de \texttt{StandardScaler} ($\mu = 0, \sigma = 1$) para las características continuas empleadas en K-Means, GMM y Autoencoder.
 \end{itemize}
 
 \subsubsection{Gestión de Registros Duplicados}
@@ -57,7 +57,7 @@ Se identificaron registros con idéntica marca temporal, código IUCR y localiza
 
 \subsubsection{Tratamiento de Valores Faltantes}
 
-Las observaciones con valores nulos en las coordenadas geográficas (`Latitude` o `Longitude` vacías) corresponden a incidentes ocurridos fuera de jurisdicción o no localizables, los cuales representaban menos del $1.8\%$ del dataset original. Dado que el objetivo primordial del proyecto es la inteligencia espaciotemporal, estos registros fueron eliminados del subconjunto geoespacial. Para las variables categóricas secundarias con datos ausentes, se imputó la categoría centinela `UNKNOWN`.
+Las observaciones con valores nulos en las coordenadas geográficas (\texttt{Latitude} o \texttt{Longitude} vacías) corresponden a incidentes ocurridos fuera de jurisdicción o no localizables, los cuales representaban menos del $1.8\%$ del dataset original. Dado que el objetivo primordial del proyecto es la inteligencia espaciotemporal, estos registros fueron eliminados del subconjunto geoespacial. Para las variables categóricas secundarias con datos ausentes, se imputó la categoría centinela \texttt{UNKNOWN}.
 
 \subsubsection{Tratamiento de Valores Atípicos Espaciales}
 

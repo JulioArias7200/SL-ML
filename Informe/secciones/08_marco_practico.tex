@@ -248,7 +248,7 @@ Componente 4 (North Residential) & 0.129 & $(41.9681, -87.6745)$ & 0.045 & 41.8 
 \end{table}
 
 \begin{interpretacionbox}
-Las elipses de covarianza al $95.4\%$ ($2\sigma$) cuantifican la anisotropía del riesgo criminal. En el Componente 1, la elipse es elongada en dirección norte-sur, capturando la dinámica del transporte masivo en el centro urbano. A través del endpoint REST `/api/predict_risk`, el usuario puede ingresar cualquier coordenada y obtener la densidad de probabilidad continua $p(x)$ y la responsabilidad de cada componente en milisegundos.
+Las elipses de covarianza al $95.4\%$ ($2\sigma$) cuantifican la anisotropía del riesgo criminal. En el Componente 1, la elipse es elongada en dirección norte-sur, capturando la dinámica del transporte masivo en el centro urbano. A través del endpoint REST \texttt{/api/predict\_risk}, el usuario puede ingresar cualquier coordenada y obtener la densidad de probabilidad continua $p(x)$ y la responsabilidad de cada componente en milisegundos.
 \end{interpretacionbox}
 
 \subsection{Modelo Clustering Jerárquico Aglomerativo (Ward)}
@@ -264,7 +264,7 @@ El dendrograma obtenido demostró una correlación cofenética de $r_{\text{coph
 
 \subsection{Modelos de Reducción de Dimensionalidad (PCA, SVD, PPCA, t-SNE, UMAP)}
 
-Se procesó la matriz TF-IDF de descripciones textuales ($50.000$ documentos $\times 1.000$ términos léxicos) mediante los cinco algoritmos de reducción implementados en `modules/algorithms/dimensionality.py`:
+Se procesó la matriz TF-IDF de descripciones textuales ($50.000$ documentos $\times 1.000$ términos léxicos) mediante los cinco algoritmos de reducción implementados en \texttt{modules/algorithms/dimensionality.py}:
 
 \begin{table}[htbp]
 \centering
