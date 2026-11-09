@@ -1,171 +1,996 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}CPD Analytics // Minería de Texto & Tópicos LDA (Bolivia){% endblock %}
+{% block title %}CPD Analytics // Minería de Texto & Tópicos LDA ({{ 'Bolivia' if current_context == 'bolivia' else 'Chicago' }}){% endblock %}
+
+{% block extra_head %}
+<!-- KaTeX para Renderizado Matemático Tipográfico Impecable -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+{% endblock %}
 
 {% block content %}
-<div class="p-4 sm:p-6 lg:p-8 space-y-6">
-    <!-- Header -->
+<div class="p-4 sm:p-6 lg:p-8 space-y-8 max-w-[1700px] w-full mx-auto">
+    <!-- Header Principal -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-outline-variant/30">
         <div>
             <div class="flex items-center gap-2">
-                <span class="inline-flex size-2 rounded-full bg-primary-container animate-pulse"></span>
-                <span class="text-xs font-bold uppercase tracking-wider text-primary-container font-data-code">
+                <span class="inline-flex size-2 rounded-full bg-cyan-600 dark:bg-cyan-400 animate-pulse"></span>
+                <span class="text-xs font-bold uppercase tracking-wider text-cyan-700 dark:text-cyan-400 font-data-code">
                     Módulo No Supervisado // Latent Dirichlet Allocation (LDA)
                 </span>
+                <span class="text-slate-400 dark:text-outline text-xs">•</span>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 font-data-code">
+                    {{ 'Contexto: Bolivia (Prensa Policial)' if current_context == 'bolivia' else 'Contexto: Chicago CPD (RMS Incident Benchmark)' }}
+                </span>
             </div>
-            <h1 class="text-2xl font-bold tracking-tight text-on-surface mt-1">
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-on-surface mt-1">
                 Minería de Texto & Modelado de Tópicos Latentes
             </h1>
-            <p class="text-xs sm:text-sm text-outline max-w-3xl mt-1">
-                Descubrimiento temático automático sobre el corpus de noticias policiales en Bolivia mediante distribuciones multinomiales de Dirichlet y vectorización TF-IDF.
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-outline max-w-4xl mt-1 leading-relaxed">
+                {% if current_context == 'bolivia' %}
+                Descubrimiento temático no supervisado sobre el corpus de noticias policiales de Bolivia mediante distribuciones multinomiales de Dirichlet y vectorización TF-IDF.
+                {% else %}
+                Modelado generativo no supervisado sobre incidentes criminales del Chicago Police Department (RMS) mediante mezclas de Dirichlet multinomial y extracción léxica bilingüe.
+                {% endif %}
             </p>
         </div>
 
-        <div class="px-3 py-1.5 rounded-lg bg-surface-container border border-outline-variant/40 font-data-code text-xs text-outline">
-            Corpus: <span class="text-primary-container font-bold">{{ total_notes }} notas analizadas</span>
+        <div class="flex items-center gap-2">
+            <div class="px-3 py-1.5 rounded-lg bg-white dark:bg-surface-container border border-slate-200 dark:border-outline-variant/40 font-data-code text-xs text-slate-700 dark:text-outline shadow-sm">
+                Corpus: <span class="text-cyan-700 dark:text-cyan-400 font-bold">{{ total_notes }} registros analizados</span>
+            </div>
+            <div class="px-2.5 py-1.5 rounded-lg bg-cyan-50 dark:bg-cyan-950/40 border border-cyan-300 dark:border-cyan-800 font-data-code text-xs text-cyan-800 dark:text-cyan-300 font-bold uppercase">
+                {{ 'BO' if current_context == 'bolivia' else 'US' }} // k=5
+            </div>
         </div>
     </div>
 
-    <!-- Fila 1: Tarjetas de los 5 Tópicos LDA -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {% for tid, topic in topics.items() %}
-        <div class="p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm flex flex-col justify-between hover:border-primary-container/40 transition-all">
-            <div>
-                <div class="flex items-center justify-between mb-2">
-                    <span class="px-2.5 py-0.5 rounded text-[11px] font-bold font-data-code uppercase" 
-                          style="background: {{ topic.hex }}25; color: {{ topic.hex }}; border: 1px solid {{ topic.hex }}50;">
-                        TÓPICO #{{ topic.id }}
-                    </span>
-                    <span class="text-xs text-outline font-data-code">LDA Dirichlet</span>
+    <!-- Fila 1: KPIs Algorítmicos Superiores -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- KPI 1: Corpus -->
+        <div class="p-4 sm:p-5 rounded-xl bg-white dark:bg-surface-container border border-slate-200 dark:border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-600 dark:text-outline text-xs font-data-code uppercase">
+                <span>Corpus Vectorizado</span>
+                <span class="material-symbols-outlined text-cyan-600 dark:text-cyan-400 text-lg">feed</span>
+            </div>
+            <div class="my-2">
+                <div class="text-2xl sm:text-3xl font-data-display font-bold text-slate-900 dark:text-on-surface">
+                    {{ kpis.corpus_size }} <span class="text-sm font-normal text-slate-500 dark:text-outline">docs</span>
                 </div>
-                <h3 class="text-sm font-bold text-on-surface mb-2 leading-snug">
-                    {{ topic.title }}
-                </h3>
-                <p class="text-xs text-on-surface-variant mb-4 leading-relaxed">
-                    {{ topic.desc }}
+                <p class="text-xs text-slate-600 dark:text-outline-variant mt-1 font-label-md truncate" title="{{ source_badge }}">
+                    {{ source_badge }}
                 </p>
             </div>
+            <div class="text-[11px] text-slate-500 dark:text-outline font-data-code border-t border-slate-100 dark:border-outline-variant/30 pt-2 flex items-center justify-between">
+                <span>Normalización:</span>
+                <span class="text-slate-700 dark:text-slate-300 font-semibold">TF-IDF n-grams</span>
+            </div>
+        </div>
 
+        <!-- KPI 2: Tópicos Latentes (K=5) -->
+        <div class="p-4 sm:p-5 rounded-xl bg-white dark:bg-surface-container border border-slate-200 dark:border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-600 dark:text-outline text-xs font-data-code uppercase">
+                <span>Componentes Latentes</span>
+                <span class="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-lg">category</span>
+            </div>
+            <div class="my-2">
+                <div class="text-2xl sm:text-3xl font-data-display font-bold text-slate-900 dark:text-on-surface">
+                    k = {{ kpis.n_components }} <span class="text-sm font-normal text-slate-500 dark:text-outline">tópicos</span>
+                </div>
+                <p class="text-xs text-emerald-700 dark:text-emerald-400 mt-1 font-data-code flex items-center gap-1 font-semibold">
+                    <span class="material-symbols-outlined text-sm">tune</span>
+                    <span>Prior Dirichlet α={{ kpis.alpha }}</span>
+                </p>
+            </div>
+            <div class="text-[11px] text-slate-500 dark:text-outline font-data-code border-t border-slate-100 dark:border-outline-variant/30 pt-2 flex items-center justify-between">
+                <span>Inferencia:</span>
+                <span class="text-slate-700 dark:text-slate-300 font-semibold">Online Variational</span>
+            </div>
+        </div>
+
+        <!-- KPI 3: Vocabulario -->
+        <div class="p-4 sm:p-5 rounded-xl bg-white dark:bg-surface-container border border-slate-200 dark:border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-600 dark:text-outline text-xs font-data-code uppercase">
+                <span>Espacio Léxico (V)</span>
+                <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 text-lg">match_word</span>
+            </div>
+            <div class="my-2">
+                <div class="text-2xl sm:text-3xl font-data-display font-bold text-slate-900 dark:text-on-surface">
+                    {{ kpis.vocab_size }} <span class="text-sm font-normal text-slate-500 dark:text-outline">features</span>
+                </div>
+                <p class="text-xs text-purple-700 dark:text-purple-400 mt-1 font-data-code flex items-center gap-1 font-semibold">
+                    <span class="material-symbols-outlined text-sm">filter_alt</span>
+                    <span>Prior Términos β={{ kpis.beta }}</span>
+                </p>
+            </div>
+            <div class="text-[11px] text-slate-500 dark:text-outline font-data-code border-t border-slate-100 dark:border-outline-variant/30 pt-2 flex items-center justify-between">
+                <span>Stopwords:</span>
+                <span class="text-slate-700 dark:text-slate-300 font-semibold">{{ 'Español' if current_context == 'bolivia' else 'English' }} Filtrado</span>
+            </div>
+        </div>
+
+        <!-- KPI 4: Coherencia & Perplejidad -->
+        <div class="p-4 sm:p-5 rounded-xl bg-white dark:bg-surface-container border border-slate-200 dark:border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-600 dark:text-outline text-xs font-data-code uppercase">
+                <span>Coherencia & Perplejidad</span>
+                <span class="material-symbols-outlined text-amber-600 dark:text-amber-400 text-lg">speed</span>
+            </div>
+            <div class="my-2">
+                <div class="text-2xl sm:text-3xl font-data-display font-bold text-slate-900 dark:text-on-surface">
+                    {{ kpis.coherence }} <span class="text-sm font-normal text-slate-500 dark:text-outline">C_v</span>
+                </div>
+                <p class="text-xs text-amber-700 dark:text-amber-400 mt-1 font-data-code flex items-center gap-1 font-semibold">
+                    <span class="material-symbols-outlined text-sm">analytics</span>
+                    <span>Perplejidad {{ kpis.perplexity }}</span>
+                </p>
+            </div>
+            <div class="text-[11px] text-slate-500 dark:text-outline font-data-code border-t border-slate-100 dark:border-outline-variant/30 pt-2 flex items-center justify-between">
+                <span>Alineación Semántica:</span>
+                <span class="text-emerald-700 dark:text-emerald-400 font-bold">ÓPTIMA</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fila 2: VISUALIZACIONES GRÁFICAS PRIMERO -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Gráfica 1: Prevalencia y Distribución Porcentual del Corpus -->
+        <div class="p-5 sm:p-6 rounded-xl bg-white dark:bg-surface-container border border-slate-200 dark:border-outline-variant/40 shadow-sm flex flex-col justify-between">
             <div>
-                <span class="text-[10px] text-outline uppercase font-bold tracking-wider font-data-code block mb-1.5">
-                    Términos Dominantes:
-                </span>
-                <div class="flex flex-wrap gap-1.5">
-                    {% for word in topic.top_words %}
-                    <span class="px-2 py-0.5 rounded bg-surface-container-high text-[11px] font-data-code text-on-surface border border-outline-variant/30">
-                        {{ word }}
-                    </span>
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-cyan-600 dark:text-cyan-400">bar_chart</span>
+                        <h3 class="text-sm font-bold text-slate-900 dark:text-on-surface uppercase tracking-wider font-data-code">
+                            Prevalencia de Tópicos en el Corpus
+                        </h3>
+                    </div>
+                    <span class="text-xs font-data-code text-slate-500 dark:text-outline">Distribución Documental</span>
+                </div>
+                <p class="text-xs text-slate-600 dark:text-outline mb-5">
+                    Proporción relativa de documentos clasificados en cada tópico de Dirichlet sobre el total de <strong class="text-slate-900 dark:text-on-surface">{{ total_notes }} registros</strong>.
+                </p>
+
+                <!-- Barras de Distribución -->
+                <div class="space-y-4 font-data-code text-xs">
+                    {% for item in topic_distribution %}
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between items-center text-xs">
+                            <div class="flex items-center gap-2 truncate max-w-[70%]">
+                                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase shrink-0" 
+                                      style="background: {{ item.color }}20; color: {{ item.color }}; border: 1px solid {{ item.color }}50;">
+                                    #{{ item.topic_id }}
+                                </span>
+                                <span class="font-semibold text-slate-800 dark:text-slate-200 truncate" title="{{ item.full_title }}">
+                                    {{ item.title }}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span class="text-slate-500 dark:text-outline">{{ item.count }} docs</span>
+                                <span class="font-bold text-slate-900 dark:text-white" style="color: {{ item.color }};">{{ item.pct }}%</span>
+                            </div>
+                        </div>
+                        <div class="w-full h-3 rounded-full bg-slate-100 dark:bg-surface-container-high overflow-hidden flex border border-slate-200/60 dark:border-outline-variant/30">
+                            <div class="h-full rounded-full transition-all duration-700" 
+                                 style="background: {{ item.color }}; width: {{ item.pct }}%;"></div>
+                        </div>
+                    </div>
                     {% endfor %}
                 </div>
             </div>
-        </div>
-        {% endfor %}
-    </div>
 
-    <!-- Fila 2: Clasificador Interactivo & Tabla de Noticias -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Clasificador de Texto en Vivo -->
-        <div class="p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div class="mt-6 pt-3 border-t border-slate-100 dark:border-outline-variant/30 flex items-center justify-between text-[11px] font-data-code text-slate-500 dark:text-outline">
+                <span>Método: Distribución Multinomial argmax</span>
+                <span class="text-cyan-700 dark:text-cyan-400 font-semibold">∑ P(z|d) = 100%</span>
+            </div>
+        </div>
+
+        <!-- Gráfica 2: Matriz de Términos Clave y Ponderación Multinomial -->
+        <div class="p-5 sm:p-6 rounded-xl bg-white dark:bg-surface-container border border-slate-200 dark:border-outline-variant/40 shadow-sm flex flex-col justify-between">
             <div>
-                <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider font-data-code flex items-center gap-2 mb-2">
-                    <span class="material-symbols-outlined text-primary-container">psychology_alt</span>
-                    Clasificador Semántico en Vivo
-                </h3>
-                <p class="text-xs text-outline mb-4">
-                    Ingresa el fragmento de un nuevo reporte periodístico para proyectarlo sobre los tópicos LDA y estimar su categoría de delito.
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-purple-600 dark:text-purple-400">bubble_chart</span>
+                        <h3 class="text-sm font-bold text-slate-900 dark:text-on-surface uppercase tracking-wider font-data-code">
+                            Matriz de Separación Semántica
+                        </h3>
+                    </div>
+                    <span class="text-xs font-data-code text-slate-500 dark:text-outline">Pesos Término-Tópico β_k,w</span>
+                </div>
+                <p class="text-xs text-slate-600 dark:text-outline mb-4">
+                    Términos dominantes con mayor densidad de probabilidad condicional dentro de cada componente Dirichlet.
                 </p>
 
-                <textarea id="live-text-input" 
-                          class="w-full h-32 p-3 bg-surface-container-lowest text-xs text-on-surface placeholder:text-outline rounded border border-outline-variant/40 focus:border-primary-container focus:outline-none font-label-md resize-none"
-                          placeholder="Ejemplo: Dos sujetos a bordo de una motocicleta amenazaron a una transeúnte con un arma de fuego en el segundo anillo para sustraerle el celular y la cartera..."></textarea>
+                <!-- Desglose por Tópico -->
+                <div class="space-y-3 custom-scrollbar max-h-[300px] overflow-y-auto pr-1">
+                    {% for item in topic_distribution %}
+                    <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 transition-colors">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold font-data-code uppercase flex items-center gap-1.5" style="color: {{ item.color }};">
+                                <span class="size-2 rounded-full" style="background: {{ item.color }};"></span>
+                                {{ item.code }} // {{ item.title }}
+                            </span>
+                            <span class="text-[10px] text-slate-500 dark:text-slate-400 font-data-code">Top 8 Términos</span>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5">
+                            {% for word in item.top_words %}
+                            <span class="px-2 py-0.5 rounded text-[11px] font-data-code bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 text-slate-800 dark:text-slate-100 shadow-2xs">
+                                {{ word }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
 
-            <div class="mt-4 space-y-3">
+            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-outline-variant/30 flex items-center justify-between text-[11px] font-data-code text-slate-500 dark:text-outline">
+                <span>Densidad: P(w|z=k) ~ Dirichlet(β)</span>
+                <span class="text-purple-700 dark:text-purple-400 font-semibold">V = 250 Palabras Clave</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fila 3: Tarjetas de los 5 Tópicos LDA con Filtro Interactivo -->
+    <div>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+            <div>
+                <h2 class="text-lg font-bold text-slate-900 dark:text-on-surface uppercase tracking-tight font-data-code flex items-center gap-2">
+                    <span class="material-symbols-outlined text-cyan-600 dark:text-cyan-400">view_cozy</span>
+                    Arquetipos de Tópicos Latentes (Click para Filtrar)
+                </h2>
+                <p class="text-xs text-slate-600 dark:text-outline">
+                    Haz clic en cualquiera de las tarjetas de tópico para filtrar interactivamente el corpus policial inferior.
+                </p>
+            </div>
+            <button type="button" 
+                    id="btn-reset-topic-filter"
+                    class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-surface-container border border-slate-300 dark:border-outline-variant text-slate-700 dark:text-slate-200 font-data-code text-xs font-bold hover:bg-slate-200 dark:hover:bg-surface-container-high transition-colors flex items-center gap-1.5 self-start sm:self-auto cursor-pointer shadow-sm">
+                <span class="material-symbols-outlined text-sm">restart_alt</span>
+                <span>Restablecer Filtro (Ver Todos)</span>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-4">
+            {% for tid, topic in topics.items() %}
+            <div class="topic-card p-4 sm:p-4.5 rounded-xl bg-white dark:bg-surface-container border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-cyan-500/70 dark:hover:border-cyan-400/70 transition-all cursor-pointer group"
+                 data-topic-id="{{ topic.id }}"
+                 style="--topic-accent: {{ topic.hex }};">
+                <div class="flex flex-col flex-1">
+                    <div class="flex items-center justify-between gap-2 mb-2.5">
+                        <span class="px-2 py-0.5 rounded text-[11px] font-bold font-data-code uppercase tracking-wider shrink-0" 
+                              style="background: {{ topic.hex }}20; color: {{ topic.hex }}; border: 1px solid {{ topic.hex }}50;">
+                            {{ topic.code if topic.code else 'TÓPICO #' ~ topic.id }}
+                        </span>
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400 font-data-code uppercase tracking-wider shrink-0">
+                            LDA · K=5
+                        </span>
+                    </div>
+
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-on-surface mb-1.5 leading-snug line-clamp-2 min-h-[40px] flex items-center group-hover:text-cyan-700 dark:group-hover:text-cyan-300 transition-colors">
+                        {{ topic.title }}
+                    </h3>
+
+                    <p class="text-xs text-slate-600 dark:text-slate-300 mb-3 leading-relaxed line-clamp-2 h-[36px]" title="{{ topic.desc }}">
+                        {{ topic.desc }}
+                    </p>
+                </div>
+
+                <div class="mt-auto">
+                    <span class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider font-data-code block mb-1">
+                        Términos Clave:
+                    </span>
+                    <div class="flex flex-wrap gap-1 mb-3 min-h-[46px] content-start">
+                        {% for word in topic.top_words[:5] %}
+                        <span class="px-2 py-0.5 rounded bg-slate-50 dark:bg-slate-800 text-[10px] font-data-code text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700/80">
+                            {{ word }}
+                        </span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-data-code">
+                        <span class="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider">Prevalencia:</span>
+                        {% set match_item = (topic_distribution | selectattr('topic_id', 'equalto', topic.id) | first) %}
+                        <span class="font-bold text-xs shrink-0" style="color: {{ topic.hex }};">
+                            {{ match_item.count if match_item else 0 }} docs ({{ match_item.pct if match_item else 0 }}%)
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Fila 4: Consola de Inferencia Semántica en Vivo (Full Width, 2 Columnas Balanceadas) -->
+    <div class="p-5 sm:p-6 rounded-xl bg-white dark:bg-surface-container border border-slate-200 dark:border-outline-variant/40 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-outline-variant/30">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-cyan-600 dark:text-cyan-400">psychology_alt</span>
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-on-surface uppercase tracking-wider font-data-code">
+                        Inferencia Semántica en Vivo // Proyector Dirichlet
+                    </h3>
+                    <p class="text-xs text-slate-600 dark:text-outline mt-0.5">
+                        Ingresa o selecciona el fragmento de un nuevo reporte criminalístico para proyectarlo sobre el simplex de Dirichlet y estimar su distribución temática.
+                    </p>
+                </div>
+            </div>
+            <span class="px-2.5 py-1 rounded bg-cyan-100 dark:bg-cyan-950/60 text-[10px] font-data-code text-cyan-800 dark:text-cyan-300 font-bold uppercase shrink-0">
+                MAP Inferencia Bayesiana
+            </span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <!-- Columna Izquierda: Entrada de Texto y Presets -->
+            <div class="flex flex-col space-y-3">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-data-code block mb-1.5">
+                        Presets Rápidos de Prueba (1 Clic):
+                    </span>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
+                        {% for preset in presets %}
+                        <button type="button" 
+                                class="btn-preset text-left p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900/80 hover:bg-cyan-50 dark:hover:bg-cyan-950/40 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-800 hover:border-cyan-400 text-xs font-data-code transition-all flex flex-col justify-between group cursor-pointer shadow-2xs h-[72px]"
+                                data-text="{{ preset.text }}">
+                            <div class="flex items-center justify-between w-full">
+                                <span class="text-[10px] font-bold text-cyan-700 dark:text-cyan-300">⚡ Preset #{{ loop.index }}</span>
+                                <span class="material-symbols-outlined text-xs text-slate-400 group-hover:text-cyan-600 dark:group-hover:text-cyan-400">north_east</span>
+                            </div>
+                            <span class="font-medium text-[11px] text-slate-700 dark:text-slate-300 group-hover:text-cyan-800 dark:group-hover:text-cyan-200 leading-tight line-clamp-2">
+                                {{ preset.label }}
+                            </span>
+                        </button>
+                        {% endfor %}
+                    </div>
+
+                    <textarea id="live-text-input" 
+                              class="w-full h-28 p-3 bg-slate-50 dark:bg-slate-900/70 text-xs text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 rounded-lg border border-slate-300 dark:border-slate-700 focus:border-cyan-500 focus:outline-none font-label-md resize-none shadow-inner"
+                              placeholder="{{ 'Ejemplo: Dos sujetos a bordo de una motocicleta amenazaron a una transeúnte con un arma de fuego en el segundo anillo para sustraerle el celular y la cartera...' if current_context == 'bolivia' else 'Example: Two armed suspects displayed a handgun on the sidewalk and demanded the victim backpack and wallet before fleeing...' }}"></textarea>
+                </div>
+
                 <button type="button" 
                         id="btn-classify-text" 
-                        class="w-full py-2.5 rounded bg-primary-container text-surface-container-lowest font-bold font-data-code text-xs uppercase tracking-wider hover:brightness-110 transition-all flex items-center justify-center gap-2 shadow-sm">
+                        class="w-full py-2.5 rounded-lg bg-cyan-600 dark:bg-cyan-500 text-white font-bold font-data-code text-xs uppercase tracking-wider hover:bg-cyan-700 dark:hover:bg-cyan-400 hover:text-slate-950 transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer">
                     <span class="material-symbols-outlined text-sm">send</span>
-                    <span>Proyectar Tópico & Clúster</span>
+                    <span>Proyectar Tópico & Vector Dirichlet</span>
                 </button>
+            </div>
 
-                <!-- Resultado de Inferencia -->
-                <div id="classification-result" class="hidden p-3 rounded bg-surface-container-high border border-primary-container/40 font-data-code text-xs space-y-1.5">
-                    <div class="flex justify-between items-center text-primary-container font-bold">
-                        <span id="res-cluster-title">CLUSTER ASIGNADO</span>
-                        <span id="res-confidence">94.2%</span>
+            <!-- Columna Derecha: Resultado de Inferencia Dirichlet / Estado Inicial -->
+            <div class="flex flex-col">
+                <!-- Estado Inicial (placeholder amigable antes de hacer inferencia) -->
+                <div id="classification-placeholder" class="min-h-[290px] p-5 rounded-xl border border-dashed border-slate-300 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-900/60 flex flex-col items-center justify-center text-center space-y-2.5">
+                    <div class="size-10 rounded-full bg-cyan-100 dark:bg-cyan-950/80 border border-cyan-400/50 flex items-center justify-center text-cyan-700 dark:text-cyan-400">
+                        <span class="material-symbols-outlined text-xl">psychology</span>
                     </div>
-                    <p id="res-description" class="text-on-surface-variant text-[11px] leading-tight"></p>
+                    <h4 class="text-xs font-bold uppercase font-data-code text-slate-800 dark:text-slate-200">
+                        Esperando Ingesta de Reporte
+                    </h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                        Haz clic en uno de los <strong>Presets Rápidos</strong> o escribe un fragmento criminalístico para estimar el vector Dirichlet posterior \( \theta \) y sus palabras dominantes.
+                    </p>
+                </div>
+
+                <!-- Contenedor de Resultado (visible tras inferencia) -->
+                <div id="classification-result" class="hidden min-h-[290px] p-4.5 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-cyan-500/50 font-data-code text-xs space-y-3.5 shadow-md animate-fadeIn flex flex-col justify-between">
+                    <div>
+                        <!-- Encabezado con Jerarquía Clara: Badge + Confianza en fila 1, Título Completo en fila 2 -->
+                        <div class="pb-3 border-b border-slate-200 dark:border-slate-800 space-y-2">
+                            <div class="flex items-center justify-between gap-2">
+                                <span id="res-badge" class="px-2.5 py-0.5 rounded text-[11px] font-bold uppercase inline-block"></span>
+                                <div class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-50 dark:bg-cyan-950/60 border border-cyan-400/40 text-cyan-800 dark:text-cyan-300 font-data-code text-xs font-semibold">
+                                    <span class="text-[10px] uppercase text-slate-500 dark:text-slate-400">Confianza:</span>
+                                    <span id="res-confidence" class="font-bold text-sm"></span>
+                                </div>
+                            </div>
+                            <h4 id="res-cluster-title" class="font-bold text-sm sm:text-base text-slate-900 dark:text-white leading-snug"></h4>
+                        </div>
+
+                        <p id="res-description" class="text-slate-600 dark:text-slate-300 text-xs leading-relaxed my-2.5 font-body-md"></p>
+
+                        <!-- Palabras Detectadas -->
+                        <div class="my-2">
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
+                                Términos Detectados en Texto:
+                            </span>
+                            <div id="res-keywords" class="flex flex-wrap gap-1 min-h-[26px]"></div>
+                        </div>
+                    </div>
+
+                    <!-- Vector de Probabilidades Dirichlet θ -->
+                    <div class="pt-3 border-t border-slate-200 dark:border-slate-800">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-500 dark:text-slate-400">Distribución Posterior θ:</span>
+                            <span class="text-cyan-700 dark:text-cyan-400 text-[10px] font-bold">P(z|w)</span>
+                        </div>
+                        <div id="res-probability-bars" class="space-y-2.5 text-xs"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fila 5: Explorador del Corpus Policial (Full Width) -->
+    <div class="p-5 sm:p-6 rounded-xl bg-white dark:bg-surface-container border border-slate-200 dark:border-outline-variant/40 shadow-sm space-y-4">
+        <!-- Barra de Búsqueda y Píldoras de Filtro -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-cyan-600 dark:text-cyan-400">dataset</span>
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-on-surface uppercase tracking-wider font-data-code">
+                        Corpus Etiquetado Automáticamente
+                    </h3>
+                    <p class="text-xs text-slate-600 dark:text-outline mt-0.5">
+                        Explorador de notas e incidentes clasificados en el espacio de tópicos LDA.
+                    </p>
+                </div>
+            </div>
+
+            <div class="relative w-full sm:w-72">
+                <span class="material-symbols-outlined absolute left-2.5 top-2 text-slate-400 text-base">search</span>
+                <input type="text" 
+                       id="input-search-table" 
+                       placeholder="Buscar por texto, ciudad o delito..." 
+                       class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 dark:bg-surface-container-high text-slate-900 dark:text-on-surface placeholder:text-slate-400 dark:placeholder:text-outline rounded-lg border border-slate-300 dark:border-outline-variant/40 focus:border-cyan-500 focus:outline-none font-data-code shadow-2xs">
+            </div>
+        </div>
+
+        <!-- Píldoras de Tópico para Filtro Rápido -->
+        <div class="flex flex-wrap items-center gap-1.5 pb-2 border-b border-slate-100 dark:border-outline-variant/30 text-xs font-data-code">
+            <span class="text-[11px] text-slate-500 dark:text-outline mr-1">Filtrar:</span>
+            <button type="button" 
+                    class="pill-filter px-3 py-1 rounded-md text-[11px] font-bold transition-all bg-cyan-600 text-white shadow-sm cursor-pointer"
+                    data-filter-tid="all">
+                Todos ({{ total_notes }})
+            </button>
+            {% for tid, topic in topics.items() %}
+            <button type="button" 
+                    class="pill-filter px-3 py-1 rounded-md text-[11px] font-medium transition-all bg-slate-100 dark:bg-surface-container-high text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white cursor-pointer"
+                    data-filter-tid="{{ topic.id }}"
+                    style="--pill-color: {{ topic.hex }};">
+                #{{ topic.id }}: {{ topic.short_title }}
+            </button>
+            {% endfor %}
+        </div>
+
+        <!-- Tabla Responsiva Full-Width -->
+        <div class="overflow-x-auto max-h-[460px] custom-scrollbar border border-slate-200 dark:border-outline-variant/30 rounded-lg">
+            <table class="w-full text-left font-label-md text-xs" id="table-corpus">
+                <thead class="bg-slate-100 dark:bg-surface-container-high text-slate-700 dark:text-outline text-[11px] uppercase tracking-wider font-data-code sticky top-0 z-10 border-b border-slate-200 dark:border-outline-variant/40">
+                    <tr>
+                        <th class="p-3">Título / Incidente</th>
+                        <th class="p-3">Ubicación</th>
+                        <th class="p-3">Tipología</th>
+                        <th class="p-3">Tópico LDA</th>
+                        <th class="p-3 text-right">Referencia</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-outline-variant/20 bg-white dark:bg-surface-container-lowest" id="tbody-corpus">
+                    {% for n in sample_notes %}
+                    <tr class="corpus-row hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors"
+                        data-topic="{{ n.tema_lda }}"
+                        data-title="{{ n.titulo | lower }}"
+                        data-city="{{ n.ciudad | lower }}"
+                        data-crime="{{ n.delito | lower }}">
+                        <td class="p-3 text-slate-900 dark:text-on-surface font-medium max-w-md truncate" title="{{ n.titulo }}">
+                            {{ n.titulo }}
+                        </td>
+                        <td class="p-3 text-slate-600 dark:text-outline whitespace-nowrap">{{ n.ciudad }}</td>
+                        <td class="p-3 text-slate-700 dark:text-on-surface-variant whitespace-nowrap">{{ n.delito }}</td>
+                        <td class="p-3 whitespace-nowrap">
+                            {% set top_info = topics.get(n.tema_lda, topics.get(0)) %}
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold font-data-code"
+                                  style="background: {{ top_info.hex }}20; color: {{ top_info.hex }}; border: 1px solid {{ top_info.hex }}40;">
+                                #{{ n.tema_lda }} {{ top_info.short_title }}
+                            </span>
+                        </td>
+                        <td class="p-3 text-right whitespace-nowrap">
+                            {% if n.url and n.url != '#' %}
+                            <a href="{{ n.url }}" target="_blank" rel="noopener noreferrer" 
+                               class="text-cyan-700 dark:text-cyan-400 hover:underline font-data-code text-[11px] font-semibold">
+                                Ver nota ↗
+                            </a>
+                            {% else %}
+                            <span class="text-slate-400 dark:text-outline font-data-code text-[11px]">RMS #{{ n.id }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Contador de Registros Visibles -->
+        <div class="pt-2 border-t border-slate-100 dark:border-outline-variant/30 flex items-center justify-between text-[11px] font-data-code text-slate-500 dark:text-outline">
+            <span id="label-table-count">Mostrando {{ sample_notes | length }} de {{ total_notes }} registros</span>
+            <span class="text-slate-600 dark:text-slate-400">Filtrado reactivo instantáneo</span>
+        </div>
+    </div>
+
+    <!-- Fila 5: Marco Teórico & Formulación Matemática Impecable -->
+    <div id="math-foundations-container" class="p-6 sm:p-7 rounded-xl bg-white dark:bg-surface-container border border-slate-200 dark:border-outline-variant/40 shadow-sm space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-outline-variant/30 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="size-9 rounded-lg bg-cyan-100 dark:bg-cyan-950/80 border border-cyan-400 dark:border-cyan-600 flex items-center justify-center text-cyan-800 dark:text-cyan-300 shadow-sm">
+                    <span class="material-symbols-outlined text-xl">functions</span>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 dark:text-on-surface uppercase tracking-wider font-data-code">
+                        Fundamentación Matemática // Modelo Generativo Latent Dirichlet Allocation (LDA)
+                    </h3>
+                    <p class="text-xs text-slate-600 dark:text-outline mt-0.5">
+                        Arquitectura bayesiana formal basada en distribuciones de Dirichlet conjugadas con multinomiales (Blei, Ng & Jordan).
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded bg-slate-100 dark:bg-surface-container-high border border-slate-300 dark:border-outline-variant font-data-code text-xs font-bold text-slate-800 dark:text-slate-200">
+                    V = 250 Features
+                </span>
+                <span class="px-2.5 py-1 rounded bg-cyan-100 dark:bg-cyan-950/60 border border-cyan-300 dark:border-cyan-800 font-data-code text-xs font-bold text-cyan-800 dark:text-cyan-300">
+                    K = 5 Tópicos
+                </span>
+            </div>
+        </div>
+
+        <!-- Diagrama Visual de Notación de Placa Bayesiana (Plate Notation) -->
+        <div class="p-4 sm:p-5 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider font-data-code text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-cyan-600 dark:text-cyan-400 text-sm">account_tree</span>
+                    Red Bayesiana de Dependencia Condicional (Plate Notation)
+                </span>
+                <span class="text-[11px] font-data-code text-slate-500 dark:text-slate-400">Modelo Gráfico Probabilístico</span>
+            </div>
+            
+            <!-- Contenedor con Scroll Horizontal Responsivo en Pantallas Móviles -->
+            <div class="w-full overflow-x-auto custom-scrollbar pb-3 pt-1">
+                <div class="min-w-[700px] flex items-center justify-between gap-3 font-data-code text-xs select-none px-1">
+                    <!-- Alpha Prior -->
+                    <div class="flex flex-col items-center p-3 rounded-lg bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 shadow-2xs shrink-0">
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wide">Prior Documento</span>
+                        <span class="text-base font-bold text-cyan-700 dark:text-cyan-300">\(\alpha = 0.20\)</span>
+                    </div>
+
+                    <!-- Flecha hacia Placa D -->
+                    <div class="flex items-center text-cyan-600 dark:text-cyan-400 shrink-0">
+                        <span class="material-symbols-outlined text-xl">arrow_forward</span>
+                    </div>
+
+                    <!-- Placa D: Documentos -->
+                    <div class="p-3.5 rounded-xl border-2 border-dashed border-cyan-500/50 bg-cyan-500/5 dark:bg-cyan-950/30 flex flex-col items-center gap-2.5 shrink-0">
+                        <span class="text-[10px] font-bold text-cyan-800 dark:text-cyan-300 uppercase tracking-widest">
+                            Placa D ({{ total_notes }} Documentos)
+                        </span>
+                        <div class="flex items-center gap-3">
+                            <!-- Theta -->
+                            <div class="flex flex-col items-center p-2 rounded-lg bg-white dark:bg-slate-800/90 border border-cyan-400/60 dark:border-cyan-500/50 shadow-2xs">
+                                <span class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Mezcla Latente</span>
+                                <span class="text-sm font-bold text-cyan-700 dark:text-cyan-300">\(\theta_d \sim \text{Dir}(\boldsymbol{\alpha})\)</span>
+                            </div>
+                            
+                            <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-sm">arrow_forward</span>
+                            
+                            <!-- Placa N: Palabras -->
+                            <div class="p-2.5 rounded-lg border border-dashed border-amber-500/60 bg-amber-500/10 dark:bg-amber-950/30 flex items-center gap-2.5">
+                                <div class="flex flex-col items-center">
+                                    <span class="text-[9px] text-amber-800 dark:text-amber-300 uppercase font-bold">Tópico Palabra</span>
+                                    <span class="text-xs font-bold text-amber-700 dark:text-amber-300">\(z_{d,n} \sim \text{Cat}(\theta_d)\)</span>
+                                </div>
+                                <span class="material-symbols-outlined text-amber-600 dark:text-amber-400 text-sm">arrow_forward</span>
+                                <div class="flex flex-col items-center px-2.5 py-1 rounded-md bg-amber-600 dark:bg-amber-500 text-white dark:text-slate-950 shadow-xs">
+                                    <span class="text-[9px] uppercase font-bold tracking-wider">Observada</span>
+                                    <span class="text-xs font-extrabold font-mono">\(w_{d,n}\)</span>
+                                </div>
+                                <span class="text-[10px] text-amber-800 dark:text-amber-300 font-bold font-mono ml-1">× N_d</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flecha hacia Placa D desde Placa K -->
+                    <div class="flex items-center text-purple-600 dark:text-purple-400 shrink-0">
+                        <span class="material-symbols-outlined text-xl">arrow_back</span>
+                    </div>
+
+                    <!-- Placa K: Tópicos y Vocabulario -->
+                    <div class="p-3.5 rounded-xl border-2 border-dashed border-purple-500/50 bg-purple-500/5 dark:bg-purple-950/30 flex flex-col items-center gap-2.5 shrink-0">
+                        <span class="text-[10px] font-bold text-purple-800 dark:text-purple-300 uppercase tracking-widest">
+                            Placa K (5 Tópicos)
+                        </span>
+                        <div class="flex items-center gap-3">
+                            <div class="flex flex-col items-center p-2 rounded-lg bg-white dark:bg-slate-800/90 border border-purple-400/60 dark:border-purple-500/50 shadow-2xs">
+                                <span class="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Distribución Léxica</span>
+                                <span class="text-sm font-bold text-purple-700 dark:text-purple-300">\(\boldsymbol{\phi}_k \sim \text{Dir}(\boldsymbol{\beta})\)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flecha hacia Placa K desde Beta -->
+                    <div class="flex items-center text-purple-600 dark:text-purple-400 shrink-0">
+                        <span class="material-symbols-outlined text-xl">arrow_back</span>
+                    </div>
+
+                    <!-- Beta Prior -->
+                    <div class="flex flex-col items-center p-3 rounded-lg bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 shadow-2xs shrink-0">
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wide">Prior Términos</span>
+                        <span class="text-base font-bold text-purple-700 dark:text-purple-300">\(\beta = 0.10\)</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Muestra de Artículos Etiquetados -->
-        <div class="lg:col-span-2 p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm">
-            <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider font-data-code mb-3 flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary-container">feed</span>
-                Corpus Policial Etiquetado Automáticamente
-            </h3>
+        <!-- Cuadrícula de 3 Ecuaciones con KaTeX y Respaldo Tipográfico -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 font-data-code">
+            <!-- Ecuación 1: Distribución Dirichlet del Documento -->
+            <div class="flex flex-col justify-between p-5 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-cyan-100 dark:bg-cyan-950/80 text-cyan-800 dark:text-cyan-300 border border-cyan-400/50">
+                            1. Prior Dirichlet
+                        </span>
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400">Simplex \(\Delta^{K-1}\)</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white leading-snug mb-2">
+                        Distribución Temática del Documento
+                    </h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 font-label-md leading-relaxed mb-3">
+                        Cada noticia o parte policial \(d\) se proyecta como una mezcla latente sobre \(K=5\) temas:
+                    </p>
 
-            <div class="overflow-x-auto max-h-[380px] custom-scrollbar">
-                <table class="w-full text-left font-label-md text-xs">
-                    <thead class="bg-surface-container-high text-outline text-[11px] uppercase tracking-wider font-data-code sticky top-0">
-                        <tr>
-                            <th class="p-2.5">Título del Hecho</th>
-                            <th class="p-2.5">Ciudad</th>
-                            <th class="p-2.5">Delito</th>
-                            <th class="p-2.5">Tópico LDA</th>
-                            <th class="p-2.5 text-right">Enlace</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-outline-variant/20">
-                        {% for n in sample_notes %}
-                        <tr class="hover:bg-surface-container-high/40 transition-colors">
-                            <td class="p-2.5 text-on-surface font-medium max-w-xs truncate" title="{{ n.titulo }}">
-                                {{ n.titulo }}
-                            </td>
-                            <td class="p-2.5 text-outline whitespace-nowrap">{{ n.ciudad }}</td>
-                            <td class="p-2.5 text-on-surface-variant whitespace-nowrap">{{ n.delito }}</td>
-                            <td class="p-2.5 whitespace-nowrap">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold font-data-code"
-                                      style="background: {{ topics[n.tema_lda].hex }}20; color: {{ topics[n.tema_lda].hex }};">
-                                    #{{ n.tema_lda }}
-                                </span>
-                            </td>
-                            <td class="p-2.5 text-right whitespace-nowrap">
-                                <a href="{{ n.url }}" target="_blank" rel="noopener noreferrer" 
-                                   class="text-primary-container hover:underline font-data-code text-[11px]">
-                                    Ver nota ↗
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                    <!-- Caja de Ecuación Renderizada -->
+                    <div class="p-3.5 rounded-lg bg-slate-900 dark:bg-slate-950 border border-cyan-500/40 text-center shadow-inner overflow-x-auto my-2 custom-scrollbar">
+                        <div class="text-cyan-200 dark:text-cyan-300 font-bold text-base sm:text-lg tracking-wide py-1">
+                            $$\theta_d \sim \text{Dirichlet}(\boldsymbol{\alpha})$$
+                        </div>
+                        <div class="text-slate-300 dark:text-slate-400 text-xs py-1">
+                            $$p(\theta_d \mid \boldsymbol{\alpha}) = \frac{\Gamma\left(\sum_{k=1}^K \alpha_k\right)}{\prod_{k=1}^K \Gamma(\alpha_k)} \prod_{k=1}^K \theta_{d,k}^{\alpha_k - 1}$$
+                        </div>
+                    </div>
+
+                    <!-- Definición Matemática Formal -->
+                    <div class="text-[11px] text-slate-700 dark:text-slate-300 pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                        <span class="text-slate-500 dark:text-slate-400 font-medium">Soporte Simplex:</span>
+                        <span class="font-semibold text-cyan-700 dark:text-cyan-300 font-mono">\(\theta_d \in \Delta^{K-1}, \; \sum_{k=1}^K \theta_{d,k} = 1\)</span>
+                    </div>
+                </div>
+
+                <div class="pt-2 text-[11px] text-slate-600 dark:text-slate-400 space-y-1.5 font-label-md border-t border-slate-200/60 dark:border-slate-800/60">
+                    <div class="flex items-start gap-1.5">
+                        <span class="font-bold text-cyan-700 dark:text-cyan-400 shrink-0">\(\boldsymbol{\theta}_d\):</span>
+                        <span>Vector de probabilidades que define la proporción de los 5 tópicos en el documento \(d\).</span>
+                    </div>
+                    <div class="flex items-start gap-1.5">
+                        <span class="font-bold text-cyan-700 dark:text-cyan-400 shrink-0">\(\alpha < 1\):</span>
+                        <span>Hiperparámetro (\(\alpha = 0.20\)) que concentra cada texto en un tema predominante (esparcidad).</span>
+                    </div>
+                </div>
             </div>
-        </div>
+
+            <!-- Ecuación 2: Proceso Multinomial de Palabras -->
+            <div class="flex flex-col justify-between p-5 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-400/50">
+                            2. Asignación Léxica
+                        </span>
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400">Categorical \(\text{Cat}(\cdot)\)</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white leading-snug mb-2">
+                        Muestreo Multinomial de Palabras
+                    </h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 font-label-md leading-relaxed mb-3">
+                        Para cada término observado \(w_{d,n}\), se muestrea su tópico \(z\) y su manifestación léxica:
+                    </p>
+
+                    <!-- Caja de Ecuación Renderizada -->
+                    <div class="p-3.5 rounded-lg bg-slate-900 dark:bg-slate-950 border border-amber-500/40 text-center shadow-inner overflow-x-auto my-2 custom-scrollbar">
+                        <div class="text-amber-200 dark:text-amber-300 font-bold text-base sm:text-lg tracking-wide py-1">
+                            $$z_{d,n} \sim \text{Cat}(\theta_d)$$
+                        </div>
+                        <div class="text-slate-300 dark:text-slate-400 text-xs py-1">
+                            $$w_{d,n} \mid z_{d,n}=k, \boldsymbol{\phi}_k \sim \text{Cat}(\boldsymbol{\phi}_k)$$
+                        </div>
+                    </div>
+
+                    <!-- Definición Matemática Formal -->
+                    <div class="text-[11px] text-slate-700 dark:text-slate-300 pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                        <span class="text-slate-500 dark:text-slate-400 font-medium">Verosimilitud Marginal:</span>
+                        <span class="font-semibold text-amber-700 dark:text-amber-300 font-mono">\(P(w \mid \theta) = \sum_{k=1}^K \theta_k \phi_{k,w}\)</span>
+                    </div>
+                </div>
+
+                <div class="pt-2 text-[11px] text-slate-600 dark:text-slate-400 space-y-1.5 font-label-md border-t border-slate-200/60 dark:border-slate-800/60">
+                    <div class="flex items-start gap-1.5">
+                        <span class="font-bold text-amber-700 dark:text-amber-400 shrink-0">\(z_{d,n}\):</span>
+                        <span>Variable latente discreta que conecta la palabra individual observada con uno de los tópicos.</span>
+                    </div>
+                    <div class="flex items-start gap-1.5">
+                        <span class="font-bold text-amber-700 dark:text-amber-400 shrink-0">\(\boldsymbol{\phi}_k\):</span>
+                        <span>Distribución léxica del tópico \(k\) sobre el vocabulario de 250 palabras (\(\beta=0.10\)).</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ecuación 3: Inferencia Variacional Online (ELBO) -->
+            <div class="flex flex-col justify-between p-5 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-purple-100 dark:bg-purple-950/80 text-purple-800 dark:text-purple-300 border border-purple-400/50">
+                            3. Inferencia ELBO
+                        </span>
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400">Variational Bayes</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white leading-snug mb-2">
+                        Optimización de la Cota Inferior (ELBO)
+                    </h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 font-label-md leading-relaxed mb-3">
+                        Maximización estocástica de la verosimilitud marginal aproximando la distribución posterior:
+                    </p>
+
+                    <!-- Caja de Ecuación Renderizada -->
+                    <div class="p-3.5 rounded-lg bg-slate-900 dark:bg-slate-950 border border-purple-500/40 text-center shadow-inner overflow-x-auto my-2 custom-scrollbar">
+                        <div class="text-purple-200 dark:text-purple-300 font-bold text-base sm:text-lg tracking-wide py-1">
+                            $$\log p(\mathbf{w}) \ge \text{ELBO}(q)$$
+                        </div>
+                        <div class="text-slate-300 dark:text-slate-400 text-xs py-1">
+                            $$\text{ELBO} = \mathbb{E}_q[\log p(\mathbf{w}, \mathbf{z}, \theta, \boldsymbol{\Phi})] - \mathbb{E}_q[\log q]$$
+                        </div>
+                    </div>
+
+                    <!-- Definición Matemática Formal -->
+                    <div class="text-[11px] text-slate-700 dark:text-slate-300 pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                        <span class="text-slate-500 dark:text-slate-400 font-medium">Regularización KL:</span>
+                        <span class="font-semibold text-purple-700 dark:text-purple-300 font-mono">\(D_{\text{KL}}(q(\theta) \parallel p(\theta \mid \alpha))\)</span>
+                    </div>
+                </div>
+
+                <div class="pt-2 text-[11px] text-slate-600 dark:text-slate-400 space-y-1.5 font-label-md border-t border-slate-200/60 dark:border-slate-800/60">
+                    <div class="flex items-start gap-1.5">
+                        <span class="font-bold text-purple-700 dark:text-purple-400 shrink-0">\(q(\cdot)\):</span>
+                        <span>Distribución variacional factorizada que aproxima analíticamente el posterior incomputable.</span>
+                    </div>
+                    <div class="flex items-start gap-1.5">
+                        <span class="font-bold text-purple-700 dark:text-purple-400 shrink-0">\(D_{\text{KL}}\):</span>
+                        <span>Divergencia de Kullback-Leibler que penaliza la distancia frente a los priors \(\alpha\) y \(\beta\).</span>
+                    </div>
+                </div>
+            </div>
+        </div>        </div>
     </div>
 </div>
 
 <script>
-document.getElementById('btn-classify-text').addEventListener('click', () => {
-    const text = document.getElementById('live-text-input').value.trim();
-    if (!text) return;
+document.addEventListener('DOMContentLoaded', () => {
+    const currentContext = "{{ current_context }}";
+    const tableRows = document.querySelectorAll('.corpus-row');
+    const tableBody = document.getElementById('tbody-corpus');
+    const countLabel = document.getElementById('label-table-count');
+    const searchInput = document.getElementById('input-search-table');
+    const pillButtons = document.querySelectorAll('.pill-filter');
+    const topicCards = document.querySelectorAll('.topic-card');
+    const resetTopicBtn = document.getElementById('btn-reset-topic-filter');
 
-    fetch('/api/v1/predict_nlp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: text })
-    })
-    .then(res => res.json())
-    .then(data => {
-        const box = document.getElementById('classification-result');
-        box.classList.remove('hidden');
-        document.getElementById('res-cluster-title').textContent = data.title;
-        document.getElementById('res-confidence').textContent = data.confidence;
-        document.getElementById('res-description').textContent = data.description;
-    })
-    .catch(err => console.error("Error en inferencia:", err));
+    let activeTopicFilter = 'all';
+
+    // Función de filtrado interactivo de la tabla
+    function filterTable() {
+        const query = searchInput.value.toLowerCase().trim();
+        let visibleCount = 0;
+
+        tableRows.forEach(row => {
+            const topic = row.getAttribute('data-topic');
+            const title = row.getAttribute('data-title') || '';
+            const city = row.getAttribute('data-city') || '';
+            const crime = row.getAttribute('data-crime') || '';
+
+            const matchesTopic = (activeTopicFilter === 'all') || (topic === String(activeTopicFilter));
+            const matchesSearch = !query || title.includes(query) || city.includes(query) || crime.includes(query);
+
+            if (matchesTopic && matchesSearch) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        if (countLabel) {
+            countLabel.textContent = `Mostrando ${visibleCount} de {{ total_notes }} registros`;
+        }
+    }
+
+    // Actualizar estilos activos de píldoras y tarjetas
+    function setActiveTopic(tid) {
+        activeTopicFilter = tid;
+
+        // Actualizar píldoras
+        pillButtons.forEach(btn => {
+            const btnTid = btn.getAttribute('data-filter-tid');
+            if (btnTid === String(tid)) {
+                btn.classList.add('bg-cyan-600', 'text-white', 'shadow-sm');
+                btn.classList.remove('bg-slate-100', 'dark:bg-surface-container-high', 'text-slate-700', 'dark:text-slate-300');
+            } else {
+                btn.classList.remove('bg-cyan-600', 'text-white', 'shadow-sm');
+                btn.classList.add('bg-slate-100', 'dark:bg-surface-container-high', 'text-slate-700', 'dark:text-slate-300');
+            }
+        });
+
+        // Actualizar tarjetas de tópico
+        topicCards.forEach(card => {
+            const cardTid = card.getAttribute('data-topic-id');
+            if (String(cardTid) === String(tid)) {
+                card.classList.add('ring-2', 'ring-cyan-500', 'border-transparent', 'bg-cyan-50/40', 'dark:bg-cyan-950/20');
+            } else {
+                card.classList.remove('ring-2', 'ring-cyan-500', 'border-transparent', 'bg-cyan-50/40', 'dark:bg-cyan-950/20');
+            }
+        });
+
+        filterTable();
+    }
+
+    // Listeners de píldoras
+    pillButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            setActiveTopic(btn.getAttribute('data-filter-tid'));
+        });
+    });
+
+    // Listeners de tarjetas de tópicos
+    topicCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const tid = card.getAttribute('data-topic-id');
+            if (activeTopicFilter === tid) {
+                setActiveTopic('all');
+            } else {
+                setActiveTopic(tid);
+            }
+        });
+    });
+
+    // Reset botón
+    if (resetTopicBtn) {
+        resetTopicBtn.addEventListener('click', () => {
+            setActiveTopic('all');
+            if (searchInput) {
+                searchInput.value = '';
+                filterTable();
+            }
+        });
+    }
+
+    // Buscador en tabla
+    if (searchInput) {
+        searchInput.addEventListener('input', filterTable);
+    }
+
+    // Presets rápidos de 1 clic
+    const presetButtons = document.querySelectorAll('.btn-preset');
+    const liveInput = document.getElementById('live-text-input');
+    const classifyBtn = document.getElementById('btn-classify-text');
+
+    presetButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const txt = btn.getAttribute('data-text');
+            if (liveInput) {
+                liveInput.value = txt;
+                executeInference();
+            }
+        });
+    });
+
+    // Clasificador Semántico en Vivo
+    if (classifyBtn) {
+        classifyBtn.addEventListener('click', executeInference);
+    }
+
+    function executeInference() {
+        if (!liveInput) return;
+        const text = liveInput.value.trim();
+        if (!text) return;
+
+        classifyBtn.disabled = true;
+        classifyBtn.classList.add('opacity-75');
+
+        fetch('/api/v1/predict_nlp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: text, ctx: currentContext })
+        })
+        .then(res => res.json())
+        .then(data => {
+            classifyBtn.disabled = false;
+            classifyBtn.classList.remove('opacity-75');
+
+            if (!data.success) {
+                alert(data.error || "Error en inferencia");
+                return;
+            }
+
+            const placeholder = document.getElementById('classification-placeholder');
+            if (placeholder) placeholder.classList.add('hidden');
+
+            const box = document.getElementById('classification-result');
+            box.classList.remove('hidden');
+
+            const titleEl = document.getElementById('res-cluster-title');
+            const confEl = document.getElementById('res-confidence');
+            const descEl = document.getElementById('res-description');
+            const badgeEl = document.getElementById('res-badge');
+            const kwContainer = document.getElementById('res-keywords');
+            const probBarsContainer = document.getElementById('res-probability-bars');
+
+            titleEl.textContent = data.title || data.cluster_title || 'Tópico Asignado';
+            confEl.textContent = data.confidence || '94.2%';
+            descEl.textContent = data.description || '';
+
+            if (badgeEl) {
+                badgeEl.textContent = data.code || `TOPIC #${data.topic_id}`;
+                badgeEl.style.background = (data.hex || '#00e5ff') + '25';
+                badgeEl.style.color = data.hex || '#00e5ff';
+                badgeEl.style.border = `1px solid ${data.hex || '#00e5ff'}60`;
+            }
+
+            // Chips de palabras detectadas
+            if (kwContainer) {
+                kwContainer.innerHTML = '';
+                const kws = data.matched_keywords || [];
+                if (kws.length === 0) {
+                    kwContainer.innerHTML = '<span class="text-[11px] text-slate-400 dark:text-outline font-data-code">Vocabulario genérico (Prior α)</span>';
+                } else {
+                    kws.forEach(kw => {
+                        const chip = document.createElement('span');
+                        chip.className = 'px-2 py-0.5 rounded text-[10px] font-data-code font-bold bg-white dark:bg-slate-800 border border-cyan-500/50 text-cyan-800 dark:text-cyan-300';
+                        chip.textContent = kw;
+                        kwContainer.appendChild(chip);
+                    });
+                }
+            }
+
+            // Barras de vector de probabilidades Dirichlet
+            if (probBarsContainer && data.probabilities) {
+                probBarsContainer.innerHTML = '';
+                data.probabilities.forEach(p => {
+                    const row = document.createElement('div');
+                    row.className = 'space-y-1';
+                    row.innerHTML = `
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-700 dark:text-slate-300 font-medium truncate max-w-[75%]" title="${p.short_title}">
+                                #${p.topic_id}: ${p.short_title}
+                            </span>
+                            <span class="font-bold shrink-0 font-data-code text-xs" style="color: ${p.hex};">${p.prob}%</span>
+                        </div>
+                        <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+                            <div class="h-full rounded-full transition-all duration-500" style="background: ${p.hex}; width: ${p.prob}%;"></div>
+                        </div>
+                    `;
+                    probBarsContainer.appendChild(row);
+                });
+            }
+        })
+        .catch(err => {
+            classifyBtn.disabled = false;
+            classifyBtn.classList.remove('opacity-75');
+            console.error("Error en inferencia:", err);
+        });
+    }
+
+    // Renderizado KaTeX Tipográfico Automático de Fórmulas
+    function renderMathFormulas() {
+        if (window.renderMathInElement) {
+            const mathContainer = document.getElementById('math-foundations-container') || document.body;
+            window.renderMathInElement(mathContainer, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ],
+                throwOnError: false
+            });
+        } else {
+            setTimeout(renderMathFormulas, 100);
+        }
+    }
+    renderMathFormulas();
 });
 </script>
 {% endblock %}
-

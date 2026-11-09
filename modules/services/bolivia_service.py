@@ -15,6 +15,8 @@ class BoliviaService:
         0: {
             "id": 0,
             "title": "Tópico #0: Agresiones Físicas, Riñas y Conflictos Nocturnos",
+            "short_title": "Agresiones Físicas & Riñas",
+            "code": "BO-LDA-00",
             "badge_color": "rose",
             "hex": "#ff3366",
             "top_words": ["agresión", "golpes", "heridos", "noche", "alcohol", "pelea", "víctima", "calle", "policía", "hospital"],
@@ -23,6 +25,8 @@ class BoliviaService:
         1: {
             "id": 1,
             "title": "Tópico #1: Litigios Judiciales, Delitos Financieros y Estafas",
+            "short_title": "Litigios & Estafas",
+            "code": "BO-LDA-01",
             "badge_color": "purple",
             "hex": "#9d4edd",
             "top_words": ["estafa", "dinero", "denuncia", "fiscalía", "banco", "víctimas", "justicia", "aprehensión", "contrato", "documentos"],
@@ -31,6 +35,8 @@ class BoliviaService:
         2: {
             "id": 2,
             "title": "Tópico #2: Narcotráfico, Sustancias Controladas e Incautaciones",
+            "short_title": "Narcotráfico & FELCN",
+            "code": "BO-LDA-02",
             "badge_color": "emerald",
             "hex": "#34d399",
             "top_words": ["droga", "cocaína", "felcn", "marihuana", "vehículo", "operativo", "frontera", "aprehendido", "sustancia", "paquetes"],
@@ -39,6 +45,8 @@ class BoliviaService:
         3: {
             "id": 3,
             "title": "Tópico #3: Atracos a Mano Armada y Modus Operandi 'Motochorros'",
+            "short_title": "Atracos 'Motochorros'",
+            "code": "BO-LDA-03",
             "badge_color": "amber",
             "hex": "#fbbf24",
             "top_words": ["arma", "moto", "disparo", "asalto", "celular", "encapuchados", "bolso", "cámara", "anillo", "fuga"],
@@ -47,6 +55,8 @@ class BoliviaService:
         4: {
             "id": 4,
             "title": "Tópico #4: Hurtos en Comercio, Descuidismo y Desarticulación",
+            "short_title": "Hurtos & Descuidistas",
+            "code": "BO-LDA-04",
             "badge_color": "cyan",
             "hex": "#00e5ff",
             "top_words": ["hurto", "mercado", "descuidistas", "tienda", "seguridad", "cámaras", "mochila", "feria", "pardo", "aprehendidos"],

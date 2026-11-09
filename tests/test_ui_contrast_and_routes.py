@@ -41,6 +41,7 @@ def test_routes_status_chicago(client):
         '/',
         '/globo-3d',
         '/reduccion-espacios',
+        '/nlp-topicos',
         '/anomalias-probabilistico',
         '/jerarquico-densidad',
         '/kmeans-nlp'

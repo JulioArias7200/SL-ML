@@ -6,6 +6,7 @@ from modules.services.webgis_service import WebGISService
 from modules.services.reduction_service import ReductionService
 from modules.services.bolivia_service import BoliviaService
 from modules.services.chicago_service import ChicagoService
+from modules.services.nlp_topics_service import NLPTopicsService
 
 api_bp = Blueprint('api_bp', __name__, url_prefix='/api/v1')
 
@@ -66,7 +67,14 @@ def predict_nlp():
     if not text:
         return jsonify({"success": False, "error": "El texto del reporte no puede estar vacío."}), 400
     
-    result = KMeansNLPService.predict_nlp(text)
+    algo = data.get('algo', 'lda').lower()
+    ctx = data.get('ctx', request.args.get('ctx'))
+
+    if algo == 'kmeans':
+        result = KMeansNLPService.predict_nlp(text)
+    else:
+        result = NLPTopicsService.predict_topic_lda(text, ctx=ctx)
+
     return jsonify(result)
 
 @api_bp.route('/spatial_filter', methods=['GET'])

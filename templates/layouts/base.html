@@ -77,25 +77,30 @@
 
     <!-- Estilos Tácticos & Modo Noche -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=4.3.0">
+
+    <!-- KaTeX para Renderizado Matemático Tipográfico Impecable -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
     {% block extra_head %}{% endblock %}
 </head>
 
-<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-surface-container-lowest custom-scrollbar">
+<body class="bg-background text-on-surface font-body-md antialiased h-screen overflow-hidden flex flex-col selection:bg-primary-container selection:text-surface-container-lowest">
 
     <!-- Drawer Off-canvas para Móvil y Tabletas (< 1024px) -->
     {% include 'components/sidebar_mobile_drawer.html' %}
 
-    <div class="flex min-h-screen w-full bg-surface-container-lowest">
+    <div class="flex h-screen w-full overflow-hidden bg-surface-container-lowest">
         <!-- Sidebar Fijo para Desktop (>= 1024px) -->
         {% include 'components/sidebar_desktop.html' %}
 
         <!-- Columna de Contenido Principal -->
-        <div class="flex flex-col flex-1 min-w-0 overflow-y-auto custom-scrollbar">
-            <!-- Header Táctico Superior -->
+        <div class="flex flex-col flex-1 min-w-0 h-screen overflow-hidden">
+            <!-- Header Táctico Superior Fijo -->
             {% include 'components/header_nav.html' %}
 
-            <!-- Área de Vistas Dinámicas -->
-            <main class="flex-1 w-full">
+            <!-- Área de Vistas Dinámicas (Contenedor Scrollable Independiente) -->
+            <main class="flex-1 w-full overflow-y-auto custom-scrollbar relative">
                 {% block content %}{% endblock %}
             </main>
         </div>
@@ -104,6 +109,28 @@
     <!-- Scripts de Control Globales -->
     <script src="{{ url_for('static', filename='js/theme_controller.js') }}"></script>
     <script src="{{ url_for('static', filename='js/responsive_drawer.js') }}"></script>
+
+    <!-- Renderizado KaTeX Global Automático -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            function renderAllKaTeX() {
+                if (window.renderMathInElement) {
+                    window.renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false},
+                            {left: '\\(', right: '\\)', display: false},
+                            {left: '\\[', right: '\\]', display: true}
+                        ],
+                        throwOnError: false
+                    });
+                } else {
+                    setTimeout(renderAllKaTeX, 120);
+                }
+            }
+            renderAllKaTeX();
+        });
+    </script>
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>

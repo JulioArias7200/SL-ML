@@ -33,6 +33,60 @@ class ChicagoService:
         10: {"k": 10, "wss": 117.8, "sil": 0.395, "dbi": 1.04, "var_exp": "89.8%", "desc": "Sobreajuste ruidoso"}
     }
 
+    # 5 Tópicos Latentes de Dirichlet (LDA) descubiertos en los incidentes CPD de Chicago
+    LDA_TOPICS = {
+        0: {
+            "id": 0,
+            "title": "Tópico #0: Retail Shoplifting & Commercial Property Theft",
+            "short_title": "Hurto Comercial / Retail",
+            "code": "CHI-LDA-00",
+            "badge_color": "cyan",
+            "hex": "#00e5ff",
+            "top_words": ["theft", "store", "retail", "merchandise", "backpack", "register", "security", "unpaid", "cash", "display"],
+            "desc": "Sustracción no violenta de bienes en centros comerciales, supermercados y farmacias sin uso de armas."
+        },
+        1: {
+            "id": 1,
+            "title": "Tópico #1: Motor Vehicle Theft & Street Property Damage",
+            "short_title": "Robo Vehicular & Daño",
+            "code": "CHI-LDA-01",
+            "badge_color": "purple",
+            "hex": "#9d4edd",
+            "top_words": ["vehicle", "automobile", "damage", "street", "window", "smashed", "catalytic", "parked", "stolen", "overnight"],
+            "desc": "Sustracción y vandalismo de automóviles estacionados en vía pública, rotura de cristales y robo de autopartes."
+        },
+        2: {
+            "id": 2,
+            "title": "Tópico #2: Weapons Violations, Armed Robbery & Burglary",
+            "short_title": "Robo a Mano Armada & Armas",
+            "code": "CHI-LDA-02",
+            "badge_color": "rose",
+            "hex": "#ff3366",
+            "top_words": ["weapons", "handgun", "firearm", "armed", "robbery", "entry", "unlawful", "display", "sidewalk", "suspect"],
+            "desc": "Atracos en vía pública con armas cortas, infracción de porte ilícito de fuego y allanamientos forzados."
+        },
+        3: {
+            "id": 3,
+            "title": "Tópico #3: Deceptive Practice, Financial Fraud & Cyber-Scams",
+            "short_title": "Fraude Financiero & Engaño",
+            "code": "CHI-LDA-03",
+            "badge_color": "emerald",
+            "hex": "#34d399",
+            "top_words": ["deceptive", "practice", "fraud", "counterfeit", "financial", "forged", "building", "cta", "identity", "unauthorized"],
+            "desc": "Fraudes con tarjetas de crédito, cheques falsificados, usurpación de identidad y engaño comercial corporativo."
+        },
+        4: {
+            "id": 4,
+            "title": "Tópico #4: Domestic Battery, Physical Assault & Altercations",
+            "short_title": "Violencia Intrafamiliar & Asalto",
+            "code": "CHI-LDA-04",
+            "badge_color": "amber",
+            "hex": "#fbbf24",
+            "top_words": ["battery", "domestic", "assault", "physical", "apartment", "residence", "injuries", "victim", "argument", "escalated"],
+            "desc": "Agresiones físicas y conflagraciones intrafamiliares en domicilios residenciales y edificios de apartamentos."
+        }
+    }
+
     @classmethod
     def get_dashboard_summary(cls):
         return {
@@ -241,3 +295,19 @@ class ChicagoService:
         import os
         base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
         return os.path.join(base_dir, 'data', 'chicago_benchmark', 'silver', 'chicago_crimes_curated.parquet')
+
+    @classmethod
+    def get_nlp_data(cls):
+        """Retorna la muestra representativa de 250 incidentes policiales con tópico LDA precomputado."""
+        import os
+        import json
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        json_path = os.path.join(base_dir, 'data', 'chicago_benchmark', 'gold', 'reduction_embeddings_chicago.json')
+        if os.path.exists(json_path):
+            try:
+                with open(json_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    return data.get('points', [])
+            except Exception as e:
+                print(f"[ERROR ChicagoService.get_nlp_data] {e}")
+        return []
