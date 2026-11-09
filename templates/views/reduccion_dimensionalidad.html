@@ -50,15 +50,80 @@
         </div>
     </div>
 
-    <!-- Fila 1: Panel Teórico / Matemático del Algoritmo Seleccionado -->
+    <!-- Fila 1: Gráfico Interactivo de Dispersión 2D (Visualización Principal) -->
+    <div class="p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/20 mb-3 gap-3">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container">bubble_chart</span>
+                <h2 class="text-sm sm:text-base font-bold text-on-surface uppercase tracking-wider font-data-code">
+                    Plano Bidimensional Proyectado: {{ current_algo.upper() }}
+                </h2>
+            </div>
+            
+            <!-- Selector de Segmentación y Coloreado Táctico -->
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-outline font-data-code uppercase font-bold tracking-wider">Colorear por:</span>
+                <div class="segmented-control inline-flex rounded-lg bg-surface-container-high p-0.5 border border-outline-variant/40 font-data-code text-xs">
+                    <button type="button" 
+                            id="btn-color-ward" 
+                            class="color-mode-btn px-2.5 py-1 rounded transition-all active bg-primary-container text-surface-container-lowest font-bold" 
+                            data-mode="ward" 
+                            title="Colorear por Macro-Clusters del Dendrograma Jerárquico (Ward k=3)">
+                        <span>Ward (Dendrograma)</span>
+                    </button>
+                    <button type="button" 
+                            id="btn-color-category" 
+                            class="color-mode-btn px-2.5 py-1 rounded transition-all text-on-surface-variant hover:text-on-surface" 
+                            data-mode="category" 
+                            title="Colorear por tipología penal reportada">
+                        <span>Delito</span>
+                    </button>
+                    <button type="button" 
+                            id="btn-color-topic" 
+                            class="color-mode-btn px-2.5 py-1 rounded transition-all text-on-surface-variant hover:text-on-surface" 
+                            data-mode="topic" 
+                            title="Colorear por Tópicos Semánticos LDA (k=5)">
+                        <span>Tópico LDA</span>
+                    </button>
+                    <button type="button" 
+                            id="btn-color-anomaly" 
+                            class="color-mode-btn px-2.5 py-1 rounded transition-all text-on-surface-variant hover:text-on-surface" 
+                            data-mode="anomaly" 
+                            title="Colorear por Anomalía Autoencoder (MSE de Reconstrucción)">
+                        <span>Autoencoder</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Micro-Barra Táctica Informativa de Validación -->
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded bg-surface-container-lowest border border-outline-variant/30 text-[11px] font-data-code mb-3">
+            <span id="info-mode-badge" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/40 uppercase">
+                WARD DENDROGRAMA
+            </span>
+            <span id="info-mode-desc" class="text-on-surface-variant">
+                {% if current_context == 'chicago' %}
+                Validación de Conglomerados Jerárquicos: Evaluación de separabilidad en espacio latente {{ current_algo.upper() }} entre Macro A (The Loop / Comercial), Macro B (Sector Oeste / Violencia) y Macro C (Periferias Residenciales).
+                {% else %}
+                Validación de Conglomerados Jerárquicos: Evaluación de separabilidad en espacio latente {{ current_algo.upper() }} entre Macro 1 (Patrimonial), Macro 2 (Violencia) y Macro 3 (Conflictos y Crimen).
+                {% endif %}
+            </span>
+        </div>
+
+        <!-- Contenedor Plotly -->
+        <div id="plot-reduction" class="w-full h-[550px]"></div>
+    </div>
+
+    <!-- Fila 2: Fundamentación Teórica / Matemática & Métricas de Proyección -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Panel Teórico / Matemático del Algoritmo Seleccionado -->
         <div class="lg:col-span-2 p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm flex flex-col justify-between">
             <div>
                 <div class="flex items-center justify-between pb-2 mb-3 border-b border-outline-variant/20">
-                    <h2 class="text-base font-bold text-on-surface flex items-center gap-2">
+                    <h3 class="text-base font-bold text-on-surface flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary-container">psychology</span>
                         {{ data.meta.name }}
-                    </h2>
+                    </h3>
                     <span class="px-2 py-0.5 rounded bg-surface-container-high text-[11px] font-data-code text-primary-container border border-primary-container/30">
                         {{ data.meta.type }}
                     </span>
@@ -132,73 +197,9 @@
             </div>
 
             <div class="pt-3 text-[11px] text-outline text-right">
-                Total Documentos: <span class="text-on-surface font-bold">{{ data.series|length }} notas</span>
+                Total Registros: <span class="text-on-surface font-bold font-mono">{{ data.series|length }} {{ 'incidentes (RMS)' if current_context == 'chicago' else 'notas policiales' }}</span>
             </div>
         </div>
-    </div>
-
-    <!-- Fila 2: Gráfico Interactivo de Dispersión 2D -->
-    <div class="p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/20 mb-3 gap-3">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary-container">bubble_chart</span>
-                <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider font-data-code">
-                    Plano Bidimensional Proyectado: {{ current_algo.upper() }}
-                </h3>
-            </div>
-            
-            <!-- Selector de Segmentación y Coloreado Táctico -->
-            <div class="flex items-center gap-2">
-                <span class="text-xs text-outline font-data-code uppercase font-bold tracking-wider">Colorear por:</span>
-                <div class="segmented-control inline-flex rounded-lg bg-surface-container-high p-0.5 border border-outline-variant/40 font-data-code text-xs">
-                    <button type="button" 
-                            id="btn-color-ward" 
-                            class="color-mode-btn px-2.5 py-1 rounded transition-all active bg-primary-container text-surface-container-lowest font-bold" 
-                            data-mode="ward" 
-                            title="Colorear por Macro-Clusters del Dendrograma Jerárquico (Ward k=3)">
-                        <span>Ward (Dendrograma)</span>
-                    </button>
-                    <button type="button" 
-                            id="btn-color-category" 
-                            class="color-mode-btn px-2.5 py-1 rounded transition-all text-on-surface-variant hover:text-on-surface" 
-                            data-mode="category" 
-                            title="Colorear por tipología penal reportada">
-                        <span>Delito</span>
-                    </button>
-                    <button type="button" 
-                            id="btn-color-topic" 
-                            class="color-mode-btn px-2.5 py-1 rounded transition-all text-on-surface-variant hover:text-on-surface" 
-                            data-mode="topic" 
-                            title="Colorear por Tópicos Semánticos LDA (k=5)">
-                        <span>Tópico LDA</span>
-                    </button>
-                    <button type="button" 
-                            id="btn-color-anomaly" 
-                            class="color-mode-btn px-2.5 py-1 rounded transition-all text-on-surface-variant hover:text-on-surface" 
-                            data-mode="anomaly" 
-                            title="Colorear por Anomalía Autoencoder (MSE de Reconstrucción)">
-                        <span>Autoencoder</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Micro-Barra Táctica Informativa de Validación -->
-        <div class="flex items-center gap-2 px-3 py-1.5 rounded bg-surface-container-lowest border border-outline-variant/30 text-[11px] font-data-code mb-3">
-            <span id="info-mode-badge" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40 uppercase">
-                WARD DENDROGRAMA
-            </span>
-            <span id="info-mode-desc" class="text-on-surface-variant">
-                {% if current_context == 'chicago' %}
-                Validación de Conglomerados Jerárquicos: Evaluación de separabilidad en espacio latente {{ current_algo.upper() }} entre Macro A (The Loop / Comercial), Macro B (Sector Oeste / Violencia) y Macro C (Periferias Residenciales).
-                {% else %}
-                Validación de Conglomerados Jerárquicos: Evaluación de separabilidad en espacio latente {{ current_algo.upper() }} entre Macro 1 (Patrimonial), Macro 2 (Violencia) y Macro 3 (Conflictos y Crimen).
-                {% endif %}
-            </span>
-        </div>
-
-        <!-- Contenedor Plotly -->
-        <div id="plot-reduction" class="w-full h-[520px]"></div>
     </div>
 </div>
 
