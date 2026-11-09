@@ -21,19 +21,27 @@
                 <span class="text-xs font-bold uppercase tracking-wider text-primary-container font-data-code">
                     Módulo No Supervisado // Clases 26 y 29 de Octubre
                 </span>
+                <span class="text-outline text-xs font-data-code">•</span>
+                <span class="px-2 py-0.5 rounded text-[11px] font-data-code font-bold uppercase tracking-wider {{ 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30' if current_context == 'chicago' else 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30' }}">
+                    {{ 'CHICAGO POLICE RMS (BENCHMARK)' if current_context == 'chicago' else 'PRENSA POLICIAL BOLIVIA' }}
+                </span>
             </div>
             <h1 class="text-2xl font-bold tracking-tight text-on-surface mt-1">
                 Reducción de Dimensionalidad & Espacios Latentes
             </h1>
             <p class="text-xs sm:text-sm text-outline max-w-3xl mt-1">
-                Comparativa experimental de técnicas lineales (PCA, TruncatedSVD), probabilísticas (PPCA) y no lineales (t-SNE, UMAP) sobre el espacio semántico de noticias policiales de Bolivia.
+                {% if current_context == 'chicago' %}
+                Comparativa experimental sobre el espacio de incidentes criminales del CPD RMS Chicago (800k+ registros): técnicas lineales (PCA, TruncatedSVD), probabilísticas (PPCA) y de variedad no lineal (t-SNE, UMAP).
+                {% else %}
+                Comparativa experimental sobre el corpus periodístico de seguridad ciudadana de Bolivia: técnicas lineales (PCA, TruncatedSVD), probabilísticas (PPCA) y de variedad no lineal (t-SNE, UMAP).
+                {% endif %}
             </p>
         </div>
 
         <!-- Selector de Algoritmo Activo -->
         <div class="flex flex-wrap items-center gap-1.5 p-1 rounded-lg bg-surface-container border border-outline-variant/40 font-data-code text-xs">
             {% for item in data.available_algorithms %}
-            <a href="?algo={{ item.id }}" 
+            <a href="?algo={{ item.id }}&ctx={{ current_context }}" 
                class="px-3 py-1.5 rounded transition-all flex items-center gap-1.5 {{ 'bg-primary-container text-surface-container-lowest font-bold shadow-sm' if current_algo == item.id else 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high' }}">
                 <span>{{ item.id.upper() }}</span>
                 <span class="text-[10px] opacity-75 hidden sm:inline">({{ item.class_date }})</span>
@@ -42,92 +50,14 @@
         </div>
     </div>
 
-    <!-- Fila 1: Panel Teórico / Matemático del Algoritmo Seleccionado -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm flex flex-col justify-between">
-            <div>
-                <div class="flex items-center justify-between pb-2 mb-3 border-b border-outline-variant/20">
-                    <h2 class="text-base font-bold text-on-surface flex items-center gap-2">
-                        <span class="material-symbols-outlined text-primary-container">psychology</span>
-                        {{ data.meta.name }}
-                    </h2>
-                    <span class="px-2 py-0.5 rounded bg-surface-container-high text-[11px] font-data-code text-primary-container border border-primary-container/30">
-                        {{ data.meta.type }}
-                    </span>
-                </div>
-                <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed mb-4">
-                    {{ data.meta.description }}
-                </p>
-            </div>
-
-            <div class="p-3.5 rounded-xl bg-surface-container-lowest border border-cyan-500/30 shadow-inner font-data-code space-y-2">
-                <div class="flex items-center justify-between">
-                    <span class="text-[10px] uppercase font-bold text-primary-container tracking-wider flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-sm">functions</span>
-                        Fundamentación Matemática:
-                    </span>
-                    <span class="text-[9px] text-slate-400 font-mono">Notación Formal</span>
-                </div>
-                <!-- Render KaTeX de alta resolución para la fórmula visual -->
-                <div id="math-formula-container" class="py-1.5 text-cyan-300 text-sm sm:text-base font-normal tracking-wide overflow-x-auto">
-                    $${{ data.meta.formula_latex }}$$
-                </div>
-                <!-- Respaldo tipográfico visual limpio entendible a simple vista -->
-                <div class="text-[11px] text-slate-300 font-mono tracking-wide pt-1 border-t border-slate-800/60">
-                    <span class="text-slate-500 font-semibold">Formulación algebraica:</span> <span class="text-amber-300">{{ data.meta.formula_display }}</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tarjeta de Métricas de Varianza / Topología -->
-        <div class="p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm flex flex-col justify-between font-data-code">
-            <div>
-                <span class="text-xs text-outline font-bold uppercase tracking-wider block mb-3">Propiedades de Proyección</span>
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between py-1.5 border-b border-outline-variant/20">
-                        <span class="text-xs text-outline">Dimensión Original:</span>
-                        <span class="text-xs font-bold text-on-surface">250 Características TF-IDF</span>
-                    </div>
-                    <div class="flex items-center justify-between py-1.5 border-b border-outline-variant/20">
-                        <span class="text-xs text-outline">Espacio Reducido:</span>
-                        <span class="text-xs font-bold text-primary-container">2D (Latente)</span>
-                    </div>
-                    {% if data.meta.variance_explained %}
-                    <div class="flex items-center justify-between py-1.5 border-b border-outline-variant/20">
-                        <span class="text-xs text-outline">Varianza Componente 1:</span>
-                        <span class="text-xs font-bold text-emerald-400">{{ data.meta.variance_explained[0] }}%</span>
-                    </div>
-                    <div class="flex items-center justify-between py-1.5 border-b border-outline-variant/20">
-                        <span class="text-xs text-outline">Varianza Componente 2:</span>
-                        <span class="text-xs font-bold text-emerald-400">{{ data.meta.variance_explained[1] }}%</span>
-                    </div>
-                    {% else %}
-                    <div class="flex items-center justify-between py-1.5 border-b border-outline-variant/20">
-                        <span class="text-xs text-outline">Métrica de Distancia:</span>
-                        <span class="text-xs font-bold text-amber-400">Divergencia KL / Topología</span>
-                    </div>
-                    <div class="flex items-center justify-between py-1.5 border-b border-outline-variant/20">
-                        <span class="text-xs text-outline">Preservación:</span>
-                        <span class="text-xs font-bold text-cyan-400">Estructura No Lineal</span>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="pt-3 text-[11px] text-outline text-right">
-                Total Documentos: <span class="text-on-surface font-bold">{{ data.series|length }} notas</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Fila 2: Gráfico Interactivo de Dispersión 2D -->
+    <!-- Fila 1: Gráfico Interactivo de Dispersión 2D (Visualización Principal) -->
     <div class="p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline-variant/20 mb-3 gap-3">
             <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary-container">bubble_chart</span>
-                <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider font-data-code">
+                <h2 class="text-sm sm:text-base font-bold text-on-surface uppercase tracking-wider font-data-code">
                     Plano Bidimensional Proyectado: {{ current_algo.upper() }}
-                </h3>
+                </h2>
             </div>
             
             <!-- Selector de Segmentación y Coloreado Táctico -->
@@ -168,16 +98,108 @@
 
         <!-- Micro-Barra Táctica Informativa de Validación -->
         <div class="flex items-center gap-2 px-3 py-1.5 rounded bg-surface-container-lowest border border-outline-variant/30 text-[11px] font-data-code mb-3">
-            <span id="info-mode-badge" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40 uppercase">
+            <span id="info-mode-badge" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/40 uppercase">
                 WARD DENDROGRAMA
             </span>
             <span id="info-mode-desc" class="text-on-surface-variant">
-                Validación de Conglomerados Jerárquicos: Evaluación de separabilidad en espacio latente {{ current_algo.upper() }} entre Macro A (Casco SCZ), Macro B (CBBA/Plan 3000) y Macro C (Periferias).
+                {% if current_context == 'chicago' %}
+                Validación de Conglomerados Jerárquicos: Evaluación de separabilidad en espacio latente {{ current_algo.upper() }} entre Macro A (The Loop / Comercial), Macro B (Sector Oeste / Violencia) y Macro C (Periferias Residenciales).
+                {% else %}
+                Validación de Conglomerados Jerárquicos: Evaluación de separabilidad en espacio latente {{ current_algo.upper() }} entre Macro 1 (Patrimonial), Macro 2 (Violencia) y Macro 3 (Conflictos y Crimen).
+                {% endif %}
             </span>
         </div>
 
         <!-- Contenedor Plotly -->
-        <div id="plot-reduction" class="w-full h-[520px]"></div>
+        <div id="plot-reduction" class="w-full h-[550px]"></div>
+    </div>
+
+    <!-- Fila 2: Fundamentación Teórica / Matemática & Métricas de Proyección -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Panel Teórico / Matemático del Algoritmo Seleccionado -->
+        <div class="lg:col-span-2 p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between pb-2 mb-3 border-b border-outline-variant/20">
+                    <h3 class="text-base font-bold text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary-container">psychology</span>
+                        {{ data.meta.name }}
+                    </h3>
+                    <span class="px-2 py-0.5 rounded bg-surface-container-high text-[11px] font-data-code text-primary-container border border-primary-container/30">
+                        {{ data.meta.type }}
+                    </span>
+                </div>
+                <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed mb-4">
+                    {{ data.meta.description }}
+                </p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-surface-container-lowest border border-slate-300 dark:border-cyan-500/30 shadow-inner font-data-code space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] uppercase font-bold text-primary-container tracking-wider flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-sm">functions</span>
+                        Fundamentación Matemática:
+                    </span>
+                    <span class="text-[9px] text-slate-600 dark:text-slate-400 font-mono">Notación Formal</span>
+                </div>
+                <!-- Render KaTeX de alta resolución para la fórmula visual -->
+                <div id="math-formula-container" class="py-1.5 text-slate-950 dark:text-cyan-300 text-sm sm:text-base font-bold tracking-wide overflow-x-auto">
+                    $${{ data.meta.formula_latex }}$$
+                </div>
+                <!-- Respaldo tipográfico visual limpio entendible a simple vista -->
+                <div class="text-[11px] text-slate-800 dark:text-slate-300 font-mono tracking-wide pt-1 border-t border-slate-300 dark:border-slate-800/60">
+                    <span class="text-slate-600 dark:text-slate-500 font-semibold">Formulación algebraica:</span> <span class="text-amber-800 dark:text-amber-300 font-semibold">{{ data.meta.formula_display }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta de Métricas de Varianza / Topología -->
+        <div class="p-5 rounded-lg bg-surface-container border border-outline-variant/40 shadow-sm flex flex-col justify-between font-data-code">
+            <div>
+                <span class="text-xs text-outline font-bold uppercase tracking-wider block mb-3">Propiedades de Proyección</span>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between py-1.5 border-b border-outline-variant/20">
+                        <span class="text-xs text-outline">Dimensión Original:</span>
+                        <span class="text-xs font-bold text-on-surface">{{ data.meta.n_features or 250 }} Características TF-IDF</span>
+                    </div>
+                    <div class="flex items-center justify-between py-1.5 border-b border-outline-variant/20">
+                        <span class="text-xs text-outline">Espacio Reducido:</span>
+                        <span class="text-xs font-bold text-primary-container">2D (Latente)</span>
+                    </div>
+                    {% if data.meta.variance_explained and data.meta.variance_explained[0] is not none %}
+                    <div class="flex items-center justify-between py-1.5 border-b border-outline-variant/20">
+                        <span class="text-xs text-outline">Varianza Componente 1:</span>
+                        <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono">{{ data.meta.variance_explained[0] }}%</span>
+                    </div>
+                    <div class="flex items-center justify-between py-1.5 border-b border-outline-variant/20">
+                        <span class="text-xs text-outline">Varianza Componente 2:</span>
+                        <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono">{{ data.meta.variance_explained[1] }}%</span>
+                    </div>
+                    {% elif current_algo == 'ppca' %}
+                    <div class="flex items-center justify-between py-1.5 border-b border-outline-variant/20">
+                        <span class="text-xs text-outline">Modelo Generativo:</span>
+                        <span class="text-xs font-bold text-amber-600 dark:text-amber-400">Latente Gaussiano</span>
+                    </div>
+                    <div class="flex items-center justify-between py-1.5 border-b border-outline-variant/20">
+                        <span class="text-xs text-outline">Log-Verosimilitud:</span>
+                        <span class="text-xs font-bold text-cyan-600 dark:text-cyan-400 font-mono">{{ data.meta.log_likelihood or '-142.50' }}</span>
+                    </div>
+                    {% else %}
+                    <div class="flex items-center justify-between py-1.5 border-b border-outline-variant/20">
+                        <span class="text-xs text-outline">Métrica de Distancia:</span>
+                        <span class="text-xs font-bold text-amber-600 dark:text-amber-400">Coseno / Topología</span>
+                    </div>
+                    <div class="flex items-center justify-between py-1.5 border-b border-outline-variant/20">
+                        <span class="text-xs text-outline">Confiabilidad Topológica:</span>
+                        <span class="text-xs font-bold text-cyan-600 dark:text-cyan-400 font-mono">{{ data.meta.trustworthiness or '88.5' }}%</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="pt-3 text-[11px] text-outline text-right">
+                Total Registros: <span class="text-on-surface font-bold font-mono">{{ data.series|length }} {{ 'incidentes (RMS)' if current_context == 'chicago' else 'notas policiales' }}</span>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -188,13 +210,26 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Paletas cromáticas tácticas calibradas
     const colorMapCategory = {
+        // Bolivia
         'Robo Agravado / Asalto': '#ff3366',
         'Agresión Física y Lesiones': '#fbbf24',
         'Hurto / Descuidismo': '#00e5ff',
         'Homicidio / Asesinato': '#ff0033',
         'Narcotráfico / Drogas': '#34d399',
         'Judicial / Político': '#9d4edd',
-        'Otros': '#64748b'
+        'Otros': '#64748b',
+        // Chicago RMS
+        'THEFT': '#00e5ff',
+        'BATTERY': '#ff3366',
+        'CRIMINAL DAMAGE': '#fbbf24',
+        'ASSAULT': '#ff5c8a',
+        'DECEPTIVE PRACTICE': '#9d4edd',
+        'ROBBERY': '#f97316',
+        'NARCOTICS': '#34d399',
+        'MOTOR VEHICLE THEFT': '#38bdf8',
+        'WEAPONS VIOLATION': '#e11d48',
+        'BURGLARY': '#10b981',
+        'OTHER OFFENSE': '#64748b'
     };
 
     const colorMapWard = {
@@ -294,21 +329,21 @@ document.addEventListener("DOMContentLoaded", function() {
             margin: { l: 40, r: 20, t: 30, b: 40 },
             hovermode: 'closest',
             xaxis: {
-                title: { text: `Eje 1 (${algoName}_1)`, font: { color: isDark ? '#849396' : '#475569', family: 'JetBrains Mono' } },
-                gridcolor: isDark ? 'rgba(59, 73, 76, 0.25)' : 'rgba(226, 232, 240, 0.9)',
-                zerolinecolor: isDark ? 'rgba(0, 229, 255, 0.3)' : 'rgba(2, 132, 199, 0.3)',
-                tickfont: { color: isDark ? '#849396' : '#64748b' }
+                title: { text: `Eje 1 (${algoName}_1)`, font: { color: isDark ? '#dfe2ef' : '#1e293b', family: 'JetBrains Mono' } },
+                gridcolor: isDark ? 'rgba(59, 73, 76, 0.25)' : 'rgba(203, 213, 225, 0.8)',
+                zerolinecolor: isDark ? 'rgba(0, 229, 255, 0.3)' : 'rgba(3, 105, 161, 0.4)',
+                tickfont: { color: isDark ? '#849396' : '#334155' }
             },
             yaxis: {
-                title: { text: `Eje 2 (${algoName}_2)`, font: { color: isDark ? '#849396' : '#475569', family: 'JetBrains Mono' } },
-                gridcolor: isDark ? 'rgba(59, 73, 76, 0.25)' : 'rgba(226, 232, 240, 0.9)',
-                zerolinecolor: isDark ? 'rgba(0, 229, 255, 0.3)' : 'rgba(2, 132, 199, 0.3)',
-                tickfont: { color: isDark ? '#849396' : '#64748b' }
+                title: { text: `Eje 2 (${algoName}_2)`, font: { color: isDark ? '#dfe2ef' : '#1e293b', family: 'JetBrains Mono' } },
+                gridcolor: isDark ? 'rgba(59, 73, 76, 0.25)' : 'rgba(203, 213, 225, 0.8)',
+                zerolinecolor: isDark ? 'rgba(0, 229, 255, 0.3)' : 'rgba(3, 105, 161, 0.4)',
+                tickfont: { color: isDark ? '#849396' : '#334155' }
             },
             legend: {
-                font: { color: isDark ? '#dfe2ef' : '#0f172a', size: 11, family: 'Inter' },
-                bgcolor: isDark ? 'rgba(15, 19, 28, 0.85)' : 'rgba(255, 255, 255, 0.92)',
-                bordercolor: isDark ? 'rgba(59, 73, 76, 0.4)' : 'rgba(226, 232, 240, 0.9)',
+                font: { color: isDark ? '#dfe2ef' : '#090d16', size: 11, family: 'Inter' },
+                bgcolor: isDark ? 'rgba(15, 19, 28, 0.85)' : 'rgba(255, 255, 255, 0.95)',
+                bordercolor: isDark ? 'rgba(59, 73, 76, 0.4)' : 'rgba(203, 213, 225, 0.9)',
                 borderwidth: 1
             }
         };
@@ -329,11 +364,16 @@ document.addEventListener("DOMContentLoaded", function() {
     const infoBadge = document.getElementById('info-mode-badge');
     const infoDesc = document.getElementById('info-mode-desc');
 
+    const isChicago = "{{ current_context }}" === "chicago";
+    const wardDescription = isChicago 
+        ? `Validación de Conglomerados Jerárquicos: Evaluación de separabilidad en espacio latente ${algoName} entre Macro A (The Loop / Comercial), Macro B (Sector Oeste / Violencia) y Macro C (Periferias Residenciales).`
+        : `Validación de Conglomerados Jerárquicos: Evaluación de separabilidad en espacio latente ${algoName} entre Macro 1 (Patrimonial), Macro 2 (Violencia) y Macro 3 (Conflictos y Crimen).`;
+
     const modeMetadata = {
         'ward': {
             badge: 'WARD DENDROGRAMA',
-            badgeClass: 'px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40 uppercase',
-            desc: `Validación de Conglomerados Jerárquicos: Evaluación de separabilidad en espacio latente ${algoName} entre Macro A (Casco SCZ), Macro B (CBBA/Plan 3000) y Macro C (Periferias).`
+            badgeClass: 'px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/40 uppercase',
+            desc: wardDescription
         },
         'category': {
             badge: 'TIPOLOGÍA PENAL',

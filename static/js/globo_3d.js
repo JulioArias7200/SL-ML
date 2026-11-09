@@ -1298,21 +1298,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span id="dock-dropdown-label">Distritos</span>
                         <span class="material-symbols-outlined text-xs transition-transform duration-200" id="dock-dropdown-chevron">expand_less</span>
                     </button>
-                    <div id="dock-dropdown-menu" class="hidden absolute bottom-full mb-2 left-1/2 -translate-x-1/2 min-w-[160px] p-1.5 rounded-xl bg-slate-900/95 border border-cyan-500/40 backdrop-blur-xl shadow-2xl flex flex-col gap-1 z-30 font-data-code text-xs">
-                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="the loop" title="Distrito 1 - The Loop">
-                            <span class="material-symbols-outlined text-xs text-cyan-400">domain</span>
+                    <div id="dock-dropdown-menu" class="hidden absolute bottom-full mb-2 left-1/2 -translate-x-1/2 min-w-[160px] p-1.5 rounded-xl bg-white/95 dark:bg-slate-900/95 border border-slate-300 dark:border-cyan-500/40 text-slate-900 dark:text-slate-100 backdrop-blur-xl shadow-2xl flex flex-col gap-1 z-30 font-data-code text-xs">
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2" data-city="the loop" title="Distrito 1 - The Loop">
+                            <span class="material-symbols-outlined text-xs text-cyan-700 dark:text-cyan-400">domain</span>
                             <span>The Loop</span>
                         </button>
-                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="west side" title="Distrito 11 - West Side (Garfield / Austin)">
-                            <span class="material-symbols-outlined text-xs text-amber-400">warning</span>
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2" data-city="west side" title="Distrito 11 - West Side (Garfield / Austin)">
+                            <span class="material-symbols-outlined text-xs text-amber-700 dark:text-amber-400">warning</span>
                             <span>West Side</span>
                         </button>
-                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="south side" title="Distrito 7 - South Side (Englewood)">
-                            <span class="material-symbols-outlined text-xs text-rose-400">near_me</span>
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2" data-city="south side" title="Distrito 7 - South Side (Englewood)">
+                            <span class="material-symbols-outlined text-xs text-rose-700 dark:text-rose-400">near_me</span>
                             <span>South Side</span>
                         </button>
-                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="north side" title="Distrito 19 - North Side (Lincoln / Lakeview)">
-                            <span class="material-symbols-outlined text-xs text-sky-400">shield</span>
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2" data-city="north side" title="Distrito 19 - North Side (Lincoln / Lakeview)">
+                            <span class="material-symbols-outlined text-xs text-sky-700 dark:text-sky-400">shield</span>
                             <span>North Side</span>
                         </button>
                     </div>
@@ -1335,25 +1335,25 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span id="dock-dropdown-label">Ciudades</span>
                         <span class="material-symbols-outlined text-xs transition-transform duration-200" id="dock-dropdown-chevron">expand_less</span>
                     </button>
-                    <div id="dock-dropdown-menu" class="hidden absolute bottom-full mb-2 left-1/2 -translate-x-1/2 min-w-[160px] p-1.5 rounded-xl bg-slate-900/95 border border-cyan-500/40 backdrop-blur-xl shadow-2xl flex flex-col gap-1 z-30 font-data-code text-xs">
-                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="santa cruz" title="Área Metropolitana Santa Cruz">
-                            <span class="material-symbols-outlined text-xs text-cyan-400">apartment</span>
+                    <div id="dock-dropdown-menu" class="hidden absolute bottom-full mb-2 left-1/2 -translate-x-1/2 min-w-[160px] p-1.5 rounded-xl bg-white/95 dark:bg-slate-900/95 border border-slate-300 dark:border-cyan-500/40 text-slate-900 dark:text-slate-100 backdrop-blur-xl shadow-2xl flex flex-col gap-1 z-30 font-data-code text-xs">
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2" data-city="santa cruz" title="Área Metropolitana Santa Cruz">
+                            <span class="material-symbols-outlined text-xs text-cyan-700 dark:text-cyan-400">apartment</span>
                             <span>Santa Cruz</span>
                         </button>
-                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="la paz" title="Sede de Gobierno La Paz">
-                            <span class="material-symbols-outlined text-xs text-amber-400">terrain</span>
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2" data-city="la paz" title="Sede de Gobierno La Paz">
+                            <span class="material-symbols-outlined text-xs text-amber-700 dark:text-amber-400">terrain</span>
                             <span>La Paz</span>
                         </button>
-                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="el alto" title="Área Metropolitana El Alto">
-                            <span class="material-symbols-outlined text-xs text-sky-400">altitude</span>
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2" data-city="el alto" title="Área Metropolitana El Alto">
+                            <span class="material-symbols-outlined text-xs text-sky-700 dark:text-sky-400">altitude</span>
                             <span>El Alto</span>
                         </button>
-                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="cochabamba" title="Valle Central de Cochabamba">
-                            <span class="material-symbols-outlined text-xs text-emerald-400">location_on</span>
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2" data-city="cochabamba" title="Valle Central de Cochabamba">
+                            <span class="material-symbols-outlined text-xs text-emerald-700 dark:text-emerald-400">location_on</span>
                             <span>Cochabamba</span>
                         </button>
-                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/15 flex items-center gap-2" data-city="viacha" title="Municipio de Viacha (Lugar del Hecho)">
-                            <span class="material-symbols-outlined text-xs text-purple-400">explore</span>
+                        <button type="button" class="btn-tactile hud-dock-menu-btn hud-city-btn text-left px-2.5 py-1.5 rounded-lg flex items-center gap-2" data-city="viacha" title="Municipio de Viacha (Lugar del Hecho)">
+                            <span class="material-symbols-outlined text-xs text-purple-700 dark:text-purple-400">explore</span>
                             <span>Viacha</span>
                         </button>
                     </div>

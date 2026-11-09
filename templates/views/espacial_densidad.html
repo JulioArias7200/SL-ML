@@ -84,7 +84,7 @@
                             </div>
                             <span class="font-bold text-xs text-on-surface uppercase tracking-wide">DBSCAN Estándar</span>
                         </div>
-                        <span class="card-status-badge text-[9px] px-2 py-0.5 rounded font-bold uppercase bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">Activo</span>
+                        <span class="card-status-badge text-[9px] px-2 py-0.5 rounded font-bold uppercase bg-cyan-100 text-cyan-800 border-cyan-300 dark:bg-cyan-500/20 dark:text-cyan-300 dark:border-cyan-500/40 border">Activo</span>
                     </div>
                     <p class="text-[11px] text-outline line-clamp-2 mb-3">
                         Clustering espacial con radio esférico rígido Haversine (&epsilon;) y mínimo de vecinos (MinPts).
@@ -92,7 +92,7 @@
                     <div class="grid grid-cols-2 gap-2 pt-2.5 border-t border-outline-variant/30 text-[10px]">
                         <div>
                             <span class="text-outline block">PARÁMETRO:</span>
-                            <span class="font-bold text-cyan-400">&epsilon;={{ hud_params.eps_meters }}m</span>
+                            <span class="font-bold text-cyan-700 dark:text-cyan-400">&epsilon;={{ hud_params.eps_meters }}m</span>
                         </div>
                         <div>
                             <span class="text-outline block">CLUSTERS:</span>
@@ -107,12 +107,12 @@
                         class="algo-tab-card text-left p-4 rounded-xl border border-outline-variant/60 bg-surface-container hover:bg-surface-container-high transition-all duration-300 relative overflow-hidden group cursor-pointer hover:border-emerald-500/50">
                     <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center gap-2">
-                            <div class="size-7 rounded-lg bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+                            <div class="size-7 rounded-lg bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                                 <span class="material-symbols-outlined text-base">hub</span>
                             </div>
                             <span class="font-bold text-xs text-on-surface uppercase tracking-wide">HDBSCAN Adaptativo</span>
                         </div>
-                        <span class="card-status-badge hidden text-[9px] px-2 py-0.5 rounded font-bold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Activo</span>
+                        <span class="card-status-badge hidden text-[9px] px-2 py-0.5 rounded font-bold uppercase bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40 border">Activo</span>
                     </div>
                     <p class="text-[11px] text-outline line-clamp-2 mb-3">
                         Densidad variable multiescala sin radio rígido. Métrica de persistencia y estabilidad &lambda;.
@@ -120,7 +120,7 @@
                     <div class="grid grid-cols-2 gap-2 pt-2.5 border-t border-outline-variant/30 text-[10px]">
                         <div>
                             <span class="text-outline block">PARÁMETRO:</span>
-                            <span class="font-bold text-emerald-400">MinCluster={{ hdbscan_data.min_cluster_size }}</span>
+                            <span class="font-bold text-emerald-700 dark:text-emerald-400">MinCluster={{ hdbscan_data.min_cluster_size }}</span>
                         </div>
                         <div>
                             <span class="text-outline block">CLUSTERS:</span>
@@ -135,12 +135,12 @@
                         class="algo-tab-card text-left p-4 rounded-xl border border-outline-variant/60 bg-surface-container hover:bg-surface-container-high transition-all duration-300 relative overflow-hidden group cursor-pointer hover:border-amber-500/50">
                     <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center gap-2">
-                            <div class="size-7 rounded-lg bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400">
+                            <div class="size-7 rounded-lg bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-600 dark:text-amber-400">
                                 <span class="material-symbols-outlined text-base">analytics</span>
                             </div>
                             <span class="font-bold text-xs text-on-surface uppercase tracking-wide">OPTICS Multiescala</span>
                         </div>
-                        <span class="card-status-badge hidden text-[9px] px-2 py-0.5 rounded font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40">Activo</span>
+                        <span class="card-status-badge hidden text-[9px] px-2 py-0.5 rounded font-bold uppercase bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40 border">Activo</span>
                     </div>
                     <p class="text-[11px] text-outline line-clamp-2 mb-3">
                         Ordenamiento de alcanzabilidad (Reachability Plot) y detección de cuencas por pendiente &xi;.
@@ -148,7 +148,7 @@
                     <div class="grid grid-cols-2 gap-2 pt-2.5 border-t border-outline-variant/30 text-[10px]">
                         <div>
                             <span class="text-outline block">PARÁMETRO:</span>
-                            <span class="font-bold text-amber-400">&xi;={{ optics_data.xi }}</span>
+                            <span class="font-bold text-amber-700 dark:text-amber-400">&xi;={{ optics_data.xi }}</span>
                         </div>
                         <div>
                             <span class="text-outline block">CUENCAS:</span>

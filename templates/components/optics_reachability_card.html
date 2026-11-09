@@ -24,14 +24,14 @@
         <!-- Telemetría de Valles y Ruido -->
         <div class="flex flex-wrap items-center gap-2 self-start lg:self-center font-data-code text-xs">
             <div class="px-3 py-1.5 rounded-lg bg-surface-container-high border border-outline-variant/80 flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm text-cyan-400">landscape</span>
+                <span class="material-symbols-outlined text-sm text-cyan-600 dark:text-cyan-400">landscape</span>
                 <span class="text-outline">Valles &xi;:</span>
-                <strong id="optics-valleys-count" class="text-cyan-400 font-bold">{{ optics_data.active_valleys_count }} Activos</strong>
+                <strong id="optics-valleys-count" class="text-cyan-700 dark:text-cyan-400 font-bold">{{ optics_data.active_valleys_count }} Activos</strong>
             </div>
             <div class="px-3 py-1.5 rounded-lg bg-surface-container-high border border-outline-variant/80 flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm text-slate-400">filter_alt</span>
+                <span class="material-symbols-outlined text-sm text-slate-500 dark:text-slate-400">filter_alt</span>
                 <span class="text-outline">Ruido/Picos:</span>
-                <strong id="optics-noise-count" class="text-rose-400 font-bold">{{ optics_data.noise_count }} ({{ optics_data.noise_pct }}%)</strong>
+                <strong id="optics-noise-count" class="text-rose-700 dark:text-rose-400 font-bold">{{ optics_data.noise_count }} ({{ optics_data.noise_pct }}%)</strong>
             </div>
         </div>
     </div>
@@ -42,10 +42,10 @@
         <div class="md:col-span-5 flex flex-col justify-center">
             <div class="flex justify-between items-center mb-1 text-xs">
                 <label for="slider-xi" class="text-on-surface flex items-center gap-1.5 font-semibold">
-                    <span class="material-symbols-outlined text-sm text-amber-400">tune</span>
+                    <span class="material-symbols-outlined text-sm text-amber-600 dark:text-amber-400">tune</span>
                     Gradiente de Extracción &xi; (Xi-Steepness):
                 </label>
-                <span id="val-xi-display" class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30 text-xs">
+                <span id="val-xi-display" class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30 text-xs font-bold border">
                     &xi; = {{ optics_data.xi }}
                 </span>
             </div>

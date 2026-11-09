@@ -119,19 +119,19 @@
             <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500 to-transparent"></div>
             <div class="flex items-center justify-between text-outline text-xs font-data-code">
                 <span class="tracking-wider uppercase">TOTAL REGISTROS</span>
-                <span class="material-symbols-outlined text-cyan-400 text-lg group-hover:scale-110 transition-transform">dataset</span>
+                <span class="material-symbols-outlined text-cyan-600 dark:text-cyan-400 text-lg group-hover:scale-110 transition-transform">dataset</span>
             </div>
             <div class="my-2.5">
-                <div class="text-3xl sm:text-4xl font-data-display font-black text-white tracking-tight">
+                <div class="text-3xl sm:text-4xl font-data-display font-black text-slate-950 dark:text-white tracking-tight">
                     {{ "{:,}".format(summary.total_records) }}
                 </div>
-                <div class="text-xs font-data-code text-emerald-400 mt-1 flex items-center gap-1.5">
-                    <span class="size-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <div class="text-xs font-data-code text-emerald-700 dark:text-emerald-400 mt-1 flex items-center gap-1.5">
+                    <span class="size-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 animate-pulse"></span>
                     <span>100% Depurado &bull; Capa Gold</span>
                 </div>
             </div>
-            <div class="w-full bg-slate-900/80 h-1.5 rounded overflow-hidden mt-1 border border-slate-800">
-                <div class="h-full bg-cyan-400 rounded glow-cyan" style="width: 100%;"></div>
+            <div class="w-full bg-slate-200 dark:bg-slate-900/80 h-1.5 rounded overflow-hidden mt-1 border border-slate-300 dark:border-slate-800">
+                <div class="h-full bg-cyan-600 dark:bg-cyan-400 rounded glow-cyan" style="width: 100%;"></div>
             </div>
         </div>
 
@@ -140,19 +140,19 @@
             <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-rose-500 to-transparent"></div>
             <div class="flex items-center justify-between text-outline text-xs font-data-code">
                 <span class="tracking-wider uppercase">HOTSPOTS (DBSCAN)</span>
-                <span class="material-symbols-outlined text-rose-400 text-lg group-hover:scale-110 transition-transform">radar</span>
+                <span class="material-symbols-outlined text-rose-600 dark:text-rose-400 text-lg group-hover:scale-110 transition-transform">radar</span>
             </div>
             <div class="my-2.5">
-                <div class="text-3xl sm:text-4xl font-data-display font-black text-white tracking-tight">
-                    {{ summary.active_hotspots }} <span class="text-sm text-slate-400 font-normal">Focos</span>
+                <div class="text-3xl sm:text-4xl font-data-display font-black text-slate-950 dark:text-white tracking-tight">
+                    {{ summary.active_hotspots }} <span class="text-sm text-slate-600 dark:text-slate-400 font-normal">Focos</span>
                 </div>
-                <div class="text-xs font-data-code text-rose-400 mt-1 flex items-center gap-1.5">
-                    <span class="size-1.5 rounded-full bg-rose-400 animate-pulse"></span>
+                <div class="text-xs font-data-code text-rose-700 dark:text-rose-400 mt-1 flex items-center gap-1.5">
+                    <span class="size-1.5 rounded-full bg-rose-600 dark:bg-rose-400 animate-pulse"></span>
                     <span>Métrica Haversine esférica</span>
                 </div>
             </div>
-            <div class="w-full bg-slate-900/80 h-1.5 rounded overflow-hidden mt-1 border border-slate-800">
-                <div class="h-full bg-rose-500 rounded glow-rose" style="width: {{ 100 - summary.noise_pct }}%;"></div>
+            <div class="w-full bg-slate-200 dark:bg-slate-900/80 h-1.5 rounded overflow-hidden mt-1 border border-slate-300 dark:border-slate-800">
+                <div class="h-full bg-rose-600 dark:bg-rose-500 rounded glow-rose" style="width: {{ 100 - summary.noise_pct }}%;"></div>
             </div>
         </div>
 
@@ -161,23 +161,23 @@
             <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-500 to-transparent"></div>
             <div class="flex items-center justify-between text-outline text-xs font-data-code">
                 <span class="tracking-wider uppercase">{{ 'ANOMALÍAS (AUTOENCODER)' if current_context != 'chicago' else 'TASA DE ARRESTO' }}</span>
-                <span class="material-symbols-outlined text-amber-400 text-lg group-hover:scale-110 transition-transform">{{ 'warning' if current_context != 'chicago' else 'gavel' }}</span>
+                <span class="material-symbols-outlined text-amber-600 dark:text-amber-400 text-lg group-hover:scale-110 transition-transform">{{ 'warning' if current_context != 'chicago' else 'gavel' }}</span>
             </div>
             <div class="my-2.5">
-                <div class="text-3xl sm:text-4xl font-data-display font-black text-white tracking-tight">
+                <div class="text-3xl sm:text-4xl font-data-display font-black text-slate-950 dark:text-white tracking-tight">
                     {% if current_context != 'chicago' %}
-                    {{ summary.anomalias_count }} <span class="text-sm text-slate-400 font-normal">({{ summary.anomalias_pct }}%)</span>
+                    {{ summary.anomalias_count }} <span class="text-sm text-slate-600 dark:text-slate-400 font-normal">({{ summary.anomalias_pct }}%)</span>
                     {% else %}
                     {{ summary.arrest_rate }}%
                     {% endif %}
                 </div>
-                <div class="text-xs font-data-code text-amber-400 mt-1 flex items-center gap-1.5">
-                    <span class="size-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                <div class="text-xs font-data-code text-amber-700 dark:text-amber-400 mt-1 flex items-center gap-1.5">
+                    <span class="size-1.5 rounded-full bg-amber-600 dark:bg-amber-400 animate-pulse"></span>
                     <span>{{ 'Error MSE > Umbral Corte P90' if current_context != 'chicago' else 'Mayor en Narcóticos (78%)' }}</span>
                 </div>
             </div>
-            <div class="w-full bg-slate-900/80 h-1.5 rounded overflow-hidden mt-1 border border-slate-800">
-                <div class="h-full bg-amber-400 rounded glow-amber" style="width: {{ summary.anomalias_pct if current_context != 'chicago' else summary.arrest_rate }}%;"></div>
+            <div class="w-full bg-slate-200 dark:bg-slate-900/80 h-1.5 rounded overflow-hidden mt-1 border border-slate-300 dark:border-slate-800">
+                <div class="h-full bg-amber-600 dark:bg-amber-400 rounded glow-amber" style="width: {{ summary.anomalias_pct if current_context != 'chicago' else summary.arrest_rate }}%;"></div>
             </div>
         </div>
 
@@ -186,50 +186,50 @@
             <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-transparent"></div>
             <div class="flex items-center justify-between text-outline text-xs font-data-code">
                 <span class="tracking-wider uppercase">{{ 'SECTORES URBANOS' if current_context != 'chicago' else 'DISTRITOS TAXONÓMICOS' }}</span>
-                <span class="material-symbols-outlined text-purple-400 text-lg group-hover:scale-110 transition-transform">account_tree</span>
+                <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 text-lg group-hover:scale-110 transition-transform">account_tree</span>
             </div>
             <div class="my-2">
                 <div class="flex items-baseline justify-between">
-                    <div class="text-3xl sm:text-4xl font-data-display font-black text-white tracking-tight">
-                        {{ summary.zonas_count if current_context != 'chicago' else summary.districts_count }} <span class="text-sm text-slate-400 font-normal">Sectores</span>
+                    <div class="text-3xl sm:text-4xl font-data-display font-black text-slate-950 dark:text-white tracking-tight">
+                        {{ summary.zonas_count if current_context != 'chicago' else summary.districts_count }} <span class="text-sm text-slate-600 dark:text-slate-400 font-normal">Sectores</span>
                     </div>
-                    <span class="text-[11px] font-data-code text-purple-300 font-bold px-2 py-0.5 rounded bg-purple-950/80 border border-purple-500/40">
+                    <span class="text-[11px] font-data-code text-purple-800 dark:text-purple-300 font-bold px-2 py-0.5 rounded bg-purple-100 dark:bg-purple-950/80 border border-purple-300 dark:border-purple-500/40">
                         k=3 Macro
                     </span>
                 </div>
                 <!-- Sparkline / Comparativa de Enlaces Cofenéticos (Ward vs Average vs Complete) -->
-                <div class="mt-2.5 pt-2.5 border-t border-slate-800 space-y-1.5 font-data-code text-[10px]">
-                    <div class="flex justify-between items-center text-slate-400">
+                <div class="mt-2.5 pt-2.5 border-t border-slate-300 dark:border-slate-800 space-y-1.5 font-data-code text-[10px]">
+                    <div class="flex justify-between items-center text-slate-700 dark:text-slate-400">
                         <span>Fidelidad Cofenética (r):</span>
-                        <span class="text-cyan-400 font-bold">Ward r=0.81</span>
+                        <span class="text-cyan-700 dark:text-cyan-400 font-bold">Ward r=0.81</span>
                     </div>
                     <!-- Mini-Barras Comparativas Sparkline -->
                     <div class="grid grid-cols-3 gap-1.5 pt-0.5">
                         <div class="flex flex-col gap-0.5" title="Ward (r=0.81) - Varianza Mínima Intraclúster">
                             <div class="flex justify-between text-[9px]">
-                                <span class="text-purple-300 font-bold">Ward</span>
-                                <span class="text-purple-300">0.81</span>
+                                <span class="text-purple-800 dark:text-purple-300 font-bold">Ward</span>
+                                <span class="text-purple-700 dark:text-purple-300">0.81</span>
                             </div>
-                            <div class="w-full bg-slate-900/80 h-1.5 rounded overflow-hidden border border-slate-800">
-                                <div class="h-full bg-purple-400 rounded glow-purple" style="width: 81%;"></div>
+                            <div class="w-full bg-slate-200 dark:bg-slate-900/80 h-1.5 rounded overflow-hidden border border-slate-300 dark:border-slate-800">
+                                <div class="h-full bg-purple-600 dark:bg-purple-400 rounded glow-purple" style="width: 81%;"></div>
                             </div>
                         </div>
                         <div class="flex flex-col gap-0.5" title="Average (r=0.83) - Máxima Fidelidad Ultramétrica">
                             <div class="flex justify-between text-[9px]">
-                                <span class="text-emerald-300 font-bold">Avg</span>
-                                <span class="text-emerald-300">0.83</span>
+                                <span class="text-emerald-800 dark:text-emerald-300 font-bold">Avg</span>
+                                <span class="text-emerald-700 dark:text-emerald-300">0.83</span>
                             </div>
-                            <div class="w-full bg-slate-900/80 h-1.5 rounded overflow-hidden border border-slate-800">
-                                <div class="h-full bg-emerald-400 rounded glow-emerald" style="width: 83%;"></div>
+                            <div class="w-full bg-slate-200 dark:bg-slate-900/80 h-1.5 rounded overflow-hidden border border-slate-300 dark:border-slate-800">
+                                <div class="h-full bg-emerald-600 dark:bg-emerald-400 rounded glow-emerald" style="width: 83%;"></div>
                             </div>
                         </div>
                         <div class="flex flex-col gap-0.5" title="Complete (r=0.76) - Diámetro Máximo Compacto">
                             <div class="flex justify-between text-[9px]">
-                                <span class="text-amber-300 font-bold">Comp</span>
-                                <span class="text-amber-300">0.76</span>
+                                <span class="text-amber-800 dark:text-amber-300 font-bold">Comp</span>
+                                <span class="text-amber-700 dark:text-amber-300">0.76</span>
                             </div>
-                            <div class="w-full bg-slate-900/80 h-1.5 rounded overflow-hidden border border-slate-800">
-                                <div class="h-full bg-amber-400 rounded glow-amber" style="width: 76%;"></div>
+                            <div class="w-full bg-slate-200 dark:bg-slate-900/80 h-1.5 rounded overflow-hidden border border-slate-300 dark:border-slate-800">
+                                <div class="h-full bg-amber-600 dark:bg-amber-400 rounded glow-amber" style="width: 76%;"></div>
                             </div>
                         </div>
                     </div>
@@ -237,10 +237,10 @@
             </div>
             <!-- Acceso Directo con Umbral Óptimo Precalibrado -->
             <a href="/jerarquico-densidad?ctx={{ current_context }}" 
-               class="mt-1 flex items-center justify-between w-full px-2.5 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 text-[10px] font-data-code text-slate-300 hover:text-cyan-400 transition-colors"
+               class="mt-1 flex items-center justify-between w-full px-2.5 py-1.5 rounded bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700/80 text-[10px] font-data-code text-slate-800 hover:text-cyan-800 dark:text-slate-300 dark:hover:text-cyan-400 transition-colors"
                title="Ver Dendrograma Interactivo con umbral óptimo precalibrado">
                 <span>Dendrograma Interactivo</span>
-                <span class="text-purple-400 font-bold flex items-center gap-0.5">
+                <span class="text-purple-700 dark:text-purple-400 font-bold flex items-center gap-0.5">
                     t = {{ '12.5' if current_context != 'chicago' else '45.0' }}
                     <span class="material-symbols-outlined text-[12px]">chevron_right</span>
                 </span>
@@ -251,11 +251,11 @@
     <!-- 2. Hub de Acceso Rápido a Suites Algorítmicas (Chips de Algoritmos, Cero Muros de Texto) -->
     <section class="space-y-3">
         <div class="flex items-center justify-between">
-            <h2 class="text-xs font-bold uppercase tracking-wider text-outline font-data-code flex items-center gap-2">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-outline font-data-code flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary-container text-base">hub</span>
                 Suites Algorítmicas No Supervisadas // Acceso Directo
             </h2>
-            <span class="text-[11px] text-outline font-data-code hidden sm:inline">Selecciona una suite para interactuar</span>
+            <span class="text-[11px] text-slate-600 dark:text-outline font-data-code hidden sm:inline">Selecciona una suite para interactuar</span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -263,21 +263,21 @@
             <a href="{{ url_for('webgis_bp.globo_3d', ctx=current_context) }}" 
                class="btn-tactile card-tactical p-4.5 rounded-xl flex flex-col justify-between gap-3 group shadow-sm">
                 <div class="flex items-center justify-between">
-                    <div class="size-8.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform shadow-sm">
+                    <div class="size-8.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform shadow-sm">
                         <span class="material-symbols-outlined text-xl">public</span>
                     </div>
-                    <span class="badge-tactical bg-cyan-950/80 border border-cyan-500/30 text-cyan-400">WebGIS 3D</span>
+                    <span class="badge-tactical badge-status-cyan">WebGIS 3D</span>
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-white group-hover:text-cyan-400 transition-colors">Globo Terráqueo 3D</h3>
+                    <h3 class="text-sm font-bold text-slate-950 dark:text-white group-hover:text-cyan-700 dark:group-hover:text-cyan-400 transition-colors">Globo Terráqueo 3D</h3>
                     <!-- Chips de Algoritmo en vez de párrafo -->
                     <div class="flex flex-wrap gap-1 mt-2 font-data-code text-[10px]">
-                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">MapLibre v4</span>
-                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">WebGL</span>
-                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">Haversine</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 dark:bg-slate-900/80 dark:border-slate-700/80 dark:text-slate-300">MapLibre v4</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 dark:bg-slate-900/80 dark:border-slate-700/80 dark:text-slate-300">WebGL</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 dark:bg-slate-900/80 dark:border-slate-700/80 dark:text-slate-300">Haversine</span>
                     </div>
                 </div>
-                <span class="text-xs text-cyan-400 font-bold font-data-code flex items-center gap-1 pt-1.5 border-t border-slate-800">
+                <span class="text-xs text-cyan-700 dark:text-cyan-400 font-bold font-data-code flex items-center gap-1 pt-1.5 border-t border-slate-200 dark:border-slate-800">
                     Explorar Globo ↗
                 </span>
             </a>
@@ -286,23 +286,23 @@
             <a href="{{ url_for('reduction_bp.view', ctx=current_context) }}" 
                class="btn-tactile card-tactical p-4.5 rounded-xl flex flex-col justify-between gap-3 group shadow-sm">
                 <div class="flex items-center justify-between">
-                    <div class="size-8.5 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform shadow-sm">
+                    <div class="size-8.5 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-600 dark:text-amber-400 group-hover:scale-110 transition-transform shadow-sm">
                         <span class="material-symbols-outlined text-xl">scatter_plot</span>
                     </div>
-                    <span class="badge-tactical bg-amber-950/80 border border-amber-500/30 text-amber-400">26/29 Oct</span>
+                    <span class="badge-tactical badge-status-amber">26/29 Oct</span>
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-white group-hover:text-amber-400 transition-colors">Reducción 2D</h3>
+                    <h3 class="text-sm font-bold text-slate-950 dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">Reducción 2D</h3>
                     <!-- Chips de Algoritmo en vez de párrafo -->
                     <div class="flex flex-wrap gap-1 mt-2 font-data-code text-[10px]">
-                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">PCA</span>
-                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">SVD</span>
-                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">PPCA</span>
-                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">t-SNE</span>
-                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">UMAP</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 dark:bg-slate-900/80 dark:border-slate-700/80 dark:text-slate-300">PCA</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 dark:bg-slate-900/80 dark:border-slate-700/80 dark:text-slate-300">SVD</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 dark:bg-slate-900/80 dark:border-slate-700/80 dark:text-slate-300">PPCA</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 dark:bg-slate-900/80 dark:border-slate-700/80 dark:text-slate-300">t-SNE</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 dark:bg-slate-900/80 dark:border-slate-700/80 dark:text-slate-300">UMAP</span>
                     </div>
                 </div>
-                <span class="text-xs text-amber-400 font-bold font-data-code flex items-center gap-1 pt-1.5 border-t border-slate-800">
+                <span class="text-xs text-amber-700 dark:text-amber-400 font-bold font-data-code flex items-center gap-1 pt-1.5 border-t border-slate-200 dark:border-slate-800">
                     Analizar Espacios ↗
                 </span>
             </a>
@@ -311,21 +311,21 @@
             <a href="{{ url_for('nlp_topics_bp.view', ctx=current_context) }}" 
                class="btn-tactile card-tactical p-4.5 rounded-xl flex flex-col justify-between gap-3 group shadow-sm">
                 <div class="flex items-center justify-between">
-                    <div class="size-8.5 rounded-lg bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform shadow-sm">
+                    <div class="size-8.5 rounded-lg bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform shadow-sm">
                         <span class="material-symbols-outlined text-xl">article</span>
                     </div>
-                    <span class="badge-tactical bg-cyan-950/80 border border-cyan-400/30 text-cyan-300">Dirichlet</span>
+                    <span class="badge-tactical badge-status-cyan">Dirichlet</span>
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-white group-hover:text-cyan-400 transition-colors">NLP &amp; Tópicos LDA</h3>
+                    <h3 class="text-sm font-bold text-slate-950 dark:text-white group-hover:text-cyan-700 dark:group-hover:text-cyan-400 transition-colors">NLP &amp; Tópicos LDA</h3>
                     <!-- Chips de Algoritmo en vez de párrafo -->
                     <div class="flex flex-wrap gap-1 mt-2 font-data-code text-[10px]">
-                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">TF-IDF</span>
-                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">5 Tópicos</span>
-                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">Clasificador</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 dark:bg-slate-900/80 dark:border-slate-700/80 dark:text-slate-300">TF-IDF</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 dark:bg-slate-900/80 dark:border-slate-700/80 dark:text-slate-300">5 Tópicos</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 dark:bg-slate-900/80 dark:border-slate-700/80 dark:text-slate-300">Clasificador</span>
                     </div>
                 </div>
-                <span class="text-xs text-cyan-400 font-bold font-data-code flex items-center gap-1 pt-1.5 border-t border-slate-800">
+                <span class="text-xs text-cyan-700 dark:text-cyan-400 font-bold font-data-code flex items-center gap-1 pt-1.5 border-t border-slate-200 dark:border-slate-800">
                     Ver Tópicos ↗
                 </span>
             </a>
@@ -334,21 +334,21 @@
             <a href="{{ url_for('anomaly_gmm_bp.view', ctx=current_context) }}" 
                class="btn-tactile card-tactical p-4.5 rounded-xl flex flex-col justify-between gap-3 group shadow-sm">
                 <div class="flex items-center justify-between">
-                    <div class="size-8.5 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 group-hover:scale-110 transition-transform shadow-sm">
+                    <div class="size-8.5 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-600 dark:text-rose-400 group-hover:scale-110 transition-transform shadow-sm">
                         <span class="material-symbols-outlined text-xl">crisis_alert</span>
                     </div>
-                    <span class="badge-tactical bg-rose-950/80 border border-rose-500/30 text-rose-400">Autoencoders</span>
+                    <span class="badge-tactical badge-status-rose">Autoencoders</span>
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-white group-hover:text-rose-400 transition-colors">Anomalías &amp; GMM</h3>
+                    <h3 class="text-sm font-bold text-slate-950 dark:text-white group-hover:text-rose-700 dark:group-hover:text-rose-400 transition-colors">Anomalías &amp; GMM</h3>
                     <!-- Chips de Algoritmo en vez de párrafo -->
                     <div class="flex flex-wrap gap-1 mt-2 font-data-code text-[10px]">
-                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">MLP Reconst.</span>
-                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">MSE Error</span>
-                        <span class="px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700/80 text-slate-300">Elipses 2σ</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 dark:bg-slate-900/80 dark:border-slate-700/80 dark:text-slate-300">MLP Reconst.</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 dark:bg-slate-900/80 dark:border-slate-700/80 dark:text-slate-300">MSE Error</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 dark:bg-slate-900/80 dark:border-slate-700/80 dark:text-slate-300">Elipses 2σ</span>
                     </div>
                 </div>
-                <span class="text-xs text-rose-400 font-bold font-data-code flex items-center gap-1 pt-1.5 border-t border-slate-800">
+                <span class="text-xs text-rose-700 dark:text-rose-400 font-bold font-data-code flex items-center gap-1 pt-1.5 border-t border-slate-200 dark:border-slate-800">
                     Revisar Radar ↗
                 </span>
             </a>
@@ -359,22 +359,22 @@
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Gráfica de Barras Proporcionales de Tipología Delictiva -->
         <div class="lg:col-span-2 card-tactical p-5 rounded-xl flex flex-col gap-4 shadow-sm">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
                 <div class="flex items-center gap-2">
-                    <span class="size-2 rounded-full bg-cyan-400 animate-pulse"></span>
-                    <h3 class="text-sm font-bold text-white font-headline-sm uppercase">Distribución por Tipología Principal</h3>
+                    <span class="size-2 rounded-full bg-cyan-600 dark:bg-cyan-400 animate-pulse"></span>
+                    <h3 class="text-sm font-bold text-slate-950 dark:text-white font-headline-sm uppercase">Distribución por Tipología Principal</h3>
                 </div>
-                <span class="text-xs font-data-code text-slate-400 uppercase">{{ summary.contexto }}</span>
+                <span class="text-xs font-data-code text-slate-600 dark:text-slate-400 uppercase">{{ summary.contexto }}</span>
             </div>
 
             <div class="space-y-3 font-data-code text-xs">
                 {% for crime in summary.top_crimes %}
                 <div>
                     <div class="flex justify-between items-center mb-1">
-                        <span class="text-slate-200 font-medium">{{ crime.name }}</span>
-                        <span class="text-slate-400">{{ "{:,}".format(crime.count) }} ({{ crime.pct }}%)</span>
+                        <span class="text-slate-800 dark:text-slate-200 font-medium">{{ crime.name }}</span>
+                        <span class="text-slate-600 dark:text-slate-400">{{ "{:,}".format(crime.count) }} ({{ crime.pct }}%)</span>
                     </div>
-                    <div class="w-full bg-slate-900/80 h-2 rounded overflow-hidden border border-slate-800/80">
+                    <div class="w-full bg-slate-200 dark:bg-slate-900/80 h-2 rounded overflow-hidden border border-slate-300 dark:border-slate-800/80">
                         <div class="h-full rounded transition-all duration-500" style="width: {{ crime.pct }}%; background-color: {{ crime.color }};"></div>
                     </div>
                 </div>
@@ -385,13 +385,13 @@
         <!-- Matriz de Estado de Algoritmos del Curso -->
         <div class="card-tactical p-5 rounded-xl flex flex-col justify-between gap-4 shadow-sm">
             <div>
-                <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
                     <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-cyan-400 text-lg">auto_awesome</span>
-                        <h3 class="text-sm font-bold text-white font-headline-sm uppercase">Modelos del Curso</h3>
+                        <span class="material-symbols-outlined text-cyan-600 dark:text-cyan-400 text-lg">auto_awesome</span>
+                        <h3 class="text-sm font-bold text-slate-950 dark:text-white font-headline-sm uppercase">Modelos del Curso</h3>
                     </div>
-                    <span class="text-[10px] font-data-code text-emerald-400 font-bold uppercase flex items-center gap-1">
-                        <span class="size-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-[10px] font-data-code text-emerald-700 dark:text-emerald-400 font-bold uppercase flex items-center gap-1">
+                        <span class="size-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 animate-pulse"></span>
                         100% Ajustados
                     </span>
                 </div>
@@ -399,7 +399,7 @@
                 <div class="space-y-2 mt-3 text-xs font-data-code">
                     <div class="flex justify-between items-center p-2 rounded bg-surface-container-low border border-outline-variant">
                         <span class="text-outline">DBSCAN / HDBSCAN:</span>
-                        <span class="text-emerald-400 font-bold">HAVERSINE</span>
+                        <span class="text-emerald-700 dark:text-emerald-400 font-bold">HAVERSINE</span>
                     </div>
                     <div class="flex justify-between items-center p-2 rounded bg-surface-container-low border border-outline-variant">
                         <span class="text-outline">PCA / SVD / PPCA:</span>
@@ -407,26 +407,26 @@
                     </div>
                     <div class="flex justify-between items-center p-2 rounded bg-surface-container-low border border-outline-variant">
                         <span class="text-outline">t-SNE &bull; UMAP:</span>
-                        <span class="text-amber-400 font-bold">NO LINEAL</span>
+                        <span class="text-amber-700 dark:text-amber-400 font-bold">NO LINEAL</span>
                     </div>
                     <div class="flex justify-between items-center p-2 rounded bg-surface-container-low border border-outline-variant">
                         <span class="text-outline">LDA Dirichlet:</span>
-                        <span class="text-cyan-400 font-bold">5 TÓPICOS</span>
+                        <span class="text-cyan-700 dark:text-cyan-400 font-bold">5 TÓPICOS</span>
                     </div>
                     <div class="flex justify-between items-center p-2 rounded bg-surface-container-low border border-outline-variant">
                         <span class="text-outline">Autoencoder MSE:</span>
-                        <span class="text-rose-400 font-bold">TOP 10% ANOM.</span>
+                        <span class="text-rose-700 dark:text-rose-400 font-bold">TOP 10% ANOM.</span>
                     </div>
                     <div class="flex justify-between items-center p-2 rounded bg-surface-container-low border border-outline-variant">
                         <span class="text-outline">GMM Gaussiano:</span>
-                        <span class="text-purple-400 font-bold">2σ RIESGO</span>
+                        <span class="text-purple-700 dark:text-purple-400 font-bold">2σ RIESGO</span>
                     </div>
                 </div>
             </div>
 
             <div class="p-2 rounded-lg bg-surface-container-lowest border border-outline-variant text-[11px] text-outline font-data-code flex items-center justify-between">
                 <span>Motor: Scikit-Learn</span>
-                <span class="text-emerald-400 font-bold uppercase">&lt; 15 ms</span>
+                <span class="text-emerald-700 dark:text-emerald-400 font-bold uppercase">&lt; 15 ms</span>
             </div>
         </div>
     </section>

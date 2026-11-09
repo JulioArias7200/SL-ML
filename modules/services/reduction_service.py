@@ -56,6 +56,12 @@ class ReductionService:
         'Pampa de la Isla': {'macro': 'Macro C', 'label': 'Macro C: La Paz & Perif. (Patrimonial)', 'color': '#34d399'},
     }
 
+    CHICAGO_WARD_META = {
+        'Macro A': {'macro': 'Macro A', 'label': 'Macro A: Casco Central & Turístico (The Loop / Hurtos)', 'color': '#00e5ff'},
+        'Macro B': {'macro': 'Macro B', 'label': 'Macro B: Sector Oeste & Sur (Violencia Armada Crítica)', 'color': '#ff3366'},
+        'Macro C': {'macro': 'Macro C', 'label': 'Macro C: Periferias Residenciales (Baja Incidencia)', 'color': '#34d399'}
+    }
+
     LDA_TOPICS_META = {
         0: {"label": "Tópico #0: Agresiones y Conflictos", "color": "#ff3366"},
         1: {"label": "Tópico #1: Litigios y Estafas", "color": "#9d4edd"},
@@ -64,22 +70,28 @@ class ReductionService:
         4: {"label": "Tópico #4: Hurtos y Descuidismo", "color": "#00e5ff"}
     }
 
+    CHICAGO_LDA_TOPICS_META = {
+        0: {"label": "Tópico #0: Robbery & Armed Handgun", "color": "#ff3366"},
+        1: {"label": "Tópico #1: Battery & Domestic Assault", "color": "#fbbf24"},
+        2: {"label": "Tópico #2: Theft & Property Loss", "color": "#00e5ff"},
+        3: {"label": "Tópico #3: Narcotics & Street Crime", "color": "#34d399"},
+        4: {"label": "Tópico #4: Deceptive Practice & Fraud", "color": "#9d4edd"}
+    }
+
     @classmethod
-    def _load(cls):
+    def _load(cls, ctx="bolivia"):
         base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-        gold_fp = os.path.join(base_dir, 'data', 'bolivia_news', 'gold', 'reduction_embeddings.json')
-        legacy_fp = os.path.join(base_dir, 'data', 'web_scraping_news', 'reduction_embeddings.json')
-        fp = gold_fp if os.path.exists(gold_fp) else legacy_fp
+        if ctx == "chicago":
+            fp = os.path.join(base_dir, 'data', 'chicago_benchmark', 'gold', 'reduction_embeddings_chicago.json')
+        else:
+            gold_fp = os.path.join(base_dir, 'data', 'bolivia_news', 'gold', 'reduction_embeddings.json')
+            legacy_fp = os.path.join(base_dir, 'data', 'web_scraping_news', 'reduction_embeddings.json')
+            fp = gold_fp if os.path.exists(gold_fp) else legacy_fp
         
         if os.path.exists(fp):
-            mtime = os.path.getmtime(fp)
-            if cls._embeddings_cache is None or mtime > cls._mtime_embeddings:
-                with open(fp, 'r', encoding='utf-8') as f:
-                    cls._embeddings_cache = json.load(f)
-                cls._mtime_embeddings = mtime
-        else:
-            cls._embeddings_cache = {"points": [], "pca": {}, "svd": {}, "ppca": {}, "tsne": {}, "umap": {}}
-        return cls._embeddings_cache
+            with open(fp, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        return {"points": [], "pca": {}, "svd": {}, "ppca": {}, "tsne": {}, "umap": {}}
 
     @classmethod
     def _load_eventos(cls):
@@ -99,8 +111,8 @@ class ReductionService:
         return None
 
     @classmethod
-    def get_algorithm_data(cls, algo_name="pca"):
-        data = cls._load()
+    def get_algorithm_data(cls, algo_name="pca", ctx="bolivia"):
+        data = cls._load(ctx=ctx)
         algo_name = algo_name.lower()
         if algo_name not in ["pca", "svd", "ppca", "tsne", "umap"]:
             algo_name = "pca"
@@ -108,35 +120,61 @@ class ReductionService:
         algo_info = data.get(algo_name, {})
         coords = algo_info.get("coords", [])
         points = data.get("points", [])
-        df_eventos = cls._load_eventos()
+        df_eventos = cls._load_eventos() if ctx == "bolivia" else None
 
         # Enriquecer meta con la teoría pedagógica solicitada
         theory = cls.ALGORITHMS_THEORY.get(algo_name, cls.ALGORITHMS_THEORY['pca'])
         meta = {**algo_info, **theory}
+        meta['n_features'] = data.get('n_features', 250)
+        meta['context'] = ctx
+
+        topic_meta_dict = cls.CHICAGO_LDA_TOPICS_META if ctx == "chicago" else cls.LDA_TOPICS_META
+        ward_meta_dict = cls.CHICAGO_WARD_META if ctx == "chicago" else cls.BOLIVIA_WARD_META
 
         # Combinar coordenadas 2D con metadatos del punto y clustering jerárquico Ward
         series = []
         for i, pt in enumerate(points):
             c = coords[i] if i < len(coords) else [0, 0]
-            zona = ""
-            if df_eventos is not None and i < len(df_eventos):
+            zona = pt.get("zone", "")
+            if not zona and df_eventos is not None and i < len(df_eventos):
                 row = df_eventos.iloc[i]
                 zona = str(row['zona_principal']) if pd.notnull(row.get('zona_principal')) else ""
             
-            ciudad = str(pt.get("city", ""))
+            ciudad = str(pt.get("city", "Chicago" if ctx == "chicago" else "Bolivia"))
             
-            # Determinación de Macro-Cluster Jerárquico Ward (k=3)
-            if zona in cls.BOLIVIA_WARD_META:
+            # Determinación de Macro-Cluster Jerárquico Ward (k=3) dinámico o fallback
+            if "ward_macro" in pt and pt.get("ward_macro"):
+                ward_macro = pt["ward_macro"]
+                ward_label = pt.get("ward_label", ward_macro)
+                ward_color = pt.get("ward_color", "#38bdf8")
+            elif ctx == "chicago":
+                w_info = ward_meta_dict.get(pt.get("ward_macro", "Macro A"), ward_meta_dict["Macro A"])
+                ward_macro = w_info["macro"]
+                ward_label = w_info["label"]
+                ward_color = w_info["color"]
+            elif zona in cls.BOLIVIA_WARD_META:
                 ward_info = cls.BOLIVIA_WARD_META[zona]
+                ward_macro = ward_info["macro"]
+                ward_label = ward_info["label"]
+                ward_color = ward_info["color"]
             elif "santa cruz" in ciudad.lower():
                 ward_info = cls.BOLIVIA_WARD_META['Santa Cruz']
+                ward_macro = ward_info["macro"]
+                ward_label = ward_info["label"]
+                ward_color = ward_info["color"]
             elif "cochabamba" in ciudad.lower():
                 ward_info = cls.BOLIVIA_WARD_META['Cochabamba']
+                ward_macro = ward_info["macro"]
+                ward_label = ward_info["label"]
+                ward_color = ward_info["color"]
             else:
                 ward_info = cls.BOLIVIA_WARD_META['La Paz']
+                ward_macro = ward_info["macro"]
+                ward_label = ward_info["label"]
+                ward_color = ward_info["color"]
 
             topic_id = int(pt.get("topic", 0))
-            topic_info = cls.LDA_TOPICS_META.get(topic_id, {"label": f"Tópico #{topic_id}", "color": "#00e5ff"})
+            topic_info = topic_meta_dict.get(topic_id, {"label": f"Tópico #{topic_id}", "color": "#00e5ff"})
 
             series.append({
                 "x": c[0],
@@ -151,13 +189,15 @@ class ReductionService:
                 "topic_color": topic_info["color"],
                 "is_anomaly": pt["is_anomaly"],
                 "reconstruction_error": pt["reconstruction_error"],
-                "ward_macro": ward_info["macro"],
-                "ward_label": ward_info["label"],
-                "ward_color": ward_info["color"]
+                "ward_macro": ward_macro,
+                "ward_label": ward_label,
+                "ward_color": ward_color
             })
 
         return {
             "algorithm": algo_name,
+            "context": ctx,
+            "dataset_name": data.get("dataset_name", "Chicago Police Department (RMS)" if ctx == "chicago" else "Seguridad Ciudadana Bolivia"),
             "meta": meta,
             "series": series,
             "available_algorithms": [

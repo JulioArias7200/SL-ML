@@ -24,13 +24,13 @@
    ========================================================================== */
 :root {
     --hud-glass-bg: rgba(255, 255, 255, 0.88);
-    --hud-glass-border: rgba(226, 232, 240, 0.9);
+    --hud-glass-border: rgba(203, 213, 225, 0.9);
     --hud-glass-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
     --hud-control-bg: rgba(241, 245, 249, 0.85);
-    --hud-control-border: rgba(203, 213, 225, 0.7);
+    --hud-control-border: rgba(148, 163, 184, 0.5);
     --hud-control-hover: rgba(226, 232, 240, 0.95);
-    --hud-text: #0f172a;
-    --hud-text-muted: #64748b;
+    --hud-text: #090d16;
+    --hud-text-muted: #334155;
 }
 
 html.dark {
@@ -358,18 +358,19 @@ html.dark .hud-dock-btn:hover {
 
 /* Menú desplegable flyout del dock */
 #dock-dropdown-menu {
+    background: var(--hud-glass-bg);
+    border: 1px solid var(--hud-glass-border);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: var(--hud-glass-shadow);
+    color: var(--hud-text);
     animation: dockMenuFadeUp 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes dockMenuFadeUp {
-    from {
-        opacity: 0;
-        transform: translate(-50%, 6px) scale(0.96);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, 0) scale(1);
-    }
+html.dark #dock-dropdown-menu {
+    background: rgba(15, 20, 30, 0.95);
+    border: 1px solid rgba(0, 229, 255, 0.35);
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 229, 255, 0.08);
 }
 
 .hud-dock-menu-btn {
@@ -383,7 +384,7 @@ html.dark .hud-dock-btn:hover {
     font-family: 'Inter', sans-serif;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -391,11 +392,23 @@ html.dark .hud-dock-btn:hover {
 }
 
 .hud-dock-menu-btn:hover {
+    background: rgba(3, 105, 161, 0.08);
+    color: #0369a1;
+}
+
+html.dark .hud-dock-menu-btn:hover {
     background: rgba(0, 229, 255, 0.15);
     color: #00e5ff;
 }
 
 .hud-dock-menu-btn.active {
+    background: rgba(224, 242, 254, 0.95);
+    color: #0369a1;
+    font-weight: 600;
+    border-color: #0284c7;
+}
+
+html.dark .hud-dock-menu-btn.active {
     background: rgba(0, 229, 255, 0.22);
     color: #00e5ff;
     font-weight: 600;

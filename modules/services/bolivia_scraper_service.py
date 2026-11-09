@@ -970,38 +970,46 @@ def construir_gold_nlp(df_bronze):
         print(f"     [!] Error LDA: {e}")
         df["tema_lda"] = 0
 
-    # Proyección PPCA para el scatterplot del dashboard
+    # Proyección no supervisada y Clustering Jerárquico Aglomerativo (Ward k=3)
     try:
         from modules.algorithms.dimensionality import compute_embeddings_2d
+        from modules.algorithms.clustering_classic import run_hierarchical_ward
         from sklearn.feature_extraction.text import TfidfVectorizer
-        tfidf = TfidfVectorizer(max_features=200, max_df=0.9, min_df=1)
+        tfidf = TfidfVectorizer(max_features=250, max_df=0.9, min_df=1)
         X = tfidf.fit_transform(corpus)
         embeddings = compute_embeddings_2d(X)
         df["ppca_x"] = [c[0] for c in embeddings["ppca"]["coords"]]
         df["ppca_y"] = [c[1] for c in embeddings["ppca"]["coords"]]
+
+        # Ward Jerárquico sobre contenido semántico real (TF-IDF)
+        X_dense = X.toarray() if hasattr(X, "toarray") else X
+        ward_labels, _ = run_hierarchical_ward(X_dense, n_clusters=3)
+        df["ward_cluster"] = ward_labels
     except Exception as e:
-        print(f"     [!] Error PPCA: {e}")
+        print(f"     [!] Error PPCA / Ward: {e}")
         df["ppca_x"] = 0.0
         df["ppca_y"] = 0.0
+        df["ward_cluster"] = 0
 
-    # Autoencoder simple (MSE de reconstrucción como puntuación de anomalía)
+    # Autoencoder Neuronal (MSE de reconstrucción mediante MLPRegressor)
     try:
-        from sklearn.preprocessing import normalize
-        X_dense = X.toarray() if hasattr(X, "toarray") else X
-        X_norm  = normalize(X_dense)
-        # Autoencoder lineal: PCA reconstruct error como proxy
-        from sklearn.decomposition import PCA
-        n_comp = min(10, X_norm.shape[1], X_norm.shape[0] - 1)
-        pca    = PCA(n_components=n_comp)
-        X_rec  = pca.inverse_transform(pca.fit_transform(X_norm))
-        errors = np.mean((X_norm - X_rec) ** 2, axis=1)
+        from modules.algorithms.anomaly_autoencoder import detect_anomalies_autoencoder
+        errors, umbral, es_anomalia, _ = detect_anomalies_autoencoder(X, percentile_threshold=90)
         df["error_autoencoder"] = errors
-        umbral = np.percentile(errors, 90)
-        df["es_anomalia"] = errors > umbral
+        df["es_anomalia"] = es_anomalia
+
+        ward_palette = {
+            0: {"macro": "Macro 1", "label": "Macro 1: Delitos Patrimoniales y Propiedad", "color": "#34d399"},
+            1: {"macro": "Macro 2", "label": "Macro 2: Agresiones Físicas y Violencia", "color": "#fbbf24"},
+            2: {"macro": "Macro 3", "label": "Macro 3: Conflictos, Estafas y Narcotráfico", "color": "#ff3366"}
+        }
 
         # Exportar reduction_embeddings.json para la vista Reduccion 2D (/reduccion-espacios)
         points_list = []
         for idx, row in enumerate(df.itertuples()):
+            w_cluster = int(row.ward_cluster) if hasattr(row, 'ward_cluster') and pd.notna(row.ward_cluster) else 0
+            w_meta = ward_palette.get(w_cluster, ward_palette[0])
+
             points_list.append({
                 "id": int(idx),
                 "title": str(row.titulo) if hasattr(row, "titulo") and pd.notna(row.titulo) else f"Reporte #{idx}",
@@ -1009,10 +1017,14 @@ def construir_gold_nlp(df_bronze):
                 "city": str(row.ciudad) if hasattr(row, "ciudad") and pd.notna(row.ciudad) else "Bolivia",
                 "topic": int(row.tema_lda) if hasattr(row, "tema_lda") and pd.notna(row.tema_lda) else 0,
                 "is_anomaly": bool(row.es_anomalia) if hasattr(row, "es_anomalia") else False,
-                "reconstruction_error": round(float(row.error_autoencoder), 6) if hasattr(row, "error_autoencoder") else 0.001
+                "reconstruction_error": round(float(row.error_autoencoder), 6) if hasattr(row, "error_autoencoder") else 0.001,
+                "ward_macro": w_meta["macro"],
+                "ward_label": w_meta["label"],
+                "ward_color": w_meta["color"]
             })
 
         reduction_payload = {
+            "n_features": 250,
             "pca": embeddings.get("pca", {}),
             "svd": embeddings.get("svd", {}),
             "ppca": embeddings.get("ppca", {}),
@@ -1022,7 +1034,7 @@ def construir_gold_nlp(df_bronze):
         }
         with open(os.path.join(_GOLD_DIR, "reduction_embeddings.json"), "w", encoding="utf-8") as f_red:
             json.dump(reduction_payload, f_red, ensure_ascii=False, indent=2)
-        print(f"  [OK] reduction_embeddings.json actualizado con {len(points_list)} puntos.")
+        print(f"  [OK] reduction_embeddings.json actualizado con {len(points_list)} puntos y Autoencoder Neuronal.")
     except Exception as e:
         print(f"     [!] Error autoencoder / reduction: {e}")
         df["error_autoencoder"] = 0.001

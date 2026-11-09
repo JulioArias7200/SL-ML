@@ -39,7 +39,7 @@
             <!-- Coeficiente Cofenético -->
             <div class="px-2.5 py-1.5 rounded-lg bg-surface-container-high border border-outline-variant/80 flex items-center gap-1.5">
                 <span class="text-outline text-[11px]">Correlación (r):</span>
-                <strong id="dendro-cophenetic-val" class="text-emerald-400 font-bold text-xs">
+                <strong id="dendro-cophenetic-val" class="text-emerald-700 dark:text-emerald-400 font-bold text-xs">
                     r = {{ '0.812' if current_context == 'chicago' else '0.789' }}
                 </strong>
             </div>
@@ -59,7 +59,7 @@
                     <span id="val-dendro-threshold" class="px-2 py-0.5 rounded bg-primary-container/20 text-primary-container font-bold border border-primary-container/40 text-xs">
                         t = {{ clustermap_data.default_threshold }}
                     </span>
-                    <span id="val-dendro-clusters" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40 text-xs">
+                    <span id="val-dendro-clusters" class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40 font-bold border text-xs">
                         k = 3 Macro-Grupos
                     </span>
                 </div>
