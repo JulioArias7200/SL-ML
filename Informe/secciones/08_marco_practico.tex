@@ -92,7 +92,7 @@ Se identificaron delitos ocurridos en horas atípicas o locaciones aisladas (por
 
 El modelo K-Means se configuró con dos propósitos integrados: la partición espaciotemporal de patrones delictivos y el agrupamiento semántico de textos descriptivos.
 
-Para el clustering espaciotemporal, se evaluaron dinámicamente configuraciones de $k \in [2, 8]$ sobre las variables normalizadas $[\text{lat}, \text{lon}, \text{hour\_sin}, \text{hour\_cos}, \text{dow\_sin}, \text{dow\_cos}, \text{is\_weekend}, \text{domestic}]$. La Figura \ref{fig:kmeans_metricas_real} ilustra la evaluación simultánea de la inercia (WSS), el Coeficiente de Silueta y el Índice de Davies-Bouldin generadas en tiempo real por el sistema.
+Para el clustering espaciotemporal, se evaluaron dinámicamente configuraciones de $k \in [2, 8]$ sobre las variables normalizadas $[\text{lat},$ $\text{lon},$ $\text{hour\_sin},$ $\text{hour\_cos},$ $\text{dow\_sin},$ $\text{dow\_cos},$ $\text{is\_weekend},$ $\text{domestic}]$. La Figura \ref{fig:kmeans_metricas_real} ilustra la evaluación simultánea de la inercia (WSS), el Coeficiente de Silueta y el Índice de Davies-Bouldin generadas en tiempo real por el sistema.
 
 \begin{figure}[htbp]
 \centering
@@ -123,14 +123,14 @@ DBSCAN fue parametrizado sobre distancias ortodrómicas convirtiendo las coorden
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{lrrrr}
+\begin{tabularx}{\textwidth}{p{4.2cm} >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X}
 \toprule
-\textbf{Dataset Evaluado} & \textbf{Puntos Procesados} & \textbf{Clústeres Descubiertos} & \textbf{Puntos Núcleo} & \textbf{Tasa de Ruido ($-1$)} \\
+\textbf{Dataset Evaluado} & \textbf{Puntos} & \textbf{Clústeres} & \textbf{Puntos Núcleo} & \textbf{Tasa de Ruido} \\
 \midrule
-Chicago Benchmark ($16.771$, D1) & 16.771 & 34 núcleos urbanos & 16.106 & 3.97\% (665 pts) \\
+Chicago Benchmark ($16.771$, D1) & 16.771 & 34 núcleos & 16.106 & 3.97\% (665 pts) \\
 Bolivia News Corpus ($N=137$) & 137 & 8 micro-hotspots & 131 & 4.38\% (6 pts) \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Métricas operativas del modelo DBSCAN con distancia geodésica de Haversine.}
 \label{tab:dbscan_metricas}
 \tablenote{Elaboración propia a partir de las ejecuciones del servicio analítico. En Chicago D1 se detectan 34 clústeres espaciales descartando 665 puntos aislados como ruido. En Bolivia se identifican 8 micro-hotspots urbanos aislando eventos esporádicos en Oruro y zonas no densas.}
@@ -166,6 +166,7 @@ Frente a la limitación de DBSCAN de aplicar un radio $\varepsilon$ uniforme, HD
 
 \begin{figure}[htbp]
 \centering
+\resizebox{0.92\textwidth}{!}{%
 \begin{tikzpicture}[scale=0.9]
     \draw[->, thick] (0,0) -- (10,0) node[right] {\footnotesize Muestra de Datos};
     \draw[->, thick] (0,0) -- (0,5) node[above] {\footnotesize Densidad $\lambda = 1/\varepsilon$};
@@ -182,7 +183,8 @@ Frente a la limitación de DBSCAN de aplicar un radio $\varepsilon$ uniforme, HD
     \node[above, font=\scriptsize, color=accentorange] at (8.5, 1.8) {Cluster Efímero (Ruido)};
     
     \draw[dashed, red, line width=0.8pt] (0, 2.2) -- (10, 2.2) node[right, font=\tiny] {$\lambda_{\text{corte}}$};
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \caption{Dendrograma condensado de estabilidad y persistencia de clústeres en HDBSCAN.}
 \label{fig:hdbscan_persistencia}
 \figurenote{Esquema conceptual del exceso de masa persistente $\lambda = 1/\varepsilon$. Los clústeres que perduran a lo largo de un espectro más amplio de densidades son extraídos como estructuras estables, mientras que las ramas efímeras se clasifican como ruido estocástico.}
@@ -198,6 +200,7 @@ El algoritmo OPTICS procesó la distribución espaciotemporal generando un orden
 
 \begin{figure}[htbp]
 \centering
+\resizebox{0.92\textwidth}{!}{%
 \begin{tikzpicture}[scale=0.95]
     \draw[->, thick] (0,0) -- (11,0) node[right] {\footnotesize Orden de Procesamiento OPTICS};
     \draw[->, thick] (0,0) -- (0,4) node[above] {\footnotesize Distancia de Alcanzabilidad ($d_{\text{reach}}$)};
@@ -220,7 +223,8 @@ El algoritmo OPTICS procesó la distribución espaciotemporal generando un orden
     \draw[dashed, red] (2.3, 0) -- (2.3, 3.6);
     \draw[dashed, red] (5.5, 0) -- (5.5, 3.9);
     \node[above, font=\tiny, color=red] at (5.5, 3.9) {Frontera de Baja Densidad};
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \caption{Diagrama de Alcanzabilidad de OPTICS con identificación de valles de densidad.}
 \label{fig:optics_reachability}
 \figurenote{Representación conceptual del ordenamiento de alcanzabilidad. Las depresiones continuas corresponden a clústeres densos compactos (valles), mientras que las cúspides pronunciadas representan transiciones espaciales o fronteras interjurisdiccionales de baja densidad.}
@@ -237,7 +241,8 @@ El modelo probabilístico GMM se ajustó sobre las coordenadas geográficas de l
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{lrrrr}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l c c c c}
 \toprule
 \textbf{Componente Gaussiano} & \textbf{Peso ($\pi_k$)} & \textbf{Centroide $(\mu_{\text{lat}}, \mu_{\text{lon}})$} & \textbf{Varianza Mayor ($\sigma_1$)} & \textbf{Área Elipse $2\sigma$ ($\text{km}^2$)} \\
 \midrule
@@ -246,7 +251,8 @@ Componente 2 (South Side) & 0.298 & $(41.7752, -87.6431)$ & 0.038 & 34.2 \\
 Componente 3 (West Side) & 0.231 & $(41.8795, -87.7214)$ & 0.032 & 27.6 \\
 Componente 4 (North Residential) & 0.129 & $(41.9681, -87.6745)$ & 0.045 & 41.8 \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \caption{Parámetros estimados por el algoritmo EM para las cuatro mixturas gaussianas.}
 \label{tab:gmm_parametros}
 \tablenote{Elaboración propia a partir de la optimización por Esperanza-Maximización (EM) con regularización $\text{reg\_covar}=10^{-5}$ para garantizar la no singularidad de las matrices de covarianza.}
@@ -295,7 +301,8 @@ La Tabla \ref{tab:correlacion_penal_bootstrap} detalla la matriz de correlación
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabularx}{\textwidth}{l c c rrrrr}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l c c rrrrr}
 \toprule
 \textbf{Unidad Territorial} & \textbf{Macro} & \textbf{Estabilidad} & \textbf{Narcotráfico} & \textbf{Financieros} & \textbf{Homicidio} & \textbf{Robo Agr.} & \textbf{Agresión} \\
 \midrule
@@ -307,7 +314,8 @@ Santa Cruz (35 ev) & Grupo C & 54.5\% & 0.0\% & 54.3\% & 0.0\% & 28.6\% & 5.7\% 
 Cochabamba (15 ev) & Grupo C & 66.0\% & 0.0\% & 46.7\% & 6.7\% & 20.0\% & 26.7\% \\
 Plan 3000 (5 ev) & Grupo C & 81.5\% & 0.0\% & 20.0\% & 20.0\% & 40.0\% & 20.0\% \\
 \bottomrule
-\end{tabularx}
+\end{tabular}%
+}
 \caption{Matriz de correlación penal (\% normalizado) y estabilidad bootstrap por sector territorial.}
 \label{tab:correlacion_penal_bootstrap}
 \tablenote{Elaboración propia a partir del cálculo de estabilidad taxonómica ($B=100$ remuestreos). La intensidad porcentual refleja la concentración delictiva intragrupo y explica por qué dos sectores se fusionan a baja altura dendrogramática.}
@@ -325,14 +333,14 @@ La Figura \ref{fig:especializacion_bolivia} ilustra los perfiles de especializac
 
 \subsection{Modelos de Reducción de Dimensionalidad (PCA, SVD, PPCA, t-SNE, UMAP)}
 
-Se procesó la matriz TF-IDF de descripciones textuales ($50.000$ documentos $\times 1.000$ términos léxicos) mediante los cinco algoritmos de reducción implementados en \texttt{modules/algorithms/dimensionality.py}:
+Se procesó la matriz TF-IDF de descripciones textuales ($50.000$ documentos $\times 1.000$ términos léxicos) mediante los cinco algoritmos de reducción implementados en \texttt{modules/\allowbreak algorithms/\allowbreak dimensionality.py}:
 
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{llrr}
+\begin{tabularx}{\textwidth}{l p{3.6cm} X >{\raggedleft\arraybackslash}p{2.2cm}}
 \toprule
-\textbf{Método} & \textbf{Naturaleza} & \textbf{Varianza Explicada (2D)} & \textbf{Tiempo de Cómputo (s)} \\
+\textbf{Método} & \textbf{Naturaleza} & \textbf{Varianza Explicada (2D)} & \textbf{Tiempo (s)} \\
 \midrule
 PCA & Lineal / Ortogonal & 14.82\% ($PC_1: 8.91\%, PC_2: 5.91\%$) & 0.42 \\
 TruncatedSVD (LSA) & Lineal sobre dispersa & 14.80\% ($SVD_1: 8.89\%, SVD_2: 5.91\%$) & 0.18 \\
@@ -340,7 +348,7 @@ PPCA (Factor Analysis) & Probabilístico latente & N/A (Matriz de carga latente)
 t-SNE & No lineal / Probabilístico & N/A (Preservación local $KL$) & 14.20 \\
 UMAP & No lineal / Topológico & N/A (Preservación difusa Riemann) & 3.85 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Comparativa técnica de métodos de reducción de dimensionalidad.}
 \label{tab:reduccion_metricas}
 \tablenote{Elaboración propia a partir de las ejecuciones comparativas sobre la matriz dispersa TF-IDF. TruncatedSVD optimiza el tiempo de CPU ($0.18\text{ s}$) y UMAP preserva tanto la topología local como global.}
@@ -468,7 +476,8 @@ La Tabla \ref{tab:comparativa_modelos} consolida la evaluación comparada de los
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabularx}{\textwidth}{lccccc}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccc}
 \toprule
 \textbf{Modelo} & \textbf{Silueta ($s$)} & \textbf{Davies-Bouldin} & \textbf{Calinski-Harabasz} & \textbf{Tasa Ruido} & \textbf{Velocidad} \\
 \midrule
@@ -479,7 +488,8 @@ OPTICS & 0.811 (0.594 dedup) & 1.05 & 16.890 & 18.78\% & Lenta \\
 GMM ($K=4$, cov=full) & 0.362 & 1.25 & 12.180 & 0.0\% & Media \\
 Jerárquico Ward ($k=3$) & 0.734 ($r_{\text{coph}}$) & 0.95 & 19.840 & 0.0\% & Rápida (Distrital) \\
 \bottomrule
-\end{tabularx}
+\end{tabular}%
+}
 \caption{Tabla comparativa global de métricas de calidad entre algoritmos de clustering.}
 \label{tab:comparativa_modelos}
 \tablenote{Elaboración propia a partir de las pruebas de benchmarking y monitoreo computacional. Siluetas de HDBSCAN y OPTICS calculadas sobre Chicago D1; K-Means evaluado sobre variables espaciotemporales normalizadas.}

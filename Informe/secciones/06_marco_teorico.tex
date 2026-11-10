@@ -23,7 +23,7 @@ El dataset primario de Chicago (\texttt{Crimes\_-\_2020\_to\_Present.csv}) compr
     \item \textbf{District:} Distrito policial numerado (Chicago cuenta con 22 distritos policiales activos).
     \item \textbf{Ward / Community Area:} Divisiones políticas (distrito electoral) y comunidades barriales socioeconómicas (77 áreas comunitarias de Chicago).
     \item \textbf{X Coordinate / Y Coordinate:} Coordenadas planas en pies proyectadas según el sistema \textit{State Plane Illinois East (NAD83)}.
-    \item \textbf{Latitude / Longitude:} Coordenadas geodésicas en grados decimales (elipsoide WGS84).
+    \item \textbf{Latitud / Longitud:} Coordenadas geodésicas en grados decimales (elipsoide WGS84).
 \end{itemize}
 
 El corpus de Bolivia (\texttt{data\_noticias\_bolivia.csv}), construido mediante extracción automatizada sobre la prensa digital nacional (rotativos del eje troncal y periódicos departamentales de los 9 departamentos), registra:
@@ -78,7 +78,8 @@ La extracción y minería de texto sobre la seguridad ciudadana en Bolivia requi
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabularx}{\textwidth}{l p{3.2cm} l X}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l p{3.6cm} l l}
 \toprule
 \textbf{Jurisdicción} & \textbf{Medio Informativo} & \textbf{Portal Web Oficial} & \textbf{Canal YouTube / Identificador} \\
 \midrule
@@ -99,7 +100,8 @@ Tarija & El País / La Voz & \texttt{elpais.bo} & \texttt{@elpaisbo} \\
 Beni & La Palabra del Beni & \texttt{lapalabradelbeni.com} & \texttt{@benitvenlinea} \\
 Pando & Sol de Pando & \texttt{soldepando.com} & \texttt{Sol de Pando Oficial} \\
 \bottomrule
-\end{tabularx}
+\end{tabular}%
+}
 \caption{Ecosistema de medios y fuentes periodísticas georreferenciadas de Bolivia.}
 \label{tab:medios_bolivia}
 \tablenote{Elaboración propia a partir del levantamiento documental consolidado en \texttt{NOTICIAS.md}. Comprende agencias estatales, redes privadas, emisoras de radio e impresos departamentales de los 9 departamentos del Estado Plurinacional de Bolivia.}
@@ -159,7 +161,11 @@ Los Modelos de Mixturas de Gaussianas formulan una densidad de probabilidad cont
 \begin{equation}
     p(x) = \sum_{k=1}^K \pi_k \, \mathcal{N}(x \mid \mu_k, \Sigma_k), \quad \text{con } \sum_{k=1}^K \pi_k = 1, \; \pi_k \ge 0
 \end{equation}
-donde $\mathcal{N}(x \mid \mu_k, \Sigma_k) = \frac{1}{(2\pi)^{D/2} |\Sigma_k|^{1/2}} \exp\left(-\frac{1}{2} (x-\mu_k)^T \Sigma_k^{-1} (x-\mu_k)\right)$. Los parámetros $\{\pi_k, \mu_k, \Sigma_k\}$ se optimizan mediante el algoritmo Esperanza-Maximización (EM):
+donde la función de densidad gaussiana multivariante se define como:
+\begin{equation}
+    \mathcal{N}(x \mid \mu_k, \Sigma_k) = \frac{1}{(2\pi)^{D/2} |\Sigma_k|^{1/2}} \exp\left(-\frac{1}{2} (x-\mu_k)^T \Sigma_k^{-1} (x-\mu_k)\right)
+\end{equation}
+Los parámetros $\{\pi_k, \mu_k, \Sigma_k\}$ se optimizan mediante el algoritmo Esperanza-Maximización (EM):
 \begin{itemize}
     \item \textbf{Paso E (Expectation):} Calcula la probabilidad posterior o responsabilidad de que el componente $k$ haya generado la observación $x_i$:
     \begin{equation}

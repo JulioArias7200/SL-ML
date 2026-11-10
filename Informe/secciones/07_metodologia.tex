@@ -7,7 +7,7 @@ El desarrollo del proyecto se fundamenta en la metodología estándar para proye
 El sistema procesa dos conjuntos de datos empíricos complementarios:
 
 \begin{enumerate}
-    \item \textbf{Dataset Benchmark Internacional (Chicago Police Department -- CPD):} Obtenido del portal oficial de datos abiertos de la ciudad de Chicago (\texttt{Crimes\_-\_2020\_to\_Present\_20250228.csv}). Contiene un volumen en bruto de $324.5\text{ MB}$, con más de $800.000$ filas y $30$ variables originales que registran la totalidad de incidentes criminales reportados en la metrópoli estadounidense entre enero de 2020 y febrero de 2025.
+    \item \textbf{Dataset Benchmark Internacional (Chicago Police Department -- CPD):} Obtenido del portal oficial de datos abiertos de la ciudad de Chicago (\texttt{Crimes\allowbreak\_-\allowbreak 2020\allowbreak\_to\allowbreak\_Present\allowbreak\_20250228.csv}). Contiene un volumen en bruto de $324.5\text{ MB}$, con más de $800.000$ filas y $30$ variables originales que registran la totalidad de incidentes criminales reportados en la metrópoli estadounidense entre enero de 2020 y febrero de 2025.
     \item \textbf{Corpus Nacional de Bolivia (\texttt{data\_noticias\_bolivia.csv}):} Construido mediante un pipeline de extracción automatizada y raspado web (\textit{web scraping}) sobre la prensa digital boliviana. Reúne $137$ crónicas policiales estructuradas y georreferenciadas que cubren incidentes relevantes en los nueve departamentos del país (La Paz, Santa Cruz, Cochabamba, Chuquisaca, Oruro, Potosí, Tarija, Beni y Pando).
 \end{enumerate}
 
@@ -27,7 +27,7 @@ A diferencia de los esquemas supervisados (donde se predice una etiqueta predefi
 
 \subsection{Desarrollo de la Limpieza de Datos}
 
-La fase de preparación de datos fue implementada en el módulo automatizado \texttt{modules/data\_cleaning.py}. El flujo riguroso comprendió seis etapas secuenciales:
+La fase de preparación de datos fue implementada en el módulo automatizado \texttt{modules/\allowbreak data\_cleaning.py}. El flujo riguroso comprendió seis etapas secuenciales:
 
 \subsubsection{Auditoría y Perfilado de los Datos}
 
@@ -80,7 +80,8 @@ El proceso de preparación redujo el volumen inicial y optimizó la eficiencia e
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{lrrr}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l r r l}
 \toprule
 \textbf{Artefacto de Datos} & \textbf{Registros} & \textbf{Variables} & \textbf{Propósito en el Sistema} \\
 \midrule
@@ -90,7 +91,8 @@ CSV en Bruto (Chicago) & 814.230 & 30 & Archivo original fuente. \\
 \texttt{districts\_summary.csv} & 22 & 33 & Matriz agregada para clustering distrital. \\
 \texttt{data\_noticias\_bolivia.csv} & 137 & 10 & Corpus estructurado nacional georreferenciado. \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \caption{Resumen del balance del pipeline de depuración y preparación de datos.}
 \label{tab:balance_limpieza}
 \tablenote{Elaboración propia a partir del flujo de ingeniería de datos. La conversión columnar Parquet Snappy reduce el tamaño en disco de 324.5 MB a 48.2 MB y multiplica por doce la velocidad de ingesta en memoria.}

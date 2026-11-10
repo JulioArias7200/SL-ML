@@ -8,7 +8,7 @@ El flujo integral se estructura en dos fases operativas: la \textbf{Fase Offline
 
 \begin{enumerate}
     \item \textbf{Capa de Datos e Ingestión:} Almacena los datos maestros en Parquet con compresión Snappy y mantiene la muestra balanceada para renderizado web reactivo. Administra asimismo el repositorio estructurado de noticias de Bolivia con los 137 incidentes geocodificados y los gazetteers urbanos.
-    \item \textbf{Capa Analítica Offline:} Ejecuta los scripts de entrenamiento por lotes (\texttt{modules/algorithms/}), optimiza los hiperparámetros de densidad y reconstrucción neuronal, y genera las matrices precalculadas de estabilidad y benchmark.
+    \item \textbf{Capa Analítica Offline:} Ejecuta los scripts de entrenamiento por lotes (\texttt{modules/\allowbreak algorithms/}), optimiza los hiperparámetros de densidad y reconstrucción neuronal, y genera las matrices precalculadas de estabilidad y benchmark.
     \item \textbf{Capa de Servicio y Persistencia (Flask Master):} Carga los modelos serializados binariamente con \texttt{joblib} al iniciar el servidor. A través de Blueprints modulares (\texttt{modules/routes/}), expone los endpoints JSON RESTful detallados en la Tabla \ref{tab:endpoints_api}.
     \item \textbf{Capa de Presentación (Frontend WebGL 3D):} Renderiza el tablero de mando interactivo utilizando HTML5 semántico, hojas de estilo CSS3 y scripts en JavaScript conectados al motor WebGL (MapLibre GL JS / Deck.gl) para proyectar el Globo 3D con conmutación dinámica de capas algorítmicas.
 \end{enumerate}
